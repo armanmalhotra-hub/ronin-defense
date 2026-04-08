@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=DM+Mono:wght@400;500&family=Syne:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  *{margin:0;padding:0;box-sizing:border-box}
+  :root{
+    --navy:#0d1f3c;
+    --navy2:#142848;
+    --blue:#1a4a8a;
+    --accent:#c8a96e;
+    --accent2:#e8c98e;
+    --offwhite:#f4f1eb;
+    --warm:#e8e3d8;
+    --muted:#8a8070;
+    --text:#1a1610;
+  }
+  body{background:var(--navy);font-family:'Syne',sans-serif;color:var(--offwhite);overflow-x:hidden}
+
+  nav{display:flex;align-items:center;justify-content:space-between;padding:1.5rem 3rem;border-bottom:1px solid rgba(200,169,110,0.15);position:sticky;top:0;background:rgba(13,31,60,0.97);backdrop-filter:blur(8px);z-index:100}
+  .logo{font-family:'Instrument Serif',serif;font-size:1.6rem;color:var(--accent);letter-spacing:0.02em}
+  .logo span{color:var(--offwhite);font-style:italic}
+  nav a{color:rgba(244,241,235,0.6);text-decoration:none;font-size:0.8rem;letter-spacing:0.1em;text-transform:uppercase;transition:color 0.2s}
+  nav a:hover{color:var(--accent)}
+  .nav-links{display:flex;gap:2.5rem;align-items:center}
+  .nav-cta{background:var(--accent);color:var(--navy)!important;padding:0.5rem 1.25rem;border-radius:2px;font-weight:600;font-size:0.75rem!important}
+  .nav-cta:hover{background:var(--accent2)!important;color:var(--navy)!important}
+
+  .hero{min-height:92vh;display:flex;flex-direction:column;justify-content:center;padding:4rem 3rem 3rem;position:relative;overflow:hidden}
+  .hero-grid{position:absolute;inset:0;opacity:0.04;background-image:linear-gradient(rgba(200,169,110,0.5) 1px,transparent 1px),linear-gradient(90deg,rgba(200,169,110,0.5) 1px,transparent 1px);background-size:60px 60px}
+  .hero-tag{font-family:'DM Mono',monospace;font-size:0.7rem;color:var(--accent);letter-spacing:0.15em;text-transform:uppercase;margin-bottom:1.5rem;opacity:0.9}
+  .hero h1{font-family:'Instrument Serif',serif;font-size:clamp(3rem,6vw,5.5rem);line-height:1.05;max-width:900px;color:var(--offwhite);margin-bottom:1rem}
+  .hero h1 em{color:var(--accent);font-style:italic}
+  .hero-sub{font-size:1rem;color:rgba(244,241,235,0.55);max-width:540px;line-height:1.7;margin-bottom:2.5rem;font-weight:400}
+  .hero-actions{display:flex;gap:1rem;flex-wrap:wrap;align-items:center}
+  .btn-primary{background:var(--accent);color:var(--navy);padding:0.85rem 2rem;border-radius:2px;text-decoration:none;font-weight:700;font-size:0.85rem;letter-spacing:0.05em;transition:all 0.2s;display:inline-block}
+  .btn-primary:hover{background:var(--accent2);transform:translateY(-1px)}
+  .btn-ghost{border:1px solid rgba(200,169,110,0.4);color:var(--accent);padding:0.85rem 2rem;border-radius:2px;text-decoration:none;font-size:0.85rem;letter-spacing:0.05em;transition:all 0.2s;display:inline-block}
+  .btn-ghost:hover{border-color:var(--accent);background:rgba(200,169,110,0.08)}
+  .hero-deadline{display:flex;gap:1.5rem;margin-top:3rem;padding-top:2rem;border-top:1px solid rgba(200,169,110,0.12);flex-wrap:wrap}
+  .deadline-item{display:flex;align-items:center;gap:0.6rem}
+  .deadline-dot{width:7px;height:7px;border-radius:50%;background:var(--accent);flex-shrink:0}
+  .deadline-dot.urgent{background:#e25c5c}
+  .deadline-text{font-family:'DM Mono',monospace;font-size:0.7rem;color:rgba(244,241,235,0.5);letter-spacing:0.05em}
+  .deadline-text strong{color:rgba(244,241,235,0.85)}
+
+  section{padding:5rem 3rem}
+  .section-tag{font-family:'DM Mono',monospace;font-size:0.7rem;color:var(--accent);letter-spacing:0.15em;text-transform:uppercase;margin-bottom:1rem}
+  .section-title{font-family:'Instrument Serif',serif;font-size:clamp(2rem,3.5vw,2.8rem);line-height:1.15;color:var(--offwhite);margin-bottom:1.25rem}
+  .section-body{color:rgba(244,241,235,0.55);line-height:1.75;font-size:0.95rem;max-width:580px}
+
+  .divider{height:1px;background:linear-gradient(90deg,transparent,rgba(200,169,110,0.2),transparent);margin:0 3rem}
+
+  .urgency{background:rgba(20,40,72,0.6);border-top:1px solid rgba(200,169,110,0.1);border-bottom:1px solid rgba(200,169,110,0.1);padding:1.25rem 3rem;display:flex;gap:2rem;flex-wrap:wrap;align-items:center}
+  .urgency-label{font-family:'DM Mono',monospace;font-size:0.65rem;color:rgba(244,241,235,0.35);letter-spacing:0.15em;text-transform:uppercase;margin-right:0.5rem;white-space:nowrap}
+  .urgency-badge{display:inline-flex;align-items:center;gap:0.5rem;padding:0.35rem 0.9rem;border-radius:2px;font-family:'DM Mono',monospace;font-size:0.68rem;letter-spacing:0.06em;white-space:nowrap}
+  .badge-active{background:rgba(226,92,92,0.15);border:1px solid rgba(226,92,92,0.35);color:#e88}
+  .badge-26{background:rgba(200,169,110,0.12);border:1px solid rgba(200,169,110,0.3);color:var(--accent)}
+  .badge-27{background:rgba(26,74,138,0.3);border:1px solid rgba(100,150,220,0.25);color:rgba(150,190,255,0.8)}
+
+  .categories{background:var(--navy2)}
+  .cat-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:1px;background:rgba(200,169,110,0.08);margin-top:3rem;border:1px solid rgba(200,169,110,0.08)}
+  .cat-card{background:var(--navy2);padding:1.75rem;transition:background 0.2s;cursor:default}
+  .cat-card:hover{background:rgba(255,255,255,0.03)}
+  .cat-rank{font-family:'DM Mono',monospace;font-size:0.65rem;color:rgba(200,169,110,0.4);margin-bottom:0.75rem;letter-spacing:0.1em}
+  .cat-name{font-size:0.95rem;font-weight:600;color:var(--offwhite);margin-bottom:0.75rem;line-height:1.3}
+  .cat-desc{font-size:0.78rem;color:rgba(244,241,235,0.4);line-height:1.55}
+  .cat-badge{display:inline-block;padding:0.2rem 0.5rem;font-family:'DM Mono',monospace;font-size:0.6rem;letter-spacing:0.06em;margin-top:0.75rem;border-radius:2px}
+  .cb-active{background:rgba(226,92,92,0.12);border:1px solid rgba(226,92,92,0.25);color:#e88}
+  .cb-26{background:rgba(200,169,110,0.1);border:1px solid rgba(200,169,110,0.25);color:var(--accent)}
+  .cb-27{background:rgba(100,150,255,0.08);border:1px solid rgba(100,150,255,0.2);color:rgba(150,190,255,0.75)}
+
+  .value{background:var(--navy)}
+  .value-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:2rem;margin-top:3rem}
+  .value-card{border-left:2px solid rgba(200,169,110,0.3);padding:0 0 0 1.5rem}
+  .value-num{font-family:'Instrument Serif',serif;font-size:2.5rem;color:rgba(200,169,110,0.25);line-height:1;margin-bottom:0.5rem}
+  .value-title{font-size:0.9rem;font-weight:600;color:var(--offwhite);margin-bottom:0.5rem}
+  .value-desc{font-size:0.82rem;color:rgba(244,241,235,0.45);line-height:1.65}
+
+  .how{background:var(--navy2)}
+  .steps{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:0;margin-top:3rem}
+  .step{padding:2rem}
+  .step:not(:last-child){border-right:1px solid rgba(200,169,110,0.08)}
+  .step-num{font-family:'DM Mono',monospace;font-size:0.65rem;color:var(--accent);letter-spacing:0.1em;margin-bottom:1rem;opacity:0.7}
+  .step-title{font-size:0.9rem;font-weight:600;color:var(--offwhite);margin-bottom:0.5rem}
+  .step-desc{font-size:0.8rem;color:rgba(244,241,235,0.4);line-height:1.6}
+  .step-time{font-family:'DM Mono',monospace;font-size:0.65rem;color:var(--accent);margin-top:1rem;opacity:0.6}
+
+  .cta-section{background:var(--navy);text-align:center;padding:6rem 3rem}
+  .cta-section .section-title{max-width:600px;margin:0 auto 1rem}
+  .cta-section .section-body{margin:0 auto 2.5rem;max-width:480px}
+  .cta-form{display:flex;gap:0.75rem;max-width:480px;margin:0 auto;flex-wrap:wrap;justify-content:center}
+  .cta-input{flex:1;min-width:220px;background:rgba(255,255,255,0.05);border:1px solid rgba(200,169,110,0.2);color:var(--offwhite);padding:0.85rem 1rem;border-radius:2px;font-family:'Syne',sans-serif;font-size:0.85rem;outline:none}
+  .cta-input::placeholder{color:rgba(244,241,235,0.3)}
+  .cta-input:focus{border-color:rgba(200,169,110,0.5)}
+
+  footer{border-top:1px solid rgba(200,169,110,0.1);padding:2rem 3rem;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:1rem}
+  .footer-logo{font-family:'Instrument Serif',serif;font-size:1.1rem;color:var(--accent)}
+  .footer-meta{font-family:'DM Mono',monospace;font-size:0.65rem;color:rgba(244,241,235,0.25);letter-spacing:0.05em}
+
+  @media(max-width:600px){
+    nav,section,.hero,footer,.urgency{padding-left:1.5rem;padding-right:1.5rem}
+    .divider{margin:0 1.5rem}
+    .step:not(:last-child){border-right:none;border-bottom:1px solid rgba(200,169,110,0.08)}
+    .steps{grid-template-columns:1fr}
+    .nav-links a:not(.nav-cta){display:none}
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="logo">Ronin<span>Defense</span></div>
+  <div class="nav-links">
+    <a href="#">Categories</a>
+    <a href="#">Compliance</a>
+    <a href="#">About</a>
+    <a href="#" class="nav-cta">Request Quote</a>
+  </div>
+</nav>
+
+<section class="hero">
+  <div class="hero-grid"></div>
+  <div class="hero-tag">// Japan → US Defense Supply Chain</div>
+  <h1>Replace Chinese components.<br><em>Before the deadline.</em></h1>
+  <p class="hero-sub">Ronin connects US Tier 2 and Tier 3 defense contractors to TAA-compliant Japanese manufacturers — with the DFARS documentation to match.</p>
+  <div class="hero-actions">
+    <a href="#" class="btn-primary">Request a Quote</a>
+    <a href="#" class="btn-ghost">See Categories →</a>
+  </div>
+  <div class="hero-deadline">
+    <div class="deadline-item">
+      <div class="deadline-dot urgent"></div>
+      <div class="deadline-text"><strong>Active now</strong> — NDAA rare earth magnet ban in effect</div>
+    </div>
+    <div class="deadline-item">
+      <div class="deadline-dot"></div>
+      <div class="deadline-text"><strong>June 2026</strong> — CMC list enforcement begins</div>
+    </div>
+    <div class="deadline-item">
+      <div class="deadline-dot"></div>
+      <div class="deadline-text"><strong>Dec 2027</strong> — Section 5949 semiconductor ban</div>
+    </div>
+  </div>
+</section>
+
+<div class="urgency">
+  <span class="urgency-label">Deadlines</span>
+  <span class="urgency-badge badge-active">● Active — Magnet ban</span>
+  <span class="urgency-badge badge-26">June 2026 — CMC enforcement</span>
+  <span class="urgency-badge badge-27">Dec 2027 — Section 5949</span>
+</div>
+
+<section class="categories">
+  <div class="section-tag">// Product categories</div>
+  <div class="section-title">12 categories.<br>One compliant source.</div>
+  <p class="section-body">Every category comes with a named Chinese supplier being displaced, a TAA-confirmed Japanese replacement, and Ronin's full DFARS documentation package.</p>
+
+  <div class="cat-grid">
+    <div class="cat-card">
+      <div class="cat-rank">01</div>
+      <div class="cat-name">Power Electronics Modules</div>
+      <div class="cat-desc">IGBT and SiC modules for power conversion systems. Defense motor drives, radar power, naval distribution.</div>
+      <span class="cat-badge cb-26">TAA + CMC exposure</span>
+    </div>
+    <div class="cat-card">
+      <div class="cat-rank">02</div>
+      <div class="cat-name">Rare Earth Magnets</div>
+      <div class="cat-desc">NdFeB permanent magnets for actuators, motors, and guidance systems. NDAA ban is in effect now.</div>
+      <span class="cat-badge cb-active">Active — banned now</span>
+    </div>
+    <div class="cat-card">
+      <div class="cat-rank">03</div>
+      <div class="cat-name">Optical & Imaging Components</div>
+      <div class="cat-desc">Precision optics for EO/IR systems, targeting, and UAV payloads. Chinese suppliers flagged in DoD Govini data.</div>
+      <span class="cat-badge cb-26">Govini-flagged category</span>
+    </div>
+    <div class="cat-card">
+      <div class="cat-rank">04</div>
+      <div class="cat-name">Wire Harness Components</div>
+      <div class="cat-desc">Connectors, wire stock, and harness assemblies. Primary Chinese connector supplier is a sanctioned entity.</div>
+      <span class="cat-badge cb-active">Sanctioned supplier active</span>
+    </div>
+    <div class="cat-card">
+      <div class="cat-rank">05</div>
+      <div class="cat-name">Power Supplies</div>
+      <div class="cat-desc">AC-DC and DC-DC power supplies for defense electronics. Many units on active BOMs are manufactured in China despite non-Chinese branding.</div>
+      <span class="cat-badge cb-26">TAA violation — active</span>
+    </div>
+    <div class="cat-card">
+      <div class="cat-rank">06</div>
+      <div class="cat-name">Thermal Interface Materials</div>
+      <div class="cat-desc">Thermal pads and interface materials for defense enclosures. Chinese commodity manufacturers dominate current BOM sourcing.</div>
+      <span class="cat-badge cb-27">TAA exposure</span>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<section class="value">
+  <div class="section-tag">// Why Ronin</div>
+  <div class="section-title">Not a broker.<br>A compliance architecture.</div>
+  <p class="section-body">Getting onto a defense AVL requires more than a product. It requires documentation most distributors cannot produce.</p>
+
+  <div class="value-grid">
+    <div class="value-card">
+      <div class="value-num">01</div>
+      <div class="value-title">TAA compliance documentation</div>
+      <div class="value-desc">Country-of-origin letters directly from each manufacturer confirming Japan-origin production — not brand name, actual facility location.</div>
+    </div>
+    <div class="value-card">
+      <div class="value-num">02</div>
+      <div class="value-title">DFARS-ready COC package</div>
+      <div class="value-desc">Certificates of Conformance meeting DFARS 252.246-7007. Denied parties screening via the US Government Consolidated Screening List on every transaction.</div>
+    </div>
+    <div class="value-card">
+      <div class="value-num">03</div>
+      <div class="value-title">Authorized distributor status</div>
+      <div class="value-desc">Ronin holds written authorized distributor agreements from each supplier. Not a broker — an authorized source that holds up under CPSR audit.</div>
+    </div>
+    <div class="value-card">
+      <div class="value-num">04</div>
+      <div class="value-title">Supplier activation</div>
+      <div class="value-desc">Our Japanese suppliers have no existing US defense channel. Ronin built it. That means no incumbent distributor to compete with and no pre-existing pricing pressure.</div>
+    </div>
+    <div class="value-card">
+      <div class="value-num">05</div>
+      <div class="value-title">AVL qualification as a moat</div>
+      <div class="value-desc">Once Ronin qualifies into your AVL, the position is sticky. Re-qualification takes 90 days to 18 months. A competitor cannot simply undercut on price and take the business.</div>
+    </div>
+    <div class="value-card">
+      <div class="value-num">06</div>
+      <div class="value-title">Direct supplier relationships</div>
+      <div class="value-desc">Access built through years of direct engagement with Japanese precision manufacturers — not cold outreach. Relationships that cannot be replicated quickly by a new entrant.</div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<section class="how">
+  <div class="section-tag">// How it works</div>
+  <div class="section-title">From first contact<br>to approved vendor.</div>
+
+  <div class="steps">
+    <div class="step">
+      <div class="step-num">STEP 01</div>
+      <div class="step-title">Submit RFQ</div>
+      <div class="step-desc">Tell us your product category, current supplier, and annual volume. No part numbers or program names required.</div>
+      <div class="step-time">// 24hr response</div>
+    </div>
+    <div class="step">
+      <div class="step-num">STEP 02</div>
+      <div class="step-title">Compliance package</
