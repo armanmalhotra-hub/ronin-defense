@@ -286,13 +286,108 @@ nav.tabs #search:focus { outline: none; border-bottom-color: var(--ink); }
 }
 .survey-meta { font-size: 11px; color: var(--muted); margin: 8px 0 0; }
 
-/* ---------- play ---------- */
+/* ---------- play (HomeGuessr-style daily challenge) ---------- */
 .play-stage {
   background: var(--paper); border: 1px solid var(--line); border-radius: 4px;
-  padding: 24px 24px 20px; margin: 0 0 32px;
-  display: grid; grid-template-columns: 1fr; gap: 16px;
+  padding: 24px 24px 24px; margin: 0 0 32px;
+  display: grid; grid-template-columns: 1fr; gap: 18px;
   max-width: 640px; margin-left: auto; margin-right: auto;
 }
+.day-label {
+  font-size: 11px; text-transform: uppercase; letter-spacing: 0.1em;
+  color: var(--muted); margin: 0;
+}
+.progress {
+  display: flex; gap: 4px; margin: 0;
+}
+.progress .seg {
+  flex: 1; height: 4px; border-radius: 2px; background: var(--line);
+}
+.progress .seg.done { background: var(--good); }
+.progress .seg.active { background: var(--ink); }
+.stage-label {
+  font-size: 12px; text-transform: uppercase; letter-spacing: 0.1em;
+  color: var(--muted); margin: 8px 0 4px;
+}
+
+.brand-grid {
+  display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+  gap: 8px;
+}
+.brand-tile {
+  font: inherit; padding: 14px 12px; border-radius: 4px;
+  border: 1px solid var(--line); background: var(--bg);
+  cursor: pointer; color: var(--ink);
+  font-family: var(--serif); font-size: 14px; font-weight: 600;
+  transition: border-color 0.12s ease, background 0.12s ease;
+}
+.brand-tile:hover { border-color: var(--muted); }
+.brand-tile.selected {
+  background: var(--accent-soft); border-color: var(--accent); color: var(--accent);
+}
+
+.price-display {
+  font-family: var(--serif); font-size: 32px; font-weight: 600;
+  text-align: center; color: var(--ink);
+  font-variant-numeric: tabular-nums;
+}
+.price-slider {
+  -webkit-appearance: none; appearance: none;
+  width: 100%; height: 4px; background: var(--line); border-radius: 2px;
+  outline: none; padding: 0;
+}
+.price-slider::-webkit-slider-thumb {
+  -webkit-appearance: none; appearance: none;
+  width: 22px; height: 22px; border-radius: 50%;
+  background: var(--ink); cursor: pointer; border: 2px solid var(--paper);
+  box-shadow: 0 0 0 1px var(--ink);
+}
+.price-slider::-moz-range-thumb {
+  width: 22px; height: 22px; border-radius: 50%;
+  background: var(--ink); cursor: pointer; border: 2px solid var(--paper);
+}
+.price-scale {
+  display: flex; justify-content: space-between;
+  font-size: 11px; color: var(--muted); margin-top: -4px;
+}
+
+.big-pct {
+  font-family: var(--serif); font-weight: 600;
+  font-size: 64px; line-height: 1; text-align: center;
+  color: var(--ink); margin: 4px 0; letter-spacing: -0.02em;
+}
+.big-pct span {
+  font-size: 32px; color: var(--muted); margin-left: 2px;
+}
+.day-sub {
+  text-align: center; color: var(--muted); font-size: 13px;
+  margin: 0 0 8px;
+}
+.quip {
+  margin: 8px 0; padding: 10px 14px;
+  background: var(--accent-soft); border-left: 2px solid var(--accent);
+  border-radius: 2px; font-style: italic; color: var(--ink); font-size: 13px;
+}
+.reveal-watch {
+  margin: 8px 0 4px; font-family: var(--serif); font-size: 18px; font-weight: 600;
+}
+
+.day-grid {
+  display: flex; flex-direction: column; gap: 4px; margin-top: 8px;
+}
+.day-row {
+  display: grid; grid-template-columns: 28px 1fr auto;
+  gap: 8px; align-items: center;
+  padding: 8px 12px; background: var(--bg); border-radius: 4px;
+  font-size: 13px;
+}
+.day-row .rl { color: var(--muted); font-variant-numeric: tabular-nums; font-weight: 600; }
+.day-row .rg { color: var(--ink); }
+.day-row .rc {
+  font-variant-numeric: tabular-nums; font-weight: 600; color: var(--accent);
+}
+
+button:disabled { opacity: 0.4; cursor: not-allowed; }
 @media (min-width: 720px) {
   .play-stage.with-image { grid-template-columns: 240px 1fr; max-width: 760px; }
 }

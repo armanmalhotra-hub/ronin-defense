@@ -593,17 +593,109 @@ function renderSurveys() {
   });
 }
 
-// ---------- Play (guess the watch) ----------
+// ---------- Play: HomeGuessr-style daily challenge ----------
 const PLAY_KEY = "watch-watch:play";
-let playState = JSON.parse(localStorage.getItem(PLAY_KEY) || "null") || { round: null };
+const ROUNDS_PER_DAY = 5;
+const PRICE_MIN = 500;
+const PRICE_MAX = 60000;
 
-function newRound() {
+function todayISO() { return new Date().toISOString().slice(0, 10); }
+
+// Mulberry32 PRNG, seeded from a date string
+function seededPicker(seed) {
+  let h = 1779033703 ^ seed.length;
+  for (let i = 0; i < seed.length; i++) {
+    h = Math.imul(h ^ seed.charCodeAt(i), 3432918353);
+    h = (h << 13) | (h >>> 19);
+  }
+  let s = h >>> 0;
+  return () => {
+    s += 0x6D2B79F5;
+    let t = s;
+    t = Math.imul(t ^ (t >>> 15), t | 1);
+    t ^= t + Math.imul(t ^ (t >>> 7), t | 61);
+    return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+  };
+}
+
+function dailyWatchIds(dateStr) {
   const pool = (data.favorites || []).filter(w => priceBucket(w) !== "unknown");
-  if (!pool.length) return null;
-  const lastId = playState.round?.watchId;
-  const candidates = pool.length > 1 ? pool.filter(w => w.id !== lastId) : pool;
-  const watch = candidates[Math.floor(Math.random() * candidates.length)];
-  return { watchId: watch.id, guesses: {}, revealed: false };
+  if (!pool.length) return [];
+  const rng = seededPicker(dateStr);
+  const ids = pool.map(w => w.id);
+  // Fisher-Yates shuffle with seeded rng, then take ROUNDS_PER_DAY
+  for (let i = ids.length - 1; i > 0; i--) {
+    const j = Math.floor(rng() * (i + 1));
+    [ids[i], ids[j]] = [ids[j], ids[i]];
+  }
+  return ids.slice(0, Math.min(ROUNDS_PER_DAY, ids.length));
+}
+
+let playState = JSON.parse(localStorage.getItem(PLAY_KEY) || "null") || null;
+
+function initPlayStateOnce() {
+  // Called once after `data` is loaded.
+  const today = todayISO();
+  if (playState && playState.date === today && Array.isArray(playState.watches) && playState.watches.length) return;
+  playState = {
+    date: today,
+    watches: dailyWatchIds(today),
+    rounds: [],
+    idx: 0,
+    stage: "brand",
+    selectedBrand: "",
+    sliderPrice: 5000,
+  };
+  savePlay();
+}
+
+function priceFor(w) { return w.price_usd ?? w.price_usd_low ?? null; }
+
+function brandPoints(guess, w) {
+  return guess === w.brand ? 50 : 0;
+}
+
+function pricePoints(guess, w) {
+  const truth = priceFor(w);
+  if (truth == null || guess == null) return 0;
+  const off = Math.abs(guess - truth) / truth;
+  if (off <= 0.10) return 50;
+  if (off <= 0.20) return 40;
+  if (off <= 0.35) return 28;
+  if (off <= 0.60) return 15;
+  if (off <= 1.00) return 5;
+  return 0;
+}
+
+function quipFor(brandPts, pricePts) {
+  const b = brandPts > 0;
+  const p = pricePts >= 35;
+  if (brandPts === 50 && pricePts === 50) return "Hajime would weep. You're a menace.";
+  if (b && p) return "Quietly excellent.";
+  if (b && pricePts > 0) return "You know the maker. The market — getting there.";
+  if (b && !p) return "Right house. Wrong price tag.";
+  if (!b && p) return "Your pricing is elite. Your eye is in witness protection.";
+  if (!b && pricePts > 0) return "Both guesses orbiting truth. Try again.";
+  return "Big swing, big miss. Tomorrow's another day.";
+}
+
+function savePlay() { localStorage.setItem(PLAY_KEY, JSON.stringify(playState)); }
+
+function startNewDayIfNeeded() {
+  if (!playState) initPlayStateOnce();
+  const today = todayISO();
+  if (playState.date !== today) {
+    playState = {
+      date: today,
+      watches: dailyWatchIds(today),
+      rounds: [],
+      idx: 0,
+      stage: "brand",
+      selectedBrand: "",
+      sliderPrice: 5000,
+    };
+    savePlay();
+  }
 }
 
 function priceBucket(w) {
@@ -674,36 +766,61 @@ function correctAnswers(w) {
 
 function savePlay() { localStorage.setItem(PLAY_KEY, JSON.stringify(playState)); }
 
-async function submitGuess() {
-  const r = playState.round;
-  if (!r) return;
-  const w = data.favorites.find(x => x.id === r.watchId);
-  if (!w) return;
-  const truth = correctAnswers(w);
-  let pts = 0;
-  r.results = {};
-  for (const def of Q_DEFS) {
-    const ok = (r.guesses[def.key] || "") === truth[def.key];
-    r.results[def.key] = { ok, correct: truth[def.key], guess: r.guesses[def.key] || "—", pts: ok ? def.pts : 0 };
-    if (ok) pts += def.pts;
+async function commitDayResultIfComplete() {
+  if (!me) return;
+  if (playState.rounds.length < playState.watches.length) return;
+  const total = playState.rounds.reduce((s, r) => s + r.total, 0);
+  state.daily = state.daily || {};
+  state.daily[playState.date] = state.daily[playState.date] || {};
+  state.daily[playState.date][me] = { total, rounds: playState.rounds.length };
+  state.scores = state.scores || {};
+  state.scores[me] = state.scores[me] || { lifetime: 0, daysPlayed: 0, lastPlayed: null };
+  if (!state.scores[me].lastDay || state.scores[me].lastDay !== playState.date) {
+    state.scores[me].lifetime += total;
+    state.scores[me].daysPlayed += 1;
+    state.scores[me].lastDay = playState.date;
+    state.scores[me].lastPlayed = playState.date;
   }
-  r.revealed = true;
-  r.points = pts;
+  await Storage.save(state);
+}
 
-  if (me) {
-    state.scores = state.scores || {};
-    state.scores[me] = state.scores[me] || { lifetime: 0, rounds: 0, lastPlayed: null };
-    state.scores[me].lifetime += pts;
-    state.scores[me].rounds += 1;
-    state.scores[me].lastPlayed = new Date().toISOString().slice(0, 10);
-    await Storage.save(state);
-  }
+async function submitBrand() {
+  if (!playState.selectedBrand) return;
+  playState.stage = "price";
   savePlay();
   renderPlay();
 }
 
-function nextRound() {
-  playState.round = newRound();
+async function submitPrice() {
+  const w = data.favorites.find(x => x.id === playState.watches[playState.idx]);
+  if (!w) return;
+  const brandPts = brandPoints(playState.selectedBrand, w);
+  const pricePts = pricePoints(playState.sliderPrice, w);
+  const round = {
+    watchId: w.id,
+    brand: playState.selectedBrand,
+    price: playState.sliderPrice,
+    brandPts, pricePts,
+    total: brandPts + pricePts,
+  };
+  playState.rounds.push(round);
+  playState.stage = "reveal";
+  savePlay();
+  renderPlay();
+}
+
+async function nextRound() {
+  if (playState.idx + 1 >= playState.watches.length) {
+    playState.stage = "complete";
+    await commitDayResultIfComplete();
+    savePlay();
+    renderPlay();
+    return;
+  }
+  playState.idx += 1;
+  playState.stage = "brand";
+  playState.selectedBrand = "";
+  playState.sliderPrice = 5000;
   savePlay();
   renderPlay();
 }
@@ -712,34 +829,95 @@ function renderPlay() {
   const stage = $("play-stage");
   const lb = $("grid-leaderboard");
   if (!stage) return;
-  if (!playState.round) playState.round = newRound();
+  startNewDayIfNeeded();
 
-  const r = playState.round;
-  const w = data.favorites.find(x => x.id === r.watchId);
-  if (!w) { stage.innerHTML = `<p class="kv">No catalog yet.</p>`; return; }
+  if (!playState.watches?.length) {
+    stage.innerHTML = `<p class="kv">No catalog yet.</p>`;
+    return;
+  }
 
+  if (playState.stage === "complete") {
+    stage.className = "play-stage";
+    const total = playState.rounds.reduce((s, r) => s + r.total, 0);
+    const max = playState.rounds.length * 100;
+    const pct = Math.round(100 * total / max);
+    const rows = playState.rounds.map((r, i) => {
+      const w = data.favorites.find(x => x.id === r.watchId);
+      return `
+        <div class="day-row">
+          <span class="rl">${i + 1}</span>
+          <span class="rg">${w.brand} — ${w.model}</span>
+          <span class="rc">${r.total}</span>
+        </div>`;
+    }).join("");
+    stage.innerHTML = `
+      <div class="clue">
+        <p class="day-label">Daily challenge · ${playState.date}</p>
+        <div class="big-pct">${pct}<span>%</span></div>
+        <p class="day-sub">${total} / ${max} pts · ${playState.rounds.length} rounds</p>
+        <div class="day-grid">${rows}</div>
+        <p class="clue-line" style="margin-top:12px;color:var(--muted)">Come back tomorrow for a new lineup.</p>
+      </div>`;
+    renderLeaderboard();
+    return;
+  }
+
+  const watchId = playState.watches[playState.idx];
+  const w = data.favorites.find(x => x.id === watchId);
   const brands = [...new Set(data.favorites.map(x => x.brand))].sort();
   const hasImg = !!w.image;
-  r.guesses = r.guesses || {};
 
-  const questionFields = Q_DEFS.map(def => {
-    const opts = def.opts || brands;
-    const cur = r.guesses[def.key] || "";
-    return `
-      <label>${def.label} <span class="q-pts">+${def.pts}</span>
-        <select data-q="${def.key}">
-          <option value="">pick…</option>
-          ${opts.map(o => `<option value="${o}" ${cur === o ? "selected" : ""}>${o}</option>`).join("")}
-        </select>
-      </label>`;
+  // PROGRESS BAR
+  const segs = playState.watches.map((_, i) => {
+    const cls = i < playState.rounds.length ? "done" : i === playState.idx ? "active" : "";
+    return `<span class="seg ${cls}"></span>`;
   }).join("");
 
+  if (playState.stage === "reveal") {
+    const r = playState.rounds[playState.rounds.length - 1];
+    const isLast = playState.idx + 1 >= playState.watches.length;
+    const truth = priceFor(w);
+    const pct = Math.round(100 * r.total / 100);
+    stage.className = "play-stage" + (hasImg ? " with-image" : "");
+    stage.innerHTML = `
+      ${hasImg ? `<img class="silhouette" src="${w.image}" alt="${w.brand} ${w.model}"/>` : ""}
+      <div class="clue">
+        <p class="day-label">Round ${playState.idx + 1} of ${playState.watches.length}</p>
+        <div class="progress">${segs}</div>
+        <div class="big-pct">${pct}<span>%</span></div>
+        <p class="day-sub">${r.total} / 100 pts</p>
+        <h4 class="reveal-watch">${w.brand} — ${w.model}</h4>
+        <div class="reveal-grid">
+          <div class="reveal-row">
+            <span class="rl">Brand</span>
+            <span class="rg">${r.brand || "—"}</span>
+            <span class="rc">${r.brandPts > 0 ? `<span class="pts">+${r.brandPts}</span>` : `<span class="rwrong">${w.brand}</span>`}</span>
+          </div>
+          <div class="reveal-row">
+            <span class="rl">Price</span>
+            <span class="rg">$${r.price.toLocaleString()}</span>
+            <span class="rc">${r.pricePts > 0 ? `<span class="pts">+${r.pricePts}</span>` : ""} <span class="rwrong">$${truth.toLocaleString()}</span></span>
+          </div>
+        </div>
+        <p class="quip">${quipFor(r.brandPts, r.pricePts)}</p>
+        ${w.note ? `<p class="clue-line" style="color:var(--muted)">${w.note}</p>` : ""}
+        <div class="play-buttons" style="margin-top:8px">
+          <button id="g-next">${isLast ? "See day result →" : "Next watch →"}</button>
+        </div>
+      </div>`;
+    stage.querySelector("#g-next").addEventListener("click", nextRound);
+    renderLeaderboard();
+    return;
+  }
+
+  // STAGE: brand or price
   stage.className = "play-stage" + (hasImg ? " with-image" : "");
+  const stageBody = playState.stage === "brand" ? renderStageBrand(w, brands) : renderStagePrice(w);
   stage.innerHTML = `
-    ${hasImg ? `<img class="silhouette ${r.revealed ? "" : "hidden-img"}" src="${w.image}" alt="mystery watch"/>` : ""}
+    ${hasImg ? `<img class="silhouette hidden-img" src="${w.image}" alt="mystery watch"/>` : ""}
     <div class="clue">
-      <h3>Offhand</h3>
-      <p class="sub">a game to explore the unknown · 7 questions per round</p>
+      <p class="day-label">Round ${playState.idx + 1} of ${playState.watches.length}</p>
+      <div class="progress">${segs}</div>
       <p class="clue-line"><b>Strap:</b> ${w.strap || "—"}</p>
       <p class="clue-line"><b>Dial:</b> ${w.dial || "—"}</p>
       ${(() => {
@@ -752,72 +930,112 @@ function renderPlay() {
         }).slice(0, 3);
         return safe.length ? `<div class="pills">${safe.map(t => `<span class="pill dim">${t}</span>`).join("")}</div>` : "";
       })()}
-      ${r.revealed ? renderReveal(w, r) : `
-        <form class="play-form" onsubmit="return false">
-          ${questionFields}
-          <div class="play-buttons">
-            <button id="g-submit">Submit</button>
-            <button id="g-skip" class="secondary">Skip</button>
-          </div>
-          <p class="survey-meta">${me ? `Playing as ${me} · max ${Q_DEFS.reduce((s, d) => s + d.pts, 0)} pts/round` : "Set a nickname to track your score."}</p>
-        </form>
-      `}
+      ${stageBody}
+      <p class="survey-meta">${me ? `Playing as ${me}` : "Set a nickname to save your score on the leaderboard."}</p>
     </div>`;
 
-  if (!r.revealed) {
-    stage.querySelectorAll("select[data-q]").forEach(sel => {
-      sel.addEventListener("change", e => {
-        r.guesses[sel.dataset.q] = e.target.value;
+  if (playState.stage === "brand") {
+    stage.querySelectorAll(".brand-tile").forEach(b => {
+      b.addEventListener("click", () => {
+        playState.selectedBrand = b.dataset.brand;
         savePlay();
+        renderPlay();
       });
     });
-    stage.querySelector("#g-submit").addEventListener("click", submitGuess);
-    stage.querySelector("#g-skip").addEventListener("click", nextRound);
-  } else {
-    stage.querySelector("#g-next")?.addEventListener("click", nextRound);
+    stage.querySelector("#g-submit-brand")?.addEventListener("click", submitBrand);
+  } else if (playState.stage === "price") {
+    const slider = stage.querySelector("#price-slider");
+    const display = stage.querySelector("#price-display");
+    slider.addEventListener("input", e => {
+      const pct = +e.target.value;
+      const v = Math.round(sliderToPrice(pct));
+      playState.sliderPrice = v;
+      display.textContent = `$${v.toLocaleString()}`;
+    });
+    slider.addEventListener("change", () => savePlay());
+    stage.querySelector("#g-submit-price")?.addEventListener("click", submitPrice);
   }
 
-  // leaderboard
-  const scores = Object.entries(state.scores || {}).map(([nick, s]) => ({ nick, ...s }));
-  scores.sort((a, b) => (b.lifetime || 0) - (a.lifetime || 0));
-  lb.innerHTML = "";
-  if (!scores.length) {
-    lb.innerHTML = `<p class="kv">No scores yet — play a round.</p>`;
-    return;
-  }
-  for (const s of scores) {
-    lb.insertAdjacentHTML("beforeend", `
-      <article class="card">
-        <div class="body">
-          <h2>${s.nick}${s.nick === me ? " · you" : ""}</h2>
-          <p class="sub">${s.rounds} round${s.rounds === 1 ? "" : "s"} · last played ${s.lastPlayed || "—"}</p>
-          <p class="price">${s.lifetime || 0} pts</p>
-        </div>
-      </article>`);
-  }
+  renderLeaderboard();
 }
 
-function renderReveal(w, r) {
-  const rows = Q_DEFS.map(def => {
-    const res = r.results?.[def.key] || { ok: false, correct: "—", guess: "—", pts: 0 };
-    return `
-      <div class="reveal-row">
-        <span class="rl">${def.label}</span>
-        <span class="rg">${res.guess}</span>
-        <span class="rc">${res.ok ? `<span class="pts">+${def.pts}</span>` : `<span class="rwrong">${res.correct}</span>`}</span>
-      </div>`;
-  }).join("");
+function renderStageBrand(w, brands) {
+  const tiles = brands.map(b => `
+    <button class="brand-tile ${playState.selectedBrand === b ? "selected" : ""}" data-brand="${b}">${b}</button>
+  `).join("");
   return `
-    <div class="reveal">
-      <h4>${w.brand} — ${w.model}</h4>
-      <p class="clue-line">${w.country}${w.made_in ? " · " + w.made_in : ""} · ${w.price_label || formatPrice(w)}</p>
-      <div class="reveal-grid">${rows}</div>
-      <p class="clue-line" style="margin-top:8px"><b>+${r.points} pts</b> this round</p>
-      ${w.note ? `<p class="clue-line" style="color:var(--muted)">${w.note}</p>` : ""}
-      <div class="play-buttons" style="margin-top:8px">
-        <button id="g-next">Next round</button>
-      </div>
+    <p class="stage-label">Step 1 — Guess the brand</p>
+    <div class="brand-grid">${tiles}</div>
+    <div class="play-buttons">
+      <button id="g-submit-brand" ${playState.selectedBrand ? "" : "disabled"}>Submit brand →</button>
     </div>`;
+}
+
+// log scale: position 0..100 -> $500..$60K
+function sliderToPrice(pct) {
+  const lo = Math.log(PRICE_MIN);
+  const hi = Math.log(PRICE_MAX);
+  return Math.exp(lo + (hi - lo) * (pct / 100));
+}
+function priceToSlider(p) {
+  const lo = Math.log(PRICE_MIN);
+  const hi = Math.log(PRICE_MAX);
+  return 100 * (Math.log(p) - lo) / (hi - lo);
+}
+
+function renderStagePrice(w) {
+  const cur = playState.sliderPrice || 5000;
+  return `
+    <p class="stage-label">Step 2 — Guess the retail price</p>
+    <div class="price-display" id="price-display">$${cur.toLocaleString()}</div>
+    <input type="range" id="price-slider" min="0" max="100" step="0.1" value="${priceToSlider(cur)}" class="price-slider"/>
+    <div class="price-scale"><span>$500</span><span>$5K</span><span>$60K</span></div>
+    <div class="play-buttons">
+      <button id="g-submit-price">Submit price →</button>
+    </div>`;
+}
+
+function renderLeaderboard() {
+  const lb = $("grid-leaderboard");
+  if (!lb) return;
+  const today = todayISO();
+  const todays = state.daily?.[today] || {};
+  const todayRows = Object.entries(todays).map(([nick, s]) => ({ nick, ...s, scope: "today" }));
+  const lifetime = Object.entries(state.scores || {}).map(([nick, s]) => ({ nick, ...s, scope: "lifetime" }));
+  todayRows.sort((a, b) => (b.total || 0) - (a.total || 0));
+  lifetime.sort((a, b) => (b.lifetime || 0) - (a.lifetime || 0));
+
+  lb.innerHTML = "";
+  if (!todayRows.length && !lifetime.length) {
+    lb.innerHTML = `<p class="kv">No scores yet — play a daily round.</p>`;
+    return;
+  }
+  if (todayRows.length) {
+    lb.insertAdjacentHTML("beforeend", `<div style="grid-column: 1 / -1"><h4 class="play-title" style="margin-bottom:8px">Today · ${today}</h4></div>`);
+    for (const s of todayRows) {
+      lb.insertAdjacentHTML("beforeend", `
+        <article class="card">
+          <div class="body">
+            <h2>${s.nick}${s.nick === me ? " · you" : ""}</h2>
+            <p class="sub">${s.rounds} rounds today</p>
+            <p class="price">${s.total} pts · ${Math.round(100 * s.total / (s.rounds * 100))}%</p>
+          </div>
+        </article>`);
+    }
+  }
+  if (lifetime.length) {
+    lb.insertAdjacentHTML("beforeend", `<div style="grid-column: 1 / -1"><h4 class="play-title" style="margin: 20px 0 8px">All time</h4></div>`);
+    for (const s of lifetime) {
+      lb.insertAdjacentHTML("beforeend", `
+        <article class="card">
+          <div class="body">
+            <h2>${s.nick}${s.nick === me ? " · you" : ""}</h2>
+            <p class="sub">${s.daysPlayed || 0} day${s.daysPlayed === 1 ? "" : "s"}${s.lastPlayed ? ` · last ${s.lastPlayed}` : ""}</p>
+            <p class="price">${s.lifetime || 0} pts total</p>
+          </div>
+        </article>`);
+    }
+  }
 }
 
 // Friends: each card = a person and their stars
