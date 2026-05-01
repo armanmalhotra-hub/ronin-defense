@@ -282,23 +282,16 @@ async function vote(id, dir) {
 }
 
 function actionFoot(id, ctaHref, ctaLabel) {
-  const sc = score(id);
-  const v = myVote(id);
   const bm = isBookmarked(id);
-  const others = bookmarkers(id).filter(u => u.nickname !== me).slice(0, 3);
-  const chips = others.length
-    ? `<span class="who-chips">${others.map(u => `<span class="who-chip" title="${u.nickname} bookmarked">${u.nickname}</span>`).join("")}</span>`
+  const bms = bookmarkers(id).filter(u => u.nickname !== me).slice(0, 3);
+  const chips = bms.length
+    ? `<span class="who-chips">${bms.map(u => `<span class="who-chip" title="${u.nickname} bookmarked">${u.nickname}</span>`).join("")}</span>`
     : "";
   return `
     <div class="foot">
-      <div class="actions">
-        <button class="action star ${bm ? "on" : ""}" data-act="bookmark" data-id="${id}" aria-label="${bm ? "Remove bookmark" : "Bookmark"}">${bm ? "★" : "☆"}</button>
-        <button class="action vote up ${v === 1 ? "on" : ""}" data-act="up" data-id="${id}" aria-label="Upvote">▲</button>
-        <span class="score ${sc > 0 ? "pos" : sc < 0 ? "neg" : ""}">${sc || ""}</span>
-        <button class="action vote down ${v === -1 ? "on" : ""}" data-act="down" data-id="${id}" aria-label="Downvote">▼</button>
-        ${chips}
-      </div>
-      ${ctaHref ? `<span class="cta"><a href="${ctaHref}" target="_blank" rel="noopener">${ctaLabel || "open"} ↗</a></span>` : ""}
+      <button class="action star ${bm ? "on" : ""}" data-act="bookmark" data-id="${id}" aria-label="${bm ? "Remove bookmark" : "Bookmark"}">${bm ? "★" : "☆"}</button>
+      ${chips}
+      ${ctaHref ? `<a class="cta" href="${ctaHref}" target="_blank" rel="noopener">${ctaLabel || "open"} ↗</a>` : ""}
     </div>`;
 }
 
@@ -306,10 +299,7 @@ function bindCardActions(root) {
   root.querySelectorAll(".action").forEach(btn => {
     btn.addEventListener("click", (e) => {
       e.preventDefault();
-      const id = btn.dataset.id;
-      if (btn.dataset.act === "bookmark") toggleBookmark(id);
-      else if (btn.dataset.act === "up") vote(id, myVote(id) === 1 ? 0 : 1);
-      else if (btn.dataset.act === "down") vote(id, myVote(id) === -1 ? 0 : -1);
+      if (btn.dataset.act === "bookmark") toggleBookmark(btn.dataset.id);
     });
   });
 }
@@ -971,6 +961,7 @@ function renderPlay() {
       });
     });
     stage.querySelector("#g-submit-brand")?.addEventListener("click", submitBrand);
+    stage.querySelector("#g-skip-brand")?.addEventListener("click", nextRound);
   } else if (playState.stage === "price") {
     const slider = stage.querySelector("#price-slider");
     const display = stage.querySelector("#price-display");
@@ -982,6 +973,7 @@ function renderPlay() {
     });
     slider.addEventListener("change", () => savePlay());
     stage.querySelector("#g-submit-price")?.addEventListener("click", submitPrice);
+    stage.querySelector("#g-skip-price")?.addEventListener("click", nextRound);
   }
 
   renderLeaderboard();
@@ -994,8 +986,9 @@ function renderStageBrand(w, brands) {
   return `
     <p class="stage-label">Step 1 — Guess the brand</p>
     <div class="brand-grid">${tiles}</div>
-    <div class="play-buttons">
+    <div class="play-buttons sticky-cta">
       <button id="g-submit-brand" ${playState.selectedBrand ? "" : "disabled"}>Submit brand →</button>
+      <button id="g-skip-brand" class="secondary">Skip</button>
     </div>`;
 }
 
@@ -1018,8 +1011,9 @@ function renderStagePrice(w) {
     <div class="price-display" id="price-display">$${cur.toLocaleString()}</div>
     <input type="range" id="price-slider" min="0" max="100" step="0.1" value="${priceToSlider(cur)}" class="price-slider"/>
     <div class="price-scale"><span>$1K</span><span>$10K</span><span>$120K</span></div>
-    <div class="play-buttons">
+    <div class="play-buttons sticky-cta">
       <button id="g-submit-price">Submit price →</button>
+      <button id="g-skip-price" class="secondary">Skip</button>
     </div>`;
 }
 
