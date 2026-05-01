@@ -1229,7 +1229,8 @@
           "url": "https://kuronotokyo.com/pages/kurono-tokyo-shanghai-salon"
         }
       ],
-      "country": "Japan"
+      "country": "Japan",
+      "bio": "Hajime Asaoka's accessible line \u2014 atelier-grade design at sub-$3K, Miyota movements inside, Asaoka aesthetic outside. Drops sell out in minutes via timed online lottery. Salon Editions exist only in Tokyo."
     },
     {
       "name": "Naoya Hida & Co.",
@@ -1265,7 +1266,8 @@
           "url": "https://naoyahidawatch.com/order/?lang=en"
         }
       ],
-      "country": "Japan"
+      "country": "Japan",
+      "bio": "75 watches a year out of a Ningyocho atelier in Tokyo. German silver dials, hand-engraved Roman numerals, blued steel hands. Distribution: 25 to The Armoury, 40 direct, 5 to Kamine in Kobe."
     },
     {
       "name": "Hajime Asaoka",
@@ -1294,7 +1296,8 @@
           "url": "https://www.phillips.com/artist/15133/hajime-asaoka"
         }
       ],
-      "country": "Japan"
+      "country": "Japan",
+      "bio": "Self-taught Tokyo watchmaker. Eight watches a year, often three of them tourbillons. The signature is the oversized balance wheel visible through the dial. AHCI candidate; widely considered Japan's most important contemporary independent."
     },
     {
       "name": "Kikuchi Nakagawa",
@@ -1319,7 +1322,8 @@
           "url": "https://www.acollectedman.com/collections/kikuchi-nakagawa"
         }
       ],
-      "country": "Japan"
+      "country": "Japan",
+      "bio": "Two former Citizen-trained watchmakers \u2014 Yusuke Kikuchi and ex-swordsmith Tomonari Nakagawa \u2014 making roughly eight watches a year in Tokyo. Lugs taper into a softly domed bezel; dials by Combl\u00e9mine. Closed waitlist."
     },
     {
       "name": "Masa & Co (Masa's Pastime)",
@@ -1357,7 +1361,8 @@
         "Akita"
       ],
       "note": "Divido is 40.6mm. 7 Windows at 38mm closer to fit.",
-      "country": "Japan"
+      "country": "Japan",
+      "bio": "Akita-prefecture tool-maker turned watchmaker. The whole brand turns on Sallaz polishing \u2014 leather-wheel hand finishing that produces distortion-free mirror surfaces on faceted cases. Divido and Horizon are the showcases."
     },
     {
       "name": "Daizoh Makihara",
@@ -1374,7 +1379,8 @@
         "AHCI",
         "hand engraving"
       ],
-      "country": "Japan"
+      "country": "Japan",
+      "bio": "WOSTEP-trained Saitama watchmaker. Hand-built tourbillons and the world's first wristwatch use of Edo Kiriko hand-cut sapphire crystal. Some pieces include 3D petal-opening automata. Output: low single digits per year."
     },
     {
       "name": "Quiet Club (Norifumi Seki)",
@@ -1409,7 +1415,8 @@
         "Kyoto",
         "new"
       ],
-      "country": "Japan"
+      "country": "Japan",
+      "bio": "Kyoto independent who emerged with one watch in 2024 \u2014 the Heures Universelles worldtimer \u2014 and immediately landed a GPHG nomination. Built around the first watchmaking use of tantalum-tungsten alloy. 30 pieces total."
     },
     {
       "name": "Vague Watch Co.",
@@ -1426,7 +1433,190 @@
         "affordable",
         "patina"
       ],
-      "country": "Japan"
+      "country": "Japan",
+      "bio": "Japanese microbrand from 2010 \u2014 faux-patina, vintage-feel field and dress pieces under $1K. Industrial, not atelier. Included for stylistic context."
+    },
+    {
+      "name": "Lang & Heyne",
+      "tier": 2,
+      "url": "https://www.langundheyne.de/en/",
+      "founded": 2001,
+      "cities": [
+        "Dresden"
+      ],
+      "country": "Germany",
+      "style": "Saxon classical \u2014 hand-engraved silver dials, S-shaped balance cocks",
+      "price_range": "$36-50K",
+      "tags": [
+        "Dresden",
+        "Saxon tradition"
+      ],
+      "stockists": [],
+      "bio": "Dresden atelier in the Saxon tradition. S-shaped hand-engraved balance cocks, hand-cut wheels with pillared construction, German silver bridges. References named after Saxon kings: Friedrich August I, Konrad, Hektor. ~120 pieces a year."
+    },
+    {
+      "name": "anOrdain",
+      "tier": 2,
+      "url": "https://anordain.com/",
+      "founded": 2016,
+      "cities": [
+        "Glasgow"
+      ],
+      "country": "Scotland",
+      "style": "Vitreous enamel dials, Paulin typography",
+      "price_range": "\u00a31,950-3,200",
+      "tags": [
+        "enamel",
+        "Glasgow",
+        "Paulin"
+      ],
+      "stockists": [],
+      "bio": "Glasgow workshop that revived British vitreous enamel dial production almost single-handedly. Sourced movements (Sellita), but the dial work and Paulin-designed typography are the whole point. Models 1 / 2 / 3 share a 38mm steel case."
+    },
+    {
+      "name": "H. Moser & Cie.",
+      "tier": 1,
+      "url": "https://www.h-moser.com/",
+      "founded": 1828,
+      "cities": [
+        "Schaffhausen"
+      ],
+      "country": "Switzerland",
+      "style": "Fum\u00e9 dials, no-logo Concept series",
+      "price_range": "$15-50K",
+      "tags": [
+        "fum\u00e9",
+        "no-logo"
+      ],
+      "stockists": [],
+      "bio": "Schaffhausen manufacture, fully vertically integrated (owns hairspring specialist Precision Engineering). The Endeavour Concept dials famously have no logo \u2014 Moser's purest minimalist statement. ~1,800 watches a year."
+    },
+    {
+      "name": "Voutilainen",
+      "tier": 1,
+      "url": "https://voutilainen.ch/",
+      "founded": 2002,
+      "cities": [
+        "M\u00f4tiers"
+      ],
+      "country": "Switzerland",
+      "style": "Hand-finished movements, in-house dials, 12-sided case",
+      "price_range": "$110K+",
+      "tags": [
+        "AHCI",
+        "Combl\u00e9mine"
+      ],
+      "stockists": [],
+      "bio": "Kari Voutilainen's atelier in M\u00f4tiers, Switzerland \u2014 widely regarded as the finest movement finisher working today. The in-house Caliber 28 has a direct-impulse escapement; dials are made in-house at Combl\u00e9mine. ~60 watches a year."
+    },
+    {
+      "name": "Laurent Ferrier",
+      "tier": 1,
+      "url": "https://www.laurentferrier.ch/",
+      "founded": 2010,
+      "cities": [
+        "Geneva"
+      ],
+      "country": "Switzerland",
+      "style": "Galet plate cases, natural escapement, organic bridges",
+      "price_range": "$58K+",
+      "tags": [
+        "ex-Patek",
+        "assegai hands"
+      ],
+      "stockists": [],
+      "bio": "Geneva atelier founded by a 40-year Patek veteran. Galet 'plate' cases, natural escapement, organic-curve bridges that read more handcraft than Geneva geometry. ~225 pieces a year."
+    },
+    {
+      "name": "F.P. Journe",
+      "tier": 1,
+      "url": "https://www.fpjourne.com/",
+      "founded": 1999,
+      "cities": [
+        "Geneva"
+      ],
+      "country": "Switzerland",
+      "style": "Rose gold movements, Invenit et Fecit",
+      "price_range": "$65K+",
+      "tags": [
+        "AHCI",
+        "rose gold"
+      ],
+      "stockists": [],
+      "bio": "Fran\u00e7ois-Paul Journe's Geneva manufacture, defined by 18k rose gold movements and the 'Invenit et Fecit' signature. The Chronom\u00e8tre Souverain is the restrained pillar of the line. ~950 watches a year."
+    },
+    {
+      "name": "Garrick",
+      "tier": 2,
+      "url": "https://garrick.co.uk/",
+      "founded": 2014,
+      "cities": [
+        "Norfolk"
+      ],
+      "country": "United Kingdom",
+      "style": "English revival, frosted hand-engraved",
+      "price_range": "\u00a314K+",
+      "tags": [
+        "English",
+        "Strehler"
+      ],
+      "stockists": [],
+      "bio": "Norfolk-based attempt to revive English watchmaking at relative scale. Movements in collaboration with Andreas Strehler under the UT-G01 caliber. Frosted plates, hand-engraved balance cocks. Production in the low double digits."
+    },
+    {
+      "name": "RGM",
+      "tier": 1,
+      "url": "https://rgmwatches.com/",
+      "founded": 1992,
+      "cities": [
+        "Mount Joy, PA"
+      ],
+      "country": "USA",
+      "style": "American manufacture, in-house Cal. 801, rose-engine guilloch\u00e9",
+      "price_range": "$9.5K-30K",
+      "tags": [
+        "Pennsylvania",
+        "in-house"
+      ],
+      "stockists": [],
+      "bio": "Roland G. Murphy's Pennsylvania workshop \u2014 the leading American maker working in the traditional manufacture model. Caliber 801 was the first American-made wristwatch movement in decades. Murphy restores his own rose engines for the guilloch\u00e9."
+    },
+    {
+      "name": "J.N. Shapiro",
+      "tier": 1,
+      "url": "https://jnshapirowatches.com/",
+      "founded": 2018,
+      "cities": [
+        "Los Angeles"
+      ],
+      "country": "USA",
+      "style": "Hand-guilloch\u00e9 on restored rose engines, US-sourced movements",
+      "price_range": "$70K+",
+      "tags": [
+        "LA",
+        "guilloch\u00e9",
+        "American"
+      ],
+      "stockists": [],
+      "bio": "Joshua Shapiro's LA studio. The 2022 Resurgence is roughly 80-90% American-made \u2014 case, dial, many movement parts. Guilloch\u00e9 executed on antique rose engines Shapiro restored himself. Pieces commissioned directly."
+    },
+    {
+      "name": "Sarpaneva",
+      "tier": 2,
+      "url": "https://sarpanevawatches.com/",
+      "founded": 2003,
+      "cities": [
+        "Helsinki"
+      ],
+      "country": "Finland",
+      "style": "Human-faced moonphase, seven-armed scalloped case",
+      "price_range": "$13-17K",
+      "tags": [
+        "Finland",
+        "moonphase"
+      ],
+      "stockists": [],
+      "bio": "Stepan Sarpaneva's Helsinki brand \u2014 distinctive at a glance for the human-faced moonphase and the seven-armed scalloped case. Trained at Parmigiani / Vianney Halter. Output: low double digits to ~50 a year."
     }
   ],
   "sellers": [
