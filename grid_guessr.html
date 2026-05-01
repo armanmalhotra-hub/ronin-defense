@@ -4,145 +4,468 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>GridGuessr — Daily F1 Challenge</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Titillium+Web:wght@300;400;600;700;900&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
 <style>
   *{margin:0;padding:0;box-sizing:border-box}
   :root{
-    --bg:#f4f4f4;
-    --card:#ffffff;
-    --ink:#111;
-    --muted:#666;
-    --line:#e5e5e5;
-    --accent:#1d6f42;
-    --accent-light:#a8d4b9;
-    --accent-soft:#e6f0ea;
-    --wrong:#c8453c;
-    --close:#d8a83a;
-    --locked:#bbb;
-    --chip:#f0f0f0;
+    --bg:#070707;
+    --bg-2:#0e0e0e;
+    --card:#141414;
+    --card-2:#1a1a1a;
+    --line:#252525;
+    --line-2:#333;
+    --red:#e10600;
+    --red-dim:#a00400;
+    --red-soft:rgba(225,6,0,0.12);
+    --white:#fff;
+    --gray:#a8a8a8;
+    --gray-2:#777;
+    --muted:#555;
+    --green:#13c074;
+    --green-soft:rgba(19,192,116,0.12);
+    --yellow:#f0a800;
+    --yellow-soft:rgba(240,168,0,0.12);
   }
-  html,body{background:var(--bg);color:var(--ink);font-family:-apple-system,BlinkMacSystemFont,"SF Pro Text","Helvetica Neue",sans-serif;-webkit-font-smoothing:antialiased}
-  body{min-height:100vh;display:flex;flex-direction:column;align-items:center;padding:1rem;padding-bottom:3rem}
-  .wrap{width:100%;max-width:480px}
+  html,body{background:var(--bg);color:var(--white);font-family:'Titillium Web',-apple-system,sans-serif;-webkit-font-smoothing:antialiased;letter-spacing:0.005em}
+  body{
+    min-height:100vh;
+    padding:1rem;
+    padding-bottom:3rem;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    background-image:
+      radial-gradient(circle at 20% 0%, rgba(225,6,0,0.04) 0%, transparent 50%),
+      radial-gradient(circle at 80% 100%, rgba(225,6,0,0.03) 0%, transparent 50%);
+  }
+  .wrap{width:100%;max-width:520px}
+  .mono{font-family:'JetBrains Mono',ui-monospace,monospace;font-feature-settings:"tnum"}
 
-  /* HEADER */
-  .topbar{display:flex;align-items:center;justify-content:space-between;padding:0.5rem 0 1.25rem}
-  .top-icon{width:40px;height:40px;border-radius:50%;background:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;color:#0a4ec2;font-size:1.1rem;border:1px solid var(--line)}
-  .brand{font-weight:700;letter-spacing:0.18em;font-size:0.75rem;color:#222}
-  .progress-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem}
-  .progress-label{font-size:0.95rem;font-weight:600;color:#222}
-  .progress-pips{display:flex;gap:6px}
-  .pip{width:28px;height:4px;border-radius:2px;background:#d6d6d6}
-  .pip.done{background:var(--accent)}
-  .pip.active{background:#0a4ec2}
+  /* TOPBAR */
+  .topbar{display:flex;align-items:center;justify-content:space-between;padding:0.5rem 0 1rem;margin-bottom:0.5rem}
+  .top-icon{width:36px;height:36px;border-radius:50%;background:var(--card);display:flex;align-items:center;justify-content:center;color:var(--gray);font-size:1rem;border:1px solid var(--line);cursor:pointer}
+  .top-icon:hover{border-color:var(--red);color:var(--white)}
+  .brand{display:flex;align-items:center;gap:0.5rem;font-weight:900;letter-spacing:0.18em;font-size:0.85rem}
+  .brand .chev{color:var(--red);font-weight:900}
 
-  /* MOMENT CARD (replaces street view image) */
-  .moment{position:relative;border-radius:14px;overflow:hidden;height:260px;display:flex;flex-direction:column;justify-content:space-between;padding:1.1rem;color:#fff;box-shadow:0 2px 8px rgba(0,0,0,0.06);margin-bottom:1rem}
-  .moment.wet{background:linear-gradient(135deg,#1a2332 0%,#2d3e52 50%,#3a5070 100%)}
-  .moment.dusk{background:linear-gradient(135deg,#3a1f3d 0%,#7a3a4f 50%,#d97a4f 100%)}
-  .moment.night{background:linear-gradient(135deg,#0a0e1f 0%,#1a2540 60%,#2d3e6b 100%)}
-  .moment.sun{background:linear-gradient(135deg,#1f5fb5 0%,#3a8edb 60%,#a8d4f0 100%)}
-  .moment.heat{background:linear-gradient(135deg,#5a2d0a 0%,#a85020 60%,#e89548 100%)}
-  .moment.classic{background:linear-gradient(135deg,#2a2a2a 0%,#4a4a4a 50%,#6a6a6a 100%)}
-  .moment.history{background:linear-gradient(135deg,#3a2a1a 0%,#6a4a2a 50%,#a07a4a 100%)}
-  .moment::after{content:"";position:absolute;inset:0;background-image:repeating-linear-gradient(-45deg,transparent 0 18px,rgba(255,255,255,0.03) 18px 19px);pointer-events:none}
-  .moment-top{display:flex;justify-content:space-between;align-items:flex-start;position:relative;z-index:1}
-  .moment-year{font-size:2.6rem;font-weight:800;letter-spacing:-0.02em;line-height:1}
+  /* PROGRESS */
+  .progress-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:0.9rem;padding:0 0.1rem}
+  .progress-label{font-family:'JetBrains Mono',monospace;font-size:0.78rem;color:var(--gray);letter-spacing:0.06em}
+  .progress-label strong{color:var(--white);font-weight:700}
+  .progress-pips{display:flex;gap:5px}
+  .pip{width:30px;height:3px;background:var(--line)}
+  .pip.done{background:var(--red)}
+  .pip.active{background:var(--white)}
+
+  /* MOMENT CARD */
+  .moment{
+    position:relative;
+    border-radius:6px;
+    overflow:hidden;
+    aspect-ratio:16/10;
+    margin-bottom:1rem;
+    background:var(--card);
+    border:1px solid var(--line);
+    box-shadow:0 8px 30px rgba(0,0,0,0.4);
+  }
+  .moment-bg{position:absolute;inset:0}
+  .moment-bg.wet{background:linear-gradient(135deg,#0d1830 0%,#1a2a4a 50%,#2c3e60 100%)}
+  .moment-bg.dusk{background:linear-gradient(135deg,#1a0d1d 0%,#5a2540 50%,#c25030 100%)}
+  .moment-bg.night{background:linear-gradient(135deg,#020412 0%,#0a1530 50%,#1a2858 100%)}
+  .moment-bg.sun{background:linear-gradient(135deg,#0a3a78 0%,#2a78c4 60%,#a8d0ee 100%)}
+  .moment-bg.heat{background:linear-gradient(135deg,#3a1a05 0%,#a04020 50%,#d8852e 100%)}
+  .moment-bg.classic{background:linear-gradient(135deg,#1a1a1a 0%,#2a2a2a 50%,#404040 100%)}
+  .moment-bg.history{background:linear-gradient(135deg,#2a1808 0%,#5a3a18 50%,#8a6230 100%)}
+  .moment-bg::after{
+    content:"";
+    position:absolute;inset:0;
+    background-image:
+      repeating-linear-gradient(-30deg, transparent 0 22px, rgba(255,255,255,0.025) 22px 23px),
+      linear-gradient(180deg, transparent 60%, rgba(0,0,0,0.55) 100%);
+    pointer-events:none;
+  }
+  .moment-bg.has-image{background-size:cover;background-position:center}
+  .moment-bg.has-image::after{
+    background:linear-gradient(180deg,rgba(0,0,0,0.25) 0%,transparent 30%,transparent 55%,rgba(0,0,0,0.85) 100%);
+  }
+  .moment-year-bg{
+    position:absolute;
+    top:50%;left:50%;
+    transform:translate(-50%,-50%);
+    font-family:'JetBrains Mono',monospace;
+    font-size:11rem;
+    font-weight:700;
+    color:rgba(255,255,255,0.06);
+    letter-spacing:-0.04em;
+    pointer-events:none;
+    line-height:1;
+  }
+  .moment-hud{
+    position:absolute;inset:0;
+    padding:0.95rem 1rem;
+    display:flex;
+    flex-direction:column;
+    justify-content:space-between;
+    color:#fff;
+    z-index:1;
+  }
+  .moment-top{display:flex;justify-content:space-between;align-items:flex-start}
+  .moment-strip{
+    display:inline-flex;align-items:center;gap:0.5rem;
+    background:rgba(0,0,0,0.55);
+    border-left:3px solid var(--red);
+    padding:0.32rem 0.65rem;
+    font-family:'JetBrains Mono',monospace;
+    font-size:0.7rem;
+    letter-spacing:0.08em;
+    text-transform:uppercase;
+    backdrop-filter:blur(6px);
+  }
+  .moment-strip .yr{color:#fff;font-weight:700}
+  .moment-strip .sep{color:var(--gray-2)}
+  .moment-strip .lap{color:var(--gray)}
   .moment-tags{display:flex;flex-direction:column;gap:0.3rem;align-items:flex-end}
-  .tag{font-size:0.65rem;letter-spacing:0.1em;text-transform:uppercase;background:rgba(255,255,255,0.18);padding:0.25rem 0.55rem;border-radius:3px;font-weight:600}
-  .moment-desc{font-size:0.95rem;line-height:1.45;font-weight:500;text-shadow:0 1px 2px rgba(0,0,0,0.25);position:relative;z-index:1;max-width:340px}
-  .moment-foot{display:flex;justify-content:space-between;font-size:0.7rem;letter-spacing:0.08em;text-transform:uppercase;opacity:0.85;position:relative;z-index:1}
+  .tag{
+    display:inline-block;
+    font-size:0.62rem;letter-spacing:0.12em;text-transform:uppercase;
+    background:rgba(255,255,255,0.12);
+    color:#fff;
+    padding:0.25rem 0.55rem;
+    font-weight:600;
+    backdrop-filter:blur(4px);
+  }
+  .tag.weather{background:rgba(225,6,0,0.85);color:#fff}
+  .moment-desc{
+    font-family:'Titillium Web',sans-serif;
+    font-size:1rem;
+    line-height:1.45;
+    font-weight:400;
+    text-shadow:0 1px 4px rgba(0,0,0,0.6);
+    max-width:90%;
+  }
+  .moment-foot{
+    display:flex;justify-content:space-between;
+    font-family:'JetBrains Mono',monospace;
+    font-size:0.7rem;letter-spacing:0.1em;text-transform:uppercase;
+    color:rgba(255,255,255,0.7);
+  }
 
   /* STEP CARDS */
-  .step-card{background:var(--card);border-radius:14px;padding:1.1rem;margin-bottom:1rem;box-shadow:0 1px 3px rgba(0,0,0,0.04)}
-  .step-head{display:flex;align-items:center;gap:0.6rem;margin-bottom:0.9rem}
-  .step-num{width:26px;height:26px;border-radius:50%;background:#0a4ec2;color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:0.85rem;flex-shrink:0}
-  .step-num.done{background:var(--accent)}
-  .step-num.locked{background:var(--locked)}
-  .step-title{font-size:0.78rem;letter-spacing:0.12em;text-transform:uppercase;color:#444;font-weight:600}
-  .step-card.locked .step-title{color:var(--locked)}
-  .step-sub{font-size:0.78rem;color:var(--muted);margin-top:-0.3rem;margin-bottom:0.6rem;margin-left:2.2rem}
+  .step-card{
+    background:var(--card);
+    border:1px solid var(--line);
+    border-radius:6px;
+    padding:1.1rem;
+    margin-bottom:0.9rem;
+    position:relative;
+    overflow:hidden;
+  }
+  .step-card.active::before{
+    content:"";position:absolute;top:0;left:0;right:0;height:2px;background:var(--red);
+  }
+  .step-head{display:flex;align-items:center;gap:0.65rem;margin-bottom:0.85rem}
+  .step-num{
+    width:24px;height:24px;
+    background:var(--red);color:#fff;
+    display:flex;align-items:center;justify-content:center;
+    font-family:'JetBrains Mono',monospace;font-weight:700;font-size:0.78rem;
+    flex-shrink:0;
+  }
+  .step-num.done{background:var(--green)}
+  .step-num.locked{background:var(--line-2);color:var(--muted)}
+  .step-title{
+    font-size:0.7rem;letter-spacing:0.16em;text-transform:uppercase;
+    color:var(--white);font-weight:700;
+  }
+  .step-card.locked .step-title{color:var(--muted)}
+  .step-sub{
+    font-family:'JetBrains Mono',monospace;
+    font-size:0.7rem;letter-spacing:0.04em;
+    color:var(--gray-2);margin-top:-0.4rem;margin-bottom:0.7rem;margin-left:2.15rem;
+  }
+  .step-result{margin-left:auto;display:flex;align-items:center;gap:0.5rem}
+  .badge{
+    padding:0.2rem 0.55rem;
+    font-family:'JetBrains Mono',monospace;
+    font-size:0.65rem;font-weight:700;letter-spacing:0.1em;
+    text-transform:uppercase;
+  }
+  .badge.right{background:var(--green-soft);color:var(--green);border:1px solid rgba(19,192,116,0.3)}
+  .badge.close{background:var(--yellow-soft);color:var(--yellow);border:1px solid rgba(240,168,0,0.3)}
+  .badge.wrong{background:var(--red-soft);color:var(--red);border:1px solid rgba(225,6,0,0.35)}
 
-  /* SEARCH INPUT + SUGGESTIONS */
+  /* SEARCH */
   .search-wrap{position:relative}
-  .search{width:100%;padding:0.85rem 1rem;font-size:1rem;border:1px solid var(--line);border-radius:10px;background:#fafafa;outline:none;font-family:inherit}
-  .search:focus{border-color:#0a4ec2;background:#fff}
-  .search:disabled{background:#f0f0f0;color:#aaa;cursor:not-allowed}
-  .suggestions{position:absolute;top:calc(100% + 4px);left:0;right:0;background:#fff;border:1px solid var(--line);border-radius:10px;max-height:220px;overflow-y:auto;z-index:10;box-shadow:0 6px 18px rgba(0,0,0,0.08);display:none}
+  .search{
+    width:100%;
+    padding:0.85rem 1rem;
+    font-size:0.95rem;
+    border:1px solid var(--line);
+    background:var(--bg-2);
+    color:var(--white);
+    outline:none;
+    font-family:inherit;
+    border-radius:4px;
+  }
+  .search::placeholder{color:var(--muted)}
+  .search:focus{border-color:var(--red);background:#0a0a0a}
+  .suggestions{
+    position:absolute;top:calc(100% + 4px);left:0;right:0;
+    background:var(--card-2);
+    border:1px solid var(--line-2);
+    max-height:240px;overflow-y:auto;z-index:10;
+    box-shadow:0 8px 24px rgba(0,0,0,0.5);
+    display:none;
+    border-radius:4px;
+  }
   .suggestions.open{display:block}
-  .sugg-item{padding:0.65rem 0.9rem;font-size:0.9rem;cursor:pointer;border-bottom:1px solid #f3f3f3;display:flex;justify-content:space-between;align-items:center}
+  .sugg-item{
+    padding:0.6rem 0.85rem;
+    font-size:0.88rem;
+    cursor:pointer;
+    border-bottom:1px solid var(--line);
+    display:flex;justify-content:space-between;align-items:center;
+    color:var(--white);
+  }
   .sugg-item:last-child{border-bottom:none}
-  .sugg-item:hover,.sugg-item.hover{background:#f5f9ff}
-  .sugg-meta{font-size:0.75rem;color:var(--muted)}
+  .sugg-item:hover,.sugg-item.hover{background:rgba(225,6,0,0.08);color:#fff}
+  .sugg-meta{font-family:'JetBrains Mono',monospace;font-size:0.7rem;color:var(--gray-2);letter-spacing:0.04em}
 
-  .selected-display{padding:0.85rem 1rem;background:var(--accent-soft);border:1px solid var(--accent-light);border-radius:10px;display:flex;justify-content:space-between;align-items:center;font-size:0.95rem;font-weight:600;color:#0d3a23}
-  .selected-display .clear{background:none;border:none;color:#0d3a23;font-size:1.2rem;cursor:pointer;padding:0;line-height:1;opacity:0.6}
-  .selected-display .clear:hover{opacity:1}
+  .selected-display{
+    padding:0.85rem 1rem;
+    background:var(--bg-2);
+    border:1px solid var(--red);
+    border-left-width:3px;
+    display:flex;justify-content:space-between;align-items:center;
+    font-size:0.95rem;font-weight:600;color:#fff;
+    border-radius:4px;
+  }
+  .selected-display .meta{font-family:'JetBrains Mono',monospace;font-weight:400;color:var(--gray);font-size:0.78rem;margin-left:0.5rem;letter-spacing:0.04em}
+  .selected-display .clear{background:none;border:none;color:var(--gray);font-size:1.2rem;cursor:pointer;padding:0;line-height:1}
+  .selected-display .clear:hover{color:var(--red)}
 
-  .submit-btn{width:100%;padding:0.95rem;border:none;border-radius:50px;background:var(--accent);color:#fff;font-size:1rem;font-weight:600;cursor:pointer;margin-top:0.9rem;font-family:inherit;transition:background 0.15s,opacity 0.15s}
-  .submit-btn:disabled{background:var(--accent-light);color:#fff;cursor:not-allowed;opacity:0.7}
-  .submit-btn:not(:disabled):hover{background:#175832}
+  .submit-btn{
+    width:100%;padding:0.95rem;
+    border:none;background:var(--red);color:#fff;
+    font-size:0.85rem;font-weight:700;
+    letter-spacing:0.14em;text-transform:uppercase;
+    cursor:pointer;margin-top:0.85rem;
+    font-family:'Titillium Web',sans-serif;
+    transition:background 0.15s;
+    border-radius:3px;
+  }
+  .submit-btn:disabled{background:var(--card-2);color:var(--muted);cursor:not-allowed}
+  .submit-btn:not(:disabled):hover{background:#ff1801}
+  .submit-btn.dark{background:var(--card-2);border:1px solid var(--line-2)}
+  .submit-btn.dark:hover{background:var(--card);border-color:var(--red)}
 
-  .locked-msg{padding:0.85rem 1rem;background:#f5f5f5;border:1px dashed #ddd;border-radius:10px;color:var(--locked);font-size:0.9rem;text-align:center;font-weight:500}
+  .locked-msg{
+    padding:0.85rem 1rem;
+    background:var(--bg-2);
+    border:1px dashed var(--line-2);
+    color:var(--muted);
+    font-size:0.85rem;text-align:center;
+    font-family:'JetBrains Mono',monospace;
+    letter-spacing:0.04em;
+    border-radius:4px;
+  }
 
-  /* RESULT VIEWS */
-  .result-line{display:flex;justify-content:space-between;align-items:center;padding:0.5rem 0;font-size:0.92rem}
-  .result-line + .result-line{border-top:1px solid var(--line)}
-  .result-label{color:var(--muted);font-size:0.75rem;letter-spacing:0.08em;text-transform:uppercase}
-  .result-val{font-weight:600}
-  .result-val.right{color:var(--accent)}
-  .result-val.wrong{color:var(--wrong)}
-  .result-val.close{color:var(--close)}
+  .answer-block{padding-left:2.15rem}
+  .answer-block .ans{font-size:0.98rem;font-weight:700;color:#fff}
+  .answer-block .ans-meta{font-family:'JetBrains Mono',monospace;font-size:0.72rem;color:var(--gray-2);letter-spacing:0.04em;margin-top:0.15rem}
+  .answer-block .your{font-size:0.78rem;color:var(--gray-2);margin-top:0.4rem}
+  .answer-block .your.wrong{color:var(--red)}
 
-  .step-result{display:flex;align-items:center;gap:0.5rem;font-size:0.85rem;color:var(--muted);margin-left:auto}
-  .step-result .badge{padding:0.15rem 0.55rem;border-radius:10px;font-size:0.7rem;font-weight:700;letter-spacing:0.04em}
-  .badge.right{background:var(--accent-soft);color:var(--accent)}
-  .badge.close{background:#fbf3dc;color:#7d5e0e}
-  .badge.wrong{background:#fbe5e3;color:var(--wrong)}
-
-  /* SCORE PANEL (round result + final) */
-  .score-card{background:#fff;border-radius:14px;padding:1.5rem;text-align:center;margin-bottom:1rem;box-shadow:0 1px 3px rgba(0,0,0,0.04)}
-  .score-card .label{font-size:0.72rem;letter-spacing:0.14em;text-transform:uppercase;color:var(--muted);font-weight:600;margin-bottom:0.4rem}
-  .score-card .pct{font-size:4rem;font-weight:800;letter-spacing:-0.04em;line-height:1;color:var(--ink)}
-  .score-card .pts{font-size:0.9rem;color:var(--muted);margin-top:0.3rem}
+  /* SCORE PANEL */
+  .score-card{
+    background:var(--card);
+    border:1px solid var(--line);
+    padding:1.5rem 1.5rem;
+    text-align:center;
+    margin-bottom:1rem;
+    border-radius:6px;
+    position:relative;
+    overflow:hidden;
+  }
+  .score-card::before{
+    content:"";position:absolute;top:0;left:0;right:0;height:2px;background:var(--red);
+  }
+  .score-card .label{
+    font-family:'JetBrains Mono',monospace;
+    font-size:0.7rem;letter-spacing:0.16em;text-transform:uppercase;
+    color:var(--gray);font-weight:500;margin-bottom:0.4rem;
+  }
+  .score-card .pct{
+    font-family:'JetBrains Mono',monospace;
+    font-size:4.2rem;font-weight:700;
+    letter-spacing:-0.04em;line-height:1;color:#fff;
+  }
+  .score-card .pts{
+    font-family:'JetBrains Mono',monospace;
+    font-size:0.85rem;color:var(--gray-2);margin-top:0.3rem;letter-spacing:0.04em;
+  }
   .split{display:flex;border-top:1px solid var(--line);margin-top:1.1rem;padding-top:1rem}
-  .split > div{flex:1;text-align:center}
-  .split > div + div{border-left:1px solid var(--line)}
+  .split>div{flex:1;text-align:center}
+  .split>div+div{border-left:1px solid var(--line)}
   .split .label{margin-bottom:0.3rem}
-  .split .v{font-size:1.6rem;font-weight:800;letter-spacing:-0.02em}
+  .split .v{font-family:'JetBrains Mono',monospace;font-size:1.7rem;font-weight:700;letter-spacing:-0.02em;color:#fff}
 
-  .answer-card{background:#fff;border-radius:14px;padding:1.1rem;margin-bottom:1rem;box-shadow:0 1px 3px rgba(0,0,0,0.04)}
-  .answer-grid{display:grid;grid-template-columns:1fr 1fr;gap:0.6rem}
-  .answer-cell{padding:0.85rem;background:#fafafa;border-radius:10px;border:1px solid var(--line)}
-  .answer-cell .label{font-size:0.65rem;letter-spacing:0.1em;text-transform:uppercase;color:var(--muted);margin-bottom:0.3rem}
-  .answer-cell .ans{font-weight:700;font-size:0.95rem;color:var(--accent)}
-  .answer-cell .guess{font-size:0.8rem;color:var(--muted);margin-top:0.15rem}
-  .answer-cell .guess.wrong{color:var(--wrong)}
+  /* CELEBRATION REVEAL */
+  .celebration{
+    position:relative;
+    aspect-ratio:16/10;
+    border:1px solid var(--line);
+    border-radius:6px;
+    overflow:hidden;
+    margin-bottom:0.85rem;
+    background:linear-gradient(135deg,#1a1a1a 0%,#2a1f0f 50%,#3a2810 100%);
+    display:flex;align-items:flex-end;
+    padding:1rem;
+    box-shadow:0 8px 30px rgba(0,0,0,0.4);
+  }
+  .celebration::before{
+    content:"";position:absolute;top:0;left:0;right:0;height:2px;
+    background:linear-gradient(90deg,var(--green) 0%,#f0a800 100%);
+    z-index:2;
+  }
+  .celebration::after{
+    content:"";position:absolute;inset:0;
+    background:linear-gradient(180deg,transparent 50%,rgba(0,0,0,0.85) 100%);
+    pointer-events:none;
+  }
+  .celebration.has-gif{background-size:cover;background-position:center}
+  .celebration-trophy{
+    position:absolute;top:50%;left:50%;
+    transform:translate(-50%,-50%);
+    font-size:5rem;opacity:0.18;line-height:1;
+    pointer-events:none;
+  }
+  .celebration-overlay{
+    position:relative;z-index:1;color:#fff;
+  }
+  .winner-name{
+    font-family:'Titillium Web',sans-serif;
+    font-size:1.5rem;font-weight:900;
+    letter-spacing:-0.01em;line-height:1.1;
+    text-shadow:0 2px 6px rgba(0,0,0,0.7);
+  }
+  .winner-meta{
+    font-family:'JetBrains Mono',monospace;
+    font-size:0.72rem;color:rgba(255,255,255,0.85);
+    letter-spacing:0.08em;text-transform:uppercase;
+    margin-top:0.25rem;
+    text-shadow:0 1px 4px rgba(0,0,0,0.7);
+  }
 
-  .flavor{font-style:italic;text-align:center;color:#444;padding:0.5rem 1rem 1rem;font-size:0.9rem}
+  /* YOUTUBE LINK */
+  .yt-link{
+    display:flex;align-items:center;justify-content:center;gap:0.5rem;
+    width:100%;padding:0.85rem;
+    background:var(--card);
+    border:1px solid var(--line);
+    color:var(--white);
+    text-decoration:none;
+    font-size:0.78rem;font-weight:700;
+    letter-spacing:0.16em;text-transform:uppercase;
+    border-radius:3px;margin-bottom:0.85rem;
+    transition:border-color 0.15s,background 0.15s;
+    font-family:'Titillium Web',sans-serif;
+  }
+  .yt-link:hover{border-color:var(--red);background:var(--card-2)}
+  .yt-link .yt-icon{
+    color:#ff0000;font-size:0.85rem;
+    background:#fff;width:20px;height:20px;
+    border-radius:50%;display:flex;align-items:center;justify-content:center;
+    padding-left:2px;
+  }
+
+  .flavor{
+    text-align:center;color:var(--gray);
+    padding:0.5rem 1rem 1rem;font-size:0.92rem;
+    font-style:italic;line-height:1.5;
+  }
+  .flavor::before{content:"\\\"";color:var(--red);margin-right:0.15rem}
+  .flavor::after{content:"\\\"";color:var(--red);margin-left:0.15rem}
 
   /* START SCREEN */
-  .start-card{background:#fff;border-radius:18px;padding:2rem 1.5rem;text-align:center;margin-top:2rem;box-shadow:0 4px 16px rgba(0,0,0,0.06)}
-  .start-card .eyebrow{font-size:0.75rem;letter-spacing:0.18em;text-transform:uppercase;color:var(--muted);font-weight:600;margin-bottom:0.7rem}
-  .start-card h1{font-size:2.2rem;font-weight:800;letter-spacing:-0.02em;margin-bottom:0.8rem}
-  .start-card .blurb{color:var(--muted);font-size:0.95rem;line-height:1.5;margin-bottom:1.5rem}
-  .start-features{display:flex;justify-content:center;gap:0;border-top:1px solid var(--line);border-bottom:1px solid var(--line);padding:1.2rem 0;margin-bottom:1.5rem}
+  .start-card{
+    background:var(--card);
+    border:1px solid var(--line);
+    padding:2.2rem 1.6rem;text-align:center;
+    margin-top:2rem;border-radius:8px;
+    position:relative;overflow:hidden;
+  }
+  .start-card::before{
+    content:"";position:absolute;top:0;left:0;right:0;height:3px;
+    background:linear-gradient(90deg,var(--red) 0%,var(--red) 30%,transparent 30%,transparent 35%,var(--red) 35%,var(--red) 38%,transparent 38%,transparent 100%);
+  }
+  .start-card .eyebrow{
+    font-family:'JetBrains Mono',monospace;
+    font-size:0.7rem;letter-spacing:0.2em;text-transform:uppercase;
+    color:var(--red);font-weight:700;margin-bottom:0.8rem;
+  }
+  .start-card h1{
+    font-family:'Titillium Web',sans-serif;
+    font-size:2.6rem;font-weight:900;
+    letter-spacing:-0.02em;margin-bottom:0.6rem;
+    color:#fff;line-height:1;
+  }
+  .start-card .blurb{
+    color:var(--gray);font-size:0.95rem;line-height:1.55;
+    margin:0 auto 1.6rem;max-width:380px;
+  }
+  .start-features{
+    display:flex;justify-content:center;gap:0;
+    border-top:1px solid var(--line);
+    border-bottom:1px solid var(--line);
+    padding:1.2rem 0;margin-bottom:1.5rem;
+  }
   .start-feat{flex:1;display:flex;flex-direction:column;align-items:center;gap:0.5rem}
-  .start-feat + .start-feat{border-left:1px solid var(--line)}
-  .start-feat .icon{font-size:1.5rem;opacity:0.7}
-  .start-feat .label{font-size:0.85rem;color:#333;font-weight:500}
-  .start-btn{width:100%;padding:1rem;background:#111;color:#fff;border:none;border-radius:50px;font-size:1.05rem;font-weight:600;cursor:pointer;font-family:inherit}
-  .start-btn:hover{background:#000}
+  .start-feat+.start-feat{border-left:1px solid var(--line)}
+  .start-feat .icon{font-size:1.4rem;color:var(--red)}
+  .start-feat .label{font-size:0.78rem;color:var(--white);font-weight:600;letter-spacing:0.06em;text-transform:uppercase}
+  .start-feat .meta{font-family:'JetBrains Mono',monospace;font-size:0.65rem;color:var(--gray-2);letter-spacing:0.06em}
+  .start-btn{
+    width:100%;padding:1.05rem;
+    background:var(--red);color:#fff;
+    border:none;font-size:0.9rem;font-weight:700;
+    letter-spacing:0.18em;text-transform:uppercase;
+    cursor:pointer;font-family:'Titillium Web',sans-serif;
+    border-radius:3px;
+  }
+  .start-btn:hover{background:#ff1801}
+  .start-meta{margin-top:1rem;font-family:'JetBrains Mono',monospace;font-size:0.68rem;letter-spacing:0.1em;color:var(--muted)}
 
-  /* FINAL SCREEN */
-  .round-list{background:#fff;border-radius:14px;padding:0.4rem 1rem;margin-bottom:1rem;box-shadow:0 1px 3px rgba(0,0,0,0.04)}
-  .round-row{display:flex;justify-content:space-between;align-items:center;padding:0.7rem 0;border-bottom:1px solid var(--line);font-size:0.88rem}
+  /* FINAL */
+  .round-list{
+    background:var(--card);
+    border:1px solid var(--line);
+    padding:0.4rem 1rem;margin-bottom:1rem;
+    border-radius:6px;
+  }
+  .round-row{
+    display:flex;justify-content:space-between;align-items:center;
+    padding:0.7rem 0;border-bottom:1px solid var(--line);
+    font-size:0.85rem;
+  }
   .round-row:last-child{border-bottom:none}
-  .round-row .rn{color:var(--muted);font-size:0.78rem;width:60px}
-  .round-row .rt{flex:1}
-  .round-row .rs{font-weight:700}
+  .round-row .rn{font-family:'JetBrains Mono',monospace;color:var(--red);font-size:0.75rem;width:75px;letter-spacing:0.04em;font-weight:700}
+  .round-row .rt{flex:1;color:var(--gray);font-size:0.82rem}
+  .round-row .rt strong{color:#fff;font-weight:600}
+  .round-row .rs{font-family:'JetBrains Mono',monospace;font-weight:700;color:#fff;font-size:0.9rem}
+  .round-row .rs.bad{color:var(--red)}
+  .round-row .rs.mid{color:var(--yellow)}
+  .round-row .rs.good{color:var(--green)}
 
-  /* utility */
-  .hidden{display:none!important}
+  /* responsive */
+  @media(max-width:520px){
+    .moment-year-bg{font-size:7rem}
+    .moment-desc{font-size:0.92rem}
+    .start-card h1{font-size:2.1rem}
+    .score-card .pct{font-size:3.6rem}
+  }
 </style>
 </head>
 <body>
@@ -150,82 +473,235 @@
 
 <script>
 /* =========================================================
-   DATA — 7 iconic F1 moments
-   No copyrighted images; each moment is described in text +
-   styled atmospheric panel. Swap in real photos later.
+   DATA — 30 iconic F1 moments
+   Each moment supports an optional `image` URL. When null,
+   the card renders a styled atmospheric fallback. AI prompts
+   for generating per-moment images live in ai-image-prompts.md.
+   Descriptions deliberately omit track / driver / country /
+   team-name spoilers.
    ========================================================= */
-const MOMENTS = [
-  {
-    year: 2008,
-    track: 'interlagos',
-    driver: 'lewis-hamilton',
-    mood: 'wet',
-    tags: ['Wet finale', 'Title decider'],
-    desc: 'Last lap, last corner. The championship has just changed hands twice in 30 seconds. The pass for fifth place that wins a title.',
-    foot: ['Lap 71/71', 'Final corner'],
-    flavor: 'Glock running on dries, Hamilton hunts him down. "Is that Glock?!"'
-  },
-  {
-    year: 1993,
-    track: 'donington-park',
-    driver: 'ayrton-senna',
-    mood: 'wet',
-    tags: ['Wet', 'Lap 1 masterclass'],
-    desc: 'Started fifth. Through Redgate, Craner, the Old Hairpin and McLeans, the rain-mottled grass blurs as five cars become one in the lead.',
-    foot: ['Lap 1', 'European GP'],
-    flavor: 'Widely regarded as the greatest opening lap in F1 history.'
-  },
-  {
-    year: 2021,
-    track: 'yas-marina',
-    driver: 'max-verstappen',
-    mood: 'night',
-    tags: ['Night race', 'Title decider'],
-    desc: 'Soft tyres against worn hards. One lap left. The safety car peels in and the championship is decided in 70 seconds of green-flag racing.',
-    foot: ['Lap 58/58', 'Season finale'],
-    flavor: 'The most controversial championship finish in modern F1.'
-  },
-  {
-    year: 2000,
-    track: 'spa-francorchamps',
-    driver: 'mika-hakkinen',
-    mood: 'classic',
-    tags: ['Dry', 'Iconic overtake'],
-    desc: 'A backmarker is used as a moving chicane on the run down to Les Combes. Two cars dive past on either side of him at over 300 km/h.',
-    foot: ['Lap 41', 'Belgian GP'],
-    flavor: 'Schumacher waved his fist. The pass became legend.'
-  },
-  {
-    year: 1988,
-    track: 'monaco',
-    driver: 'ayrton-senna',
-    mood: 'sun',
-    tags: ['Qualifying', 'Pole lap'],
-    desc: '1.427 seconds clear of his teammate. In the same car. Around the streets. Later he described being on a "different conscious level" — outside himself, watching from above.',
-    foot: ['Q3', 'Saturday'],
-    flavor: '"I was no longer driving the car consciously."'
-  },
-  {
-    year: 2006,
-    track: 'hungaroring',
-    driver: 'jenson-button',
-    mood: 'wet',
-    tags: ['Wet', 'First win'],
-    desc: 'Started 14th after an engine penalty. Six years and 113 races into a career, finally on the top step — in conditions that swallowed half the grid.',
-    foot: ['Lap 70/70', 'Hungarian GP'],
-    flavor: 'A maiden victory delivered with raw skill in the rain.'
-  },
-  {
-    year: 2012,
-    track: 'interlagos',
-    driver: 'sebastian-vettel',
-    mood: 'wet',
-    tags: ['Wet', 'Title decider'],
-    desc: 'Spun on the opening lap, dropped to last with a damaged sidepod. By the flag, sixth place is enough — barely — to seal a third consecutive title.',
-    foot: ['Lap 71/71', 'Season finale'],
-    flavor: 'Decided by three points after a chaotic, rain-soaked race.'
-  }
+const ALL_MOMENTS = [
+  {id:'brazil-2008',year:2008,track:'interlagos',driver:'lewis-hamilton',mood:'wet',image:null,
+   tags:['Wet finale','Title decider'],
+   desc:'Last lap, last corner. The championship has just changed hands twice in 30 seconds. A pass for fifth place wins a title by a single point.',
+   foot:['Lap 71/71','Final corner'],
+   flavor:'Is that Glock?! And the title was his.'},
+
+  {id:'donington-1993',year:1993,track:'donington-park',driver:'ayrton-senna',mood:'wet',image:null,
+   tags:['Wet','Lap 1 masterclass'],
+   desc:'Started fifth. Through Redgate, the Craner Curves, the Old Hairpin and McLeans the rain-mottled grass blurs as five cars become one in the lead.',
+   foot:['Lap 1','European GP'],
+   flavor:'Widely regarded as the greatest opening lap in F1 history.'},
+
+  {id:'abu-dhabi-2021',year:2021,track:'yas-marina',driver:'max-verstappen',mood:'night',image:null,
+   tags:['Night race','Title decider'],
+   desc:'Soft tyres against worn hards. One lap left. The safety car peels in and a championship is decided in 70 seconds of green-flag racing.',
+   foot:['Lap 58/58','Season finale'],
+   flavor:'The most controversial championship finish in modern F1.'},
+
+  {id:'spa-2000',year:2000,track:'spa-francorchamps',driver:'mika-hakkinen',mood:'classic',image:null,
+   tags:['Dry','Iconic overtake'],
+   desc:'A backmarker becomes a moving chicane on the run down to Les Combes. Two cars dive past on either side of him at over 300 km/h.',
+   foot:['Lap 41','Round 13/17'],
+   flavor:'A waved fist. A pass that became legend.'},
+
+  {id:'monaco-1988',year:1988,track:'monaco',driver:'ayrton-senna',mood:'sun',image:null,
+   tags:['Qualifying','Pole lap'],
+   desc:'1.427 seconds clear of his teammate. In the same car. He later described being on a different conscious level — outside himself, watching from above.',
+   foot:['Q3','Saturday'],
+   flavor:'I was no longer driving the car consciously.'},
+
+  {id:'hungary-2006',year:2006,track:'hungaroring',driver:'jenson-button',mood:'wet',image:null,
+   tags:['Wet','First win'],
+   desc:'Started 14th after an engine penalty. Six years and 113 races into a career, finally on the top step — in conditions that swallowed half the grid.',
+   foot:['Lap 70/70','Round 13/18'],
+   flavor:'A maiden victory delivered with raw skill in the rain.'},
+
+  {id:'brazil-2012',year:2012,track:'interlagos',driver:'sebastian-vettel',mood:'wet',image:null,
+   tags:['Wet','Title decider'],
+   desc:'Spun on the opening lap, dropped to last with a damaged sidepod. By the flag, sixth is enough — barely — to seal a third consecutive title.',
+   foot:['Lap 71/71','Season finale'],
+   flavor:'Decided by three points after a chaotic, rain-soaked finale.'},
+
+  {id:'spa-1992',year:1992,track:'spa-francorchamps',driver:'michael-schumacher',mood:'wet',image:null,
+   tags:['Mixed conditions','First win'],
+   desc:'A driver in his second F1 season on a track that suddenly dries. He ducks into the pits one lap earlier than anyone else. By the flag, no longer a prospect.',
+   foot:['Lap 44/44','Round 12/16'],
+   flavor:'A first win in his second season, at the track of his debut.'},
+
+  {id:'estoril-1985',year:1985,track:'estoril',driver:'ayrton-senna',mood:'wet',image:null,
+   tags:['Wet','First win'],
+   desc:'Second F1 season, second race for the team. Pole position. Lapped everyone but second place. The rain never stopped.',
+   foot:['Lap 67/67','Round 2/16'],
+   flavor:'A debut victory in a black-and-gold car, in monsoon conditions.'},
+
+  {id:'suzuka-2005',year:2005,track:'suzuka',driver:'kimi-raikkonen',mood:'sun',image:null,
+   tags:['Dry','Final-lap pass'],
+   desc:'Started seventeenth after a wet qualifying. With one lap to go, second place. By the run to the line, first.',
+   foot:['Lap 53/53','Round 18/19'],
+   flavor:'A win from 17th, sealed with a pass on the last lap.'},
+
+  {id:'brazil-2007',year:2007,track:'interlagos',driver:'kimi-raikkonen',mood:'sun',image:null,
+   tags:['Dry','Title decider'],
+   desc:'Came in seven points behind the championship leader. Left as champion by a single point — having won the race while title rivals tripped over each other.',
+   foot:['Lap 71/71','Season finale'],
+   flavor:'A championship taken at the last race, having trailed all season.'},
+
+  {id:'hungary-1989',year:1989,track:'hungaroring',driver:'nigel-mansell',mood:'sun',image:null,
+   tags:['Dry','From 12th'],
+   desc:'Started twelfth on a circuit where overtaking is supposed to be impossible. A backmarker created the gap. He took it.',
+   foot:['Lap 77/77','Round 9/16'],
+   flavor:'A win from 12th, in a car that should have finished sixth.'},
+
+  {id:'spain-1996',year:1996,track:'catalunya',driver:'michael-schumacher',mood:'wet',image:null,
+   tags:['Wet','Masterclass'],
+   desc:'In a car that should have finished sixth, on a track flooded with standing water, lapping everyone but the podium by 45 seconds a lap.',
+   foot:['Lap 65/65','Round 6/16'],
+   flavor:'A virtuoso wet-weather drive in an inferior car.'},
+
+  {id:'spa-2008',year:2008,track:'spa-francorchamps',driver:'lewis-hamilton',mood:'wet',image:null,
+   tags:['Mixed','Late drama'],
+   desc:'Three laps to go. The rain returns. Two passes, two re-passes, a cut chicane, a penalty, and a result that swung a championship.',
+   foot:['Lap 44/44','Round 13/18'],
+   flavor:'The win was taken by penalty. The legend was made anyway.'},
+
+  {id:'monza-2008',year:2008,track:'monza',driver:'sebastian-vettel',mood:'wet',image:null,
+   tags:['Wet','Youngest winner'],
+   desc:'Twenty-one years old. Pole position in a midfield car, in the wet. A wet race won by a clear margin. The youngest grand prix winner in history at the time.',
+   foot:['Lap 53/53','Round 14/18'],
+   flavor:'21 years 73 days — the youngest winner in F1 history.'},
+
+  {id:'brazil-2016',year:2016,track:'interlagos',driver:'max-verstappen',mood:'wet',image:null,
+   tags:['Wet','Comeback drive'],
+   desc:'Dropped to fourteenth after a slow stop. Half-spun, caught it on the road, and came back to the podium in monsoon conditions.',
+   foot:['Lap 71/71','Round 20/21'],
+   flavor:'A catalogue of impossible saves and overtakes in the rain.'},
+
+  {id:'hungary-2014',year:2014,track:'hungaroring',driver:'daniel-ricciardo',mood:'wet',image:null,
+   tags:['Mixed','Last-lap pass'],
+   desc:'Last laps, hunted down by the championship leaders on fading tyres. He held them off and took the win on the final lap.',
+   foot:['Lap 70/70','Round 11/19'],
+   flavor:'An honest, gritty win delivered with a smile.'},
+
+  {id:'monza-2020',year:2020,track:'monza',driver:'pierre-gasly',mood:'sun',image:null,
+   tags:['Dry','First win'],
+   desc:'A red flag, a strategic gamble, and the first win for a driver who had been demoted from a top team a year earlier.',
+   foot:['Lap 53/53','Round 8/17'],
+   flavor:'A breathtaking maiden win, one year after a brutal demotion.'},
+
+  {id:'spain-2016',year:2016,track:'catalunya',driver:'max-verstappen',mood:'sun',image:null,
+   tags:['Dry','Youngest winner'],
+   desc:'Promoted from the junior team a week ago. Eighteen years old. The two leaders take each other out at turn 4. He inherits the lead — and wins.',
+   foot:['Lap 66/66','Round 5/21'],
+   flavor:'18 years 228 days — the youngest race winner in F1 history.'},
+
+  {id:'suzuka-1996',year:1996,track:'suzuka',driver:'damon-hill',mood:'sun',image:null,
+   tags:['Dry','Title decider'],
+   desc:'A wheel comes off his teammate’s car at the chicane and he is champion in the same instant. Decades of family destiny resolved in three corners.',
+   foot:['Lap 52/52','Season finale'],
+   flavor:'The first son of a champion to win the championship himself.'},
+
+  {id:'adelaide-1986',year:1986,track:'adelaide',driver:'alain-prost',mood:'sun',image:null,
+   tags:['Dry','Title decider'],
+   desc:'Three drivers in title contention. The leader’s left-rear tyre explodes at 180 mph on the back straight — and the championship swings to the man who came in third in the standings.',
+   foot:['Lap 64/82','Season finale'],
+   flavor:'A tyre explosion at 180 mph reshaped the title.'},
+
+  {id:'jerez-1997',year:1997,track:'jerez',driver:'jacques-villeneuve',mood:'sun',image:null,
+   tags:['Dry','Title decider'],
+   desc:'Three identical lap times in qualifying — to the thousandth. In the race, the title rival turns into him. The car bounces off, doesn’t retire, and the championship is taken.',
+   foot:['Lap 48/69','Season finale'],
+   flavor:'A controversial collision and a champion’s response.'},
+
+  {id:'silverstone-1987',year:1987,track:'silverstone',driver:'nigel-mansell',mood:'sun',image:null,
+   tags:['Dry','Home win'],
+   desc:'Twenty-eight seconds behind his teammate with thirty laps to go. He set fastest lap after fastest lap. Caught him on the back straight with a feint.',
+   foot:['Lap 65/65','Round 7/16'],
+   flavor:'A home crowd erupted. Mania.'},
+
+  {id:'monaco-1992',year:1992,track:'monaco',driver:'ayrton-senna',mood:'sun',image:null,
+   tags:['Dry','Defensive masterclass'],
+   desc:'Six laps from the flag, the leader pits for new tyres. He emerges three seconds behind. The chase ends at the chequered flag — by two-tenths.',
+   foot:['Lap 78/78','Round 6/16'],
+   flavor:'Three seconds defended through six laps of street circuit.'},
+
+  {id:'suzuka-1989',year:1989,track:'suzuka',driver:'alain-prost',mood:'sun',image:null,
+   tags:['Dry','Title-deciding contact'],
+   desc:'The chicane. Two title rivals — teammates, no less — make contact. One walks away. The other is later disqualified for re-joining the track.',
+   foot:['Lap 47/53','Round 15/16'],
+   flavor:'The first chapter of the most bitter feud in F1 history.'},
+
+  {id:'australia-2018',year:2018,track:'albert-park',driver:'sebastian-vettel',mood:'sun',image:null,
+   tags:['Dry','Strategic win'],
+   desc:'Pitted under a virtual safety car. Emerged in front of a Mercedes that had been controlling the race. Held on to the flag.',
+   foot:['Lap 58/58','Round 1/21'],
+   flavor:'A strategic gift, claimed and held in a season opener.'},
+
+  {id:'bahrain-2014',year:2014,track:'bahrain',driver:'lewis-hamilton',mood:'night',image:null,
+   tags:['Night race','Wheel-to-wheel'],
+   desc:'Teammates, lap after lap, swapping the lead three corners at a time. Inches apart at 200 mph under the floodlights. The first hint of a rivalry that would shape three seasons.',
+   foot:['Lap 57/57','Round 3/19'],
+   flavor:'The race that defined a teammate rivalry.'},
+
+  {id:'mexico-2017',year:2017,track:'mexico-city',driver:'lewis-hamilton',mood:'sun',image:null,
+   tags:['Dry','Title clinched'],
+   desc:'A puncture in the opening lap dropped him to last. He needed only ninth to clinch a fourth title. He came home ninth. The title was his.',
+   foot:['Lap 71/71','Round 18/20'],
+   flavor:'A fourth title clinched from last on the road.'},
+
+  {id:'silverstone-2008',year:2008,track:'silverstone',driver:'lewis-hamilton',mood:'wet',image:null,
+   tags:['Wet','Masterclass'],
+   desc:'Won by a minute and ten seconds in conditions that put half the field off. A home win delivered with metronomic precision in standing water.',
+   foot:['Lap 60/60','Round 9/18'],
+   flavor:'A 70-second margin of victory in a torrential British summer.'},
+
+  {id:'belgium-1998',year:1998,track:'spa-francorchamps',driver:'damon-hill',mood:'wet',image:null,
+   tags:['Wet','Surprise win'],
+   desc:'A first-corner pile-up. Title contenders crash into each other on the second lap. A team that had never won leads home a 1-2 in the rain.',
+   foot:['Lap 44/44','Round 13/16'],
+   flavor:'A first team win — and a 1-2 — in chaos at a forest circuit.'}
 ];
+
+/* =========================================================
+   MEDIA — anime GIFs + YouTube links per moment.
+   - `gif`: anime-style GIF of the action (shows on the moment card)
+   - `winnerGif`: anime-style GIF of the winner celebrating (shows on round-result reveal)
+   - `youtube`: YouTube link. Defaults to a deterministic search URL.
+     Replace with the canonical highlight video URL when you curate them.
+   AI prompts for generating each GIF live in ai-image-prompts.md.
+   ========================================================= */
+const MEDIA = {
+  'brazil-2008':       {gif:null, winnerGif:null, youtube:'https://www.youtube.com/results?search_query=Brazil+2008+Hamilton+championship+last+corner'},
+  'donington-1993':    {gif:null, winnerGif:null, youtube:'https://www.youtube.com/results?search_query=Donington+1993+Senna+first+lap'},
+  'abu-dhabi-2021':    {gif:null, winnerGif:null, youtube:'https://www.youtube.com/results?search_query=Abu+Dhabi+2021+last+lap+Verstappen+Hamilton'},
+  'spa-2000':          {gif:null, winnerGif:null, youtube:'https://www.youtube.com/results?search_query=Spa+2000+Hakkinen+Schumacher+Zonta'},
+  'monaco-1988':       {gif:null, winnerGif:null, youtube:'https://www.youtube.com/results?search_query=Monaco+1988+Senna+pole+lap+qualifying'},
+  'hungary-2006':      {gif:null, winnerGif:null, youtube:'https://www.youtube.com/results?search_query=Hungary+2006+Button+first+win'},
+  'brazil-2012':       {gif:null, winnerGif:null, youtube:'https://www.youtube.com/results?search_query=Brazil+2012+Vettel+championship'},
+  'spa-1992':          {gif:null, winnerGif:null, youtube:'https://www.youtube.com/results?search_query=Spa+1992+Schumacher+first+win'},
+  'estoril-1985':      {gif:null, winnerGif:null, youtube:'https://www.youtube.com/results?search_query=Estoril+1985+Senna+first+win'},
+  'suzuka-2005':       {gif:null, winnerGif:null, youtube:'https://www.youtube.com/results?search_query=Suzuka+2005+Raikkonen+last+lap+pass+Fisichella'},
+  'brazil-2007':       {gif:null, winnerGif:null, youtube:'https://www.youtube.com/results?search_query=Brazil+2007+Raikkonen+championship'},
+  'hungary-1989':      {gif:null, winnerGif:null, youtube:'https://www.youtube.com/results?search_query=Hungary+1989+Mansell+from+12th'},
+  'spain-1996':        {gif:null, winnerGif:null, youtube:'https://www.youtube.com/results?search_query=Spain+1996+Schumacher+wet+masterclass'},
+  'spa-2008':          {gif:null, winnerGif:null, youtube:'https://www.youtube.com/results?search_query=Spa+2008+Hamilton+Raikkonen+final+laps'},
+  'monza-2008':        {gif:null, winnerGif:null, youtube:'https://www.youtube.com/results?search_query=Monza+2008+Vettel+youngest+winner'},
+  'brazil-2016':       {gif:null, winnerGif:null, youtube:'https://www.youtube.com/results?search_query=Brazil+2016+Verstappen+rain'},
+  'hungary-2014':      {gif:null, winnerGif:null, youtube:'https://www.youtube.com/results?search_query=Hungary+2014+Ricciardo+win'},
+  'monza-2020':        {gif:null, winnerGif:null, youtube:'https://www.youtube.com/results?search_query=Monza+2020+Gasly+first+win'},
+  'spain-2016':        {gif:null, winnerGif:null, youtube:'https://www.youtube.com/results?search_query=Spain+2016+Verstappen+first+win'},
+  'suzuka-1996':       {gif:null, winnerGif:null, youtube:'https://www.youtube.com/results?search_query=Suzuka+1996+Damon+Hill+championship'},
+  'adelaide-1986':     {gif:null, winnerGif:null, youtube:'https://www.youtube.com/results?search_query=Adelaide+1986+Mansell+tyre+Prost+championship'},
+  'jerez-1997':        {gif:null, winnerGif:null, youtube:'https://www.youtube.com/results?search_query=Jerez+1997+Schumacher+Villeneuve+championship'},
+  'silverstone-1987':  {gif:null, winnerGif:null, youtube:'https://www.youtube.com/results?search_query=Silverstone+1987+Mansell+Piquet'},
+  'monaco-1992':       {gif:null, winnerGif:null, youtube:'https://www.youtube.com/results?search_query=Monaco+1992+Senna+Mansell+defensive'},
+  'suzuka-1989':       {gif:null, winnerGif:null, youtube:'https://www.youtube.com/results?search_query=Suzuka+1989+Senna+Prost+collision'},
+  'australia-2018':    {gif:null, winnerGif:null, youtube:'https://www.youtube.com/results?search_query=Australia+2018+Vettel+VSC+win'},
+  'bahrain-2014':      {gif:null, winnerGif:null, youtube:'https://www.youtube.com/results?search_query=Bahrain+2014+Hamilton+Rosberg+battle'},
+  'mexico-2017':       {gif:null, winnerGif:null, youtube:'https://www.youtube.com/results?search_query=Mexico+2017+Hamilton+fourth+title'},
+  'silverstone-2008':  {gif:null, winnerGif:null, youtube:'https://www.youtube.com/results?search_query=Silverstone+2008+Hamilton+wet+masterclass'},
+  'belgium-1998':      {gif:null, winnerGif:null, youtube:'https://www.youtube.com/results?search_query=Belgium+1998+Hill+Jordan+win'}
+};
 
 const TRACKS = [
   {id:'monaco',name:'Circuit de Monaco',country:'Monaco'},
@@ -261,7 +737,6 @@ const TRACKS = [
   {id:'sochi',name:'Sochi Autodrom',country:'Russia'},
   {id:'istanbul',name:'Istanbul Park',country:'Turkey'},
   {id:'red-bull-ring',name:'Red Bull Ring',country:'Austria'},
-  {id:'osterreichring',name:'Österreichring',country:'Austria'},
   {id:'jerez',name:'Circuito de Jerez',country:'Spain'},
   {id:'long-beach',name:'Long Beach Street Circuit',country:'United States'},
   {id:'detroit',name:'Detroit Street Circuit',country:'United States'},
@@ -306,31 +781,54 @@ const DRIVERS = [
   {id:'mario-andretti',name:'Mario Andretti',era:'1968–1982'},
   {id:'keke-rosberg',name:'Keke Rosberg',era:'1978–1986'},
   {id:'nico-rosberg',name:'Nico Rosberg',era:'2006–2016'},
-  {id:'valtteri-bottas',name:'Valtteri Bottas',era:'2013–'},
-  {id:'jacques-laffite',name:'Jacques Laffite',era:'1974–1986'},
-  {id:'rene-arnoux',name:'René Arnoux',era:'1978–1989'}
+  {id:'valtteri-bottas',name:'Valtteri Bottas',era:'2013–'}
 ];
+
+const ROUNDS_PER_GAME = 7;
+const PTS_PER_Q = 500;
+const TOTAL_PER_ROUND = PTS_PER_Q * 2;
 
 /* =========================================================
    STATE
    ========================================================= */
 let state = {
-  view: 'start',          // 'start' | 'round' | 'final'
-  roundIdx: 0,            // 0..6
-  trackPick: null,        // track id
-  driverPick: null,       // driver id
+  view: 'start',
+  moments: [],
+  roundIdx: 0,
+  trackPick: null,
+  driverPick: null,
   trackSubmitted: false,
   driverSubmitted: false,
-  scores: []              // per round: {trackPts, driverPts, total, trackPick, driverPick}
+  scores: []
 };
 
-const PTS_PER_Q = 500;
-const TOTAL_PER_ROUND = PTS_PER_Q * 2;
+/* =========================================================
+   UTIL
+   ========================================================= */
+function shuffle(arr){
+  const a = arr.slice();
+  for(let i=a.length-1;i>0;i--){
+    const j = Math.floor(Math.random()*(i+1));
+    [a[i],a[j]] = [a[j],a[i]];
+  }
+  return a;
+}
+
+function selectRoundMoments(){
+  return shuffle(ALL_MOMENTS).slice(0, ROUNDS_PER_GAME);
+}
 
 /* =========================================================
    RENDER ROOT
    ========================================================= */
 const app = document.getElementById('app');
+const renderTopbar = () => `
+  <div class="topbar">
+    <div class="top-icon" title="How to play">?</div>
+    <div class="brand"><span class="chev">&gt;&gt;&gt;</span> GRIDGUESSR</div>
+    <div class="top-icon" title="Share">↗</div>
+  </div>
+`;
 
 function render(){
   if(state.view==='start') return renderStart();
@@ -341,26 +839,32 @@ function render(){
 /* ---------------------- START ---------------------- */
 function renderStart(){
   app.innerHTML = `
-    <div class="topbar">
-      <div class="top-icon">?</div>
-      <div class="brand">GRIDGUESSR</div>
-      <div class="top-icon" style="color:#777">✉</div>
-    </div>
+    ${renderTopbar()}
     <div class="start-card">
       <div class="eyebrow">Daily Challenge</div>
       <h1>GridGuessr</h1>
-      <p class="blurb">Guess the track and driver of 7 iconic Formula 1 moments — pulled from sixty years of grand prix history.</p>
+      <p class="blurb">Guess the track and driver of <strong style="color:#fff">7 iconic Formula 1 moments</strong>, drawn from seventy years of Grand Prix history.</p>
       <div class="start-features">
-        <div class="start-feat"><div class="icon">📍</div><div class="label">Find the Track</div></div>
-        <div class="start-feat"><div class="icon">🏎️</div><div class="label">Name the Driver</div></div>
+        <div class="start-feat">
+          <div class="icon">◉</div>
+          <div class="label">Find the Track</div>
+          <div class="meta">37 circuits</div>
+        </div>
+        <div class="start-feat">
+          <div class="icon">▲</div>
+          <div class="label">Name the Driver</div>
+          <div class="meta">38 drivers</div>
+        </div>
       </div>
-      <button class="start-btn" id="startBtn">Start Playing</button>
+      <button class="start-btn" id="startBtn">Start Playing →</button>
+      <div class="start-meta">${ALL_MOMENTS.length} MOMENTS · ${ROUNDS_PER_GAME} ROUNDS · MAX ${(ROUNDS_PER_GAME*TOTAL_PER_ROUND).toLocaleString()} PTS</div>
     </div>
   `;
   document.getElementById('startBtn').onclick = () => {
     state.view = 'round';
     state.roundIdx = 0;
     state.scores = [];
+    state.moments = selectRoundMoments();
     resetRound();
     render();
   };
@@ -375,34 +879,49 @@ function resetRound(){
 }
 
 function renderRound(){
-  const m = MOMENTS[state.roundIdx];
-  const total = MOMENTS.length;
+  const m = state.moments[state.roundIdx];
 
-  const pips = Array.from({length: total}, (_, i) => {
+  const pips = Array.from({length: ROUNDS_PER_GAME}, (_, i) => {
     let cls = 'pip';
     if(i < state.roundIdx) cls += ' done';
     else if(i === state.roundIdx) cls += ' active';
     return `<div class="${cls}"></div>`;
   }).join('');
 
+  // Background: anime GIF if present, else mood gradient
+  const media = MEDIA[m.id] || {};
+  const bgClass = media.gif ? `moment-bg has-image ${m.mood}` : `moment-bg ${m.mood}`;
+  const bgStyle = media.gif ? `style="background-image:url('${media.gif}')"` : '';
+
   app.innerHTML = `
-    <div class="topbar">
-      <div class="top-icon">?</div>
-      <div class="brand">GRIDGUESSR</div>
-      <div class="top-icon" style="color:#777">✉</div>
-    </div>
+    ${renderTopbar()}
     <div class="progress-row">
-      <div class="progress-label">Round ${state.roundIdx+1} of ${total}</div>
+      <div class="progress-label">ROUND <strong>${state.roundIdx+1}</strong> / ${ROUNDS_PER_GAME}</div>
       <div class="progress-pips">${pips}</div>
     </div>
 
-    <div class="moment ${m.mood}">
-      <div class="moment-top">
-        <div class="moment-year">${m.year}</div>
-        <div class="moment-tags">${m.tags.map(t=>`<span class="tag">${t}</span>`).join('')}</div>
+    <div class="moment">
+      <div class="${bgClass}" ${bgStyle}></div>
+      ${!media.gif ? `<div class="moment-year-bg">${m.year}</div>` : ''}
+      <div class="moment-hud">
+        <div class="moment-top">
+          <div class="moment-strip">
+            <span class="yr">${m.year}</span>
+            <span class="sep">·</span>
+            <span class="lap">${m.foot[0]}</span>
+          </div>
+          <div class="moment-tags">
+            ${m.tags.map((t,i)=>`<span class="tag ${i===0 && /wet|night|mixed/i.test(t) ? 'weather' : ''}">${t}</span>`).join('')}
+          </div>
+        </div>
+        <div>
+          <div class="moment-desc">${m.desc}</div>
+          <div class="moment-foot" style="margin-top:0.7rem">
+            <span>${m.foot[1]}</span>
+            <span>F1 MOMENT #${state.roundIdx+1}</span>
+          </div>
+        </div>
       </div>
-      <div class="moment-desc">${m.desc}</div>
-      <div class="moment-foot"><span>${m.foot[0]}</span><span>${m.foot[1]}</span></div>
     </div>
 
     <div id="step1"></div>
@@ -418,13 +937,13 @@ function renderRound(){
 function renderTrackStep(){
   const wrap = document.getElementById('step1');
   if(state.trackSubmitted){
-    const m = MOMENTS[state.roundIdx];
+    const m = state.moments[state.roundIdx];
     const pickedTrack = TRACKS.find(t=>t.id===state.trackPick);
     const correctTrack = TRACKS.find(t=>t.id===m.track);
     const correct = state.trackPick === m.track;
     const sameCountry = pickedTrack && correctTrack && pickedTrack.country === correctTrack.country;
     const badgeCls = correct ? 'right' : (sameCountry ? 'close' : 'wrong');
-    const badgeLbl = correct ? 'CORRECT' : (sameCountry ? 'SAME COUNTRY' : 'INCORRECT');
+    const badgeLbl = correct ? 'CORRECT' : (sameCountry ? 'RIGHT COUNTRY' : 'INCORRECT');
     wrap.innerHTML = `
       <div class="step-card">
         <div class="step-head">
@@ -432,22 +951,22 @@ function renderTrackStep(){
           <div class="step-title">Track Result</div>
           <div class="step-result"><span class="badge ${badgeCls}">${badgeLbl}</span></div>
         </div>
-        <div style="padding-left:2.2rem">
-          <div style="font-size:0.95rem;font-weight:600;color:var(--accent)">${correctTrack.name}</div>
-          ${!correct ? `<div style="font-size:0.8rem;color:var(--muted);margin-top:0.2rem">You picked: ${pickedTrack ? pickedTrack.name : '—'}</div>` : ''}
+        <div class="answer-block">
+          <div class="ans">${correctTrack.name}</div>
+          <div class="ans-meta">${correctTrack.country.toUpperCase()}</div>
+          ${!correct ? `<div class="your wrong">YOU PICKED: ${pickedTrack ? pickedTrack.name : '—'}</div>` : ''}
         </div>
       </div>
     `;
     return;
   }
-
   wrap.innerHTML = `
-    <div class="step-card">
+    <div class="step-card active">
       <div class="step-head">
         <div class="step-num">1</div>
         <div class="step-title">Guess the Track</div>
       </div>
-      <div class="step-sub">Where in the world did this happen?</div>
+      <div class="step-sub">// where in the world did this happen?</div>
       ${state.trackPick
         ? renderSelected('track', state.trackPick)
         : renderSearch('track', 'Search circuits…')}
@@ -467,13 +986,13 @@ function renderDriverStep(){
           <div class="step-num locked">2</div>
           <div class="step-title">Name the Driver</div>
         </div>
-        <div class="locked-msg">Submit your track first to unlock</div>
+        <div class="locked-msg">// SUBMIT TRACK TO UNLOCK</div>
       </div>
     `;
     return;
   }
   if(state.driverSubmitted){
-    const m = MOMENTS[state.roundIdx];
+    const m = state.moments[state.roundIdx];
     const pickedDriver = DRIVERS.find(d=>d.id===state.driverPick);
     const correctDriver = DRIVERS.find(d=>d.id===m.driver);
     const correct = state.driverPick === m.driver;
@@ -484,22 +1003,22 @@ function renderDriverStep(){
           <div class="step-title">Driver Result</div>
           <div class="step-result"><span class="badge ${correct?'right':'wrong'}">${correct?'CORRECT':'INCORRECT'}</span></div>
         </div>
-        <div style="padding-left:2.2rem">
-          <div style="font-size:0.95rem;font-weight:600;color:var(--accent)">${correctDriver.name}</div>
-          ${!correct ? `<div style="font-size:0.8rem;color:var(--muted);margin-top:0.2rem">You picked: ${pickedDriver ? pickedDriver.name : '—'}</div>` : ''}
+        <div class="answer-block">
+          <div class="ans">${correctDriver.name}</div>
+          <div class="ans-meta">${correctDriver.era}</div>
+          ${!correct ? `<div class="your wrong">YOU PICKED: ${pickedDriver ? pickedDriver.name : '—'}</div>` : ''}
         </div>
       </div>
     `;
     return;
   }
-
   wrap.innerHTML = `
-    <div class="step-card">
+    <div class="step-card active">
       <div class="step-head">
         <div class="step-num">2</div>
         <div class="step-title">Name the Driver</div>
       </div>
-      <div class="step-sub">Who was at the wheel?</div>
+      <div class="step-sub">// who was at the wheel?</div>
       ${state.driverPick
         ? renderSelected('driver', state.driverPick)
         : renderSearch('driver', 'Search drivers…')}
@@ -513,32 +1032,52 @@ function renderDriverStep(){
 function renderRoundResult(){
   if(!(state.trackSubmitted && state.driverSubmitted)) return;
   const wrap = document.getElementById('roundResult');
-  const m = MOMENTS[state.roundIdx];
+  const m = state.moments[state.roundIdx];
+  const media = MEDIA[m.id] || {};
   const sc = state.scores[state.roundIdx];
   const pct = Math.round(sc.total / TOTAL_PER_ROUND * 100);
   const trackPct = Math.round(sc.trackPts / PTS_PER_Q * 100);
   const driverPct = Math.round(sc.driverPts / PTS_PER_Q * 100);
-  const isLast = state.roundIdx === MOMENTS.length - 1;
+  const isLast = state.roundIdx === state.moments.length - 1;
+  const driver = DRIVERS.find(d => d.id === m.driver);
+  const track = TRACKS.find(t => t.id === m.track);
+
+  const celebrationStyle = media.winnerGif
+    ? `style="background-image:url('${media.winnerGif}')"`
+    : '';
+  const celebrationCls = media.winnerGif ? 'celebration has-gif' : 'celebration';
 
   wrap.innerHTML = `
     <div class="score-card">
       <div class="label">Round ${state.roundIdx+1} Result</div>
       <div class="pct">${pct}%</div>
-      <div class="pts">${sc.total.toLocaleString()} / ${TOTAL_PER_ROUND.toLocaleString()} pts</div>
+      <div class="pts">${sc.total.toLocaleString()} / ${TOTAL_PER_ROUND.toLocaleString()} PTS</div>
       <div class="split">
         <div><div class="label">Track</div><div class="v">${trackPct}%</div></div>
         <div><div class="label">Driver</div><div class="v">${driverPct}%</div></div>
       </div>
     </div>
-    <div class="flavor">"${m.flavor}"</div>
-    <button class="submit-btn" id="nextBtn" style="background:#111">${isLast ? 'See Final Result →' : 'Next Moment →'}</button>
+
+    <div class="${celebrationCls}" ${celebrationStyle}>
+      ${!media.winnerGif ? `<div class="celebration-trophy">🏆</div>` : ''}
+      <div class="celebration-overlay">
+        <div class="winner-name">${driver.name}</div>
+        <div class="winner-meta">${track.name.split('(')[0].trim()} · ${m.year}</div>
+      </div>
+    </div>
+
+    <a class="yt-link" href="${media.youtube}" target="_blank" rel="noopener noreferrer">
+      <span class="yt-icon">▶</span> Watch on YouTube
+    </a>
+
+    <div class="flavor">${m.flavor}</div>
+    <button class="submit-btn dark" id="nextBtn">${isLast ? 'See Final Result →' : 'Next Moment →'}</button>
   `;
   document.getElementById('nextBtn').onclick = nextRound;
-  // scroll into view
   setTimeout(() => wrap.scrollIntoView({behavior:'smooth',block:'start'}), 50);
 }
 
-/* ---------------------- SEARCH HELPERS ---------------------- */
+/* ---------------------- SEARCH ---------------------- */
 function renderSearch(kind, placeholder){
   return `
     <div class="search-wrap">
@@ -553,7 +1092,7 @@ function renderSelected(kind, id){
   const meta = kind==='track' ? item.country : item.era;
   return `
     <div class="selected-display">
-      <div>${item.name} <span style="font-weight:400;color:#666;font-size:0.82rem;margin-left:0.4rem">${meta}</span></div>
+      <div>${item.name}<span class="meta">${meta}</span></div>
       <button class="clear" onclick="clearPick('${kind}')">×</button>
     </div>
   `;
@@ -571,11 +1110,11 @@ function bindSearch(kind){
   function update(){
     const q = input.value.trim().toLowerCase();
     filtered = q.length === 0
-      ? list.slice(0, 50)
+      ? list.slice(0, 60)
       : list.filter(x => {
           const hay = (x.name + ' ' + (x.country||x.era||'')).toLowerCase();
           return hay.includes(q);
-        }).slice(0, 50);
+        }).slice(0, 60);
     if(filtered.length === 0){
       sugg.innerHTML = `<div class="sugg-item" style="color:var(--muted);cursor:default">No matches</div>`;
     } else {
@@ -619,14 +1158,12 @@ window.clearPick = function(kind){
 
 /* ---------------------- SUBMIT / SCORING ---------------------- */
 function submitTrack(){
-  const m = MOMENTS[state.roundIdx];
+  const m = state.moments[state.roundIdx];
   const pickedTrack = TRACKS.find(t=>t.id===state.trackPick);
   const correctTrack = TRACKS.find(t=>t.id===m.track);
   let pts = 0;
   if(state.trackPick === m.track) pts = PTS_PER_Q;
   else if(pickedTrack && correctTrack && pickedTrack.country === correctTrack.country) pts = Math.round(PTS_PER_Q * 0.3);
-
-  // stash partial score; finalize after driver
   state.scores[state.roundIdx] = {
     trackPts: pts,
     driverPts: 0,
@@ -640,10 +1177,9 @@ function submitTrack(){
 }
 
 function submitDriver(){
-  const m = MOMENTS[state.roundIdx];
+  const m = state.moments[state.roundIdx];
   let pts = 0;
   if(state.driverPick === m.driver) pts = PTS_PER_Q;
-
   const sc = state.scores[state.roundIdx];
   sc.driverPts = pts;
   sc.driverPick = state.driverPick;
@@ -654,9 +1190,10 @@ function submitDriver(){
 }
 
 function nextRound(){
-  if(state.roundIdx === MOMENTS.length - 1){
+  if(state.roundIdx === state.moments.length - 1){
     state.view = 'final';
     render();
+    window.scrollTo({top:0,behavior:'smooth'});
     return;
   }
   state.roundIdx++;
@@ -668,29 +1205,25 @@ function nextRound(){
 /* ---------------------- FINAL ---------------------- */
 function renderFinal(){
   const totalPts = state.scores.reduce((s,r)=>s+r.total,0);
-  const maxPts = MOMENTS.length * TOTAL_PER_ROUND;
+  const maxPts = state.moments.length * TOTAL_PER_ROUND;
   const pct = Math.round(totalPts/maxPts*100);
   const trackPts = state.scores.reduce((s,r)=>s+r.trackPts,0);
   const driverPts = state.scores.reduce((s,r)=>s+r.driverPts,0);
-  const trackPct = Math.round(trackPts / (MOMENTS.length * PTS_PER_Q) * 100);
-  const driverPct = Math.round(driverPts / (MOMENTS.length * PTS_PER_Q) * 100);
+  const trackPct = Math.round(trackPts / (state.moments.length * PTS_PER_Q) * 100);
+  const driverPct = Math.round(driverPts / (state.moments.length * PTS_PER_Q) * 100);
 
   const verdict = pct >= 90 ? 'Tifosi tier. You watch the practice sessions.'
                 : pct >= 70 ? 'Solid garage hand. You know your eras.'
                 : pct >= 50 ? 'Casual fan with taste.'
                 : pct >= 25 ? 'A few classics in the locker.'
-                : 'Welcome to F1. Stick around.';
+                : 'Welcome to F1. Stick around — the racing’s good.';
 
   app.innerHTML = `
-    <div class="topbar">
-      <div class="top-icon">?</div>
-      <div class="brand">GRIDGUESSR</div>
-      <div class="top-icon" style="color:#777">✉</div>
-    </div>
+    ${renderTopbar()}
     <div class="score-card">
       <div class="label">Final Result</div>
       <div class="pct">${pct}%</div>
-      <div class="pts">${totalPts.toLocaleString()} / ${maxPts.toLocaleString()} pts</div>
+      <div class="pts">${totalPts.toLocaleString()} / ${maxPts.toLocaleString()} PTS</div>
       <div class="split">
         <div><div class="label">Tracks</div><div class="v">${trackPct}%</div></div>
         <div><div class="label">Drivers</div><div class="v">${driverPct}%</div></div>
@@ -699,20 +1232,21 @@ function renderFinal(){
     <div class="flavor">${verdict}</div>
     <div class="round-list">
       ${state.scores.map((sc,i)=>{
-        const m = MOMENTS[i];
+        const m = state.moments[i];
         const t = TRACKS.find(t=>t.id===m.track);
         const d = DRIVERS.find(d=>d.id===m.driver);
         const rpct = Math.round(sc.total/TOTAL_PER_ROUND*100);
+        const cls = rpct >= 75 ? 'good' : rpct >= 40 ? 'mid' : 'bad';
         return `
           <div class="round-row">
             <div class="rn">R${i+1} · ${m.year}</div>
-            <div class="rt">${t.name.split('(')[0].trim()} — ${d.name}</div>
-            <div class="rs">${rpct}%</div>
+            <div class="rt"><strong>${t.name.split('(')[0].trim()}</strong> — ${d.name}</div>
+            <div class="rs ${cls}">${rpct}%</div>
           </div>
         `;
       }).join('')}
     </div>
-    <button class="submit-btn" id="playAgain" style="background:#111">Play Again →</button>
+    <button class="submit-btn" id="playAgain">Play Again →</button>
   `;
   document.getElementById('playAgain').onclick = () => {
     state.view = 'start';
