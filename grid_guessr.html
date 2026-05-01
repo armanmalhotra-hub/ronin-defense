@@ -517,7 +517,54 @@
     border-radius:3px;
   }
   .start-btn:hover{background:#ff1801}
+  .start-btn-ghost{
+    width:100%;padding:0.85rem;
+    background:transparent;color:var(--gray);
+    border:1px solid var(--line-2);font-size:0.78rem;font-weight:600;
+    letter-spacing:0.14em;text-transform:uppercase;
+    cursor:pointer;font-family:'Titillium Web',sans-serif;
+    border-radius:3px;margin-top:0.55rem;
+    transition:border-color 0.15s,color 0.15s;
+  }
+  .start-btn-ghost:hover{border-color:var(--red);color:#fff}
   .start-meta{margin-top:1rem;font-family:'JetBrains Mono',monospace;font-size:0.68rem;letter-spacing:0.1em;color:var(--muted)}
+
+  /* SHARE CARD */
+  .share-card{
+    background:var(--card);
+    border:1px solid var(--line);
+    border-radius:6px;
+    padding:1.2rem;margin-bottom:1rem;
+    text-align:center;position:relative;overflow:hidden;
+  }
+  .share-card::before{
+    content:"";position:absolute;top:0;left:0;right:0;height:2px;
+    background:var(--green);
+  }
+  .share-label{
+    font-family:'JetBrains Mono',monospace;
+    font-size:0.65rem;letter-spacing:0.16em;text-transform:uppercase;
+    color:var(--gray-2);font-weight:600;margin-bottom:0.7rem;
+  }
+  .share-grid{
+    font-family:'JetBrains Mono',monospace;
+    font-size:0.95rem;line-height:1.5;
+    background:var(--bg-2);
+    border:1px solid var(--line);
+    border-radius:4px;
+    padding:0.85rem;
+    color:var(--white);
+    text-align:left;
+    white-space:pre;
+    overflow-x:auto;
+    margin-bottom:0.8rem;
+  }
+  .countdown{
+    font-family:'JetBrains Mono',monospace;
+    font-size:0.72rem;color:var(--gray-2);
+    letter-spacing:0.08em;text-transform:uppercase;
+    margin-top:0.85rem;
+  }
 
   /* FINAL */
   .round-list{
@@ -947,11 +994,18 @@ const ROUNDS_PER_GAME = 7;
 const PTS_PER_Q = 500;
 const TOTAL_PER_ROUND = PTS_PER_Q * 2;
 
+// Day 1 = the day GridGuessr shipped. Don't change this — it would
+// shift every saved share grid in the world.
+const EPOCH_ISO = '2026-05-01';
+const STORAGE_KEY = 'gridguessr_state_v1';
+
 /* =========================================================
    STATE
    ========================================================= */
 let state = {
   view: 'start',
+  mode: 'daily',          // 'daily' | 'practice'
+  day: null,
   moments: [],
   roundIdx: 0,
   trackPick: null,
@@ -962,8 +1016,29 @@ let state = {
 };
 
 /* =========================================================
-   UTIL
+   UTIL — daily seed, deterministic shuffle, persistence
    ========================================================= */
+// Mulberry32 — small fast seeded PRNG.
+function mulberry32(seed){
+  return function(){
+    seed = (seed + 0x6D2B79F5) | 0;
+    let t = seed;
+    t = Math.imul(t ^ (t >>> 15), t | 1);
+    t ^= t + Math.imul(t ^ (t >>> 7), t | 61);
+    return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+  };
+}
+
+function seededShuffle(arr, seed){
+  const rng = mulberry32(seed);
+  const a = arr.slice();
+  for(let i=a.length-1;i>0;i--){
+    const j = Math.floor(rng()*(i+1));
+    [a[i],a[j]] = [a[j],a[i]];
+  }
+  return a;
+}
+
 function shuffle(arr){
   const a = arr.slice();
   for(let i=a.length-1;i>0;i--){
@@ -973,8 +1048,50 @@ function shuffle(arr){
   return a;
 }
 
-function selectRoundMoments(){
+// Today's day number, computed from local midnight.
+function todayNumber(){
+  const epoch = new Date(EPOCH_ISO + 'T00:00:00');
+  const today = new Date();
+  today.setHours(0,0,0,0);
+  return Math.floor((today.getTime() - epoch.getTime()) / 86400000) + 1;
+}
+
+function selectMomentsForDay(day){
+  return seededShuffle(ALL_MOMENTS, day).slice(0, ROUNDS_PER_GAME);
+}
+
+function selectRandomMoments(){
   return shuffle(ALL_MOMENTS).slice(0, ROUNDS_PER_GAME);
+}
+
+function saveState(){
+  if(state.mode !== 'daily') return; // practice mode is ephemeral
+  try{
+    localStorage.setItem(STORAGE_KEY, JSON.stringify({
+      day: state.day,
+      view: state.view,
+      roundIdx: state.roundIdx,
+      trackPick: state.trackPick,
+      teamPick: state.teamPick,
+      trackSubmitted: state.trackSubmitted,
+      teamSubmitted: state.teamSubmitted,
+      scores: state.scores
+    }));
+  } catch(e){ /* localStorage may be unavailable; fail silently */ }
+}
+
+function loadState(){
+  try{
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if(!raw) return null;
+    const data = JSON.parse(raw);
+    if(data.day !== todayNumber()) return null; // stale, ignore
+    return data;
+  } catch(e){ return null; }
+}
+
+function clearState(){
+  try{ localStorage.removeItem(STORAGE_KEY); } catch(e){}
 }
 
 /* =========================================================
@@ -997,12 +1114,13 @@ function render(){
 
 /* ---------------------- START ---------------------- */
 function renderStart(){
+  const day = todayNumber();
   app.innerHTML = `
     ${renderTopbar()}
     <div class="start-card">
-      <div class="eyebrow">Daily Challenge</div>
+      <div class="eyebrow">Daily Challenge · Day ${day}</div>
       <h1>GridGuessr</h1>
-      <p class="blurb">Guess the track and team behind <strong style="color:#fff">7 iconic Formula 1 moments</strong>, drawn from seventy years of Grand Prix history.</p>
+      <p class="blurb">Guess the track and team behind <strong style="color:#fff">7 iconic Formula 1 moments</strong>. Same 7 for everyone, every day.</p>
       <div class="start-features">
         <div class="start-feat">
           <div class="icon">◉</div>
@@ -1015,15 +1133,29 @@ function renderStart(){
           <div class="meta">${TEAMS.length} teams</div>
         </div>
       </div>
-      <button class="start-btn" id="startBtn">Start Playing →</button>
+      <button class="start-btn" id="startBtn">Play Today's Puzzle →</button>
+      <button class="start-btn-ghost" id="practiceBtn">Practice Mode (random)</button>
       <div class="start-meta">${ALL_MOMENTS.length} MOMENTS · ${ROUNDS_PER_GAME} ROUNDS · MAX ${(ROUNDS_PER_GAME*TOTAL_PER_ROUND).toLocaleString()} PTS</div>
     </div>
   `;
   document.getElementById('startBtn').onclick = () => {
     state.view = 'round';
+    state.mode = 'daily';
+    state.day = day;
     state.roundIdx = 0;
     state.scores = [];
-    state.moments = selectRoundMoments();
+    state.moments = selectMomentsForDay(day);
+    resetRound();
+    saveState();
+    render();
+  };
+  document.getElementById('practiceBtn').onclick = () => {
+    state.view = 'round';
+    state.mode = 'practice';
+    state.day = null;
+    state.roundIdx = 0;
+    state.scores = [];
+    state.moments = selectRandomMoments();
     resetRound();
     render();
   };
@@ -1384,6 +1516,7 @@ function submitTrack(){
     teamPick: null
   };
   state.trackSubmitted = true;
+  saveState();
   renderTrackStep();
   renderTeamStep();
 }
@@ -1398,6 +1531,7 @@ function submitTeam(){
   sc.teamPick = state.teamPick;
   sc.total = sc.trackPts + sc.teamPts;
   state.teamSubmitted = true;
+  saveState();
   renderTrackStep();   // collapse step 1
   renderTeamStep();    // collapse step 2
   renderRoundResult(); // show full dossier
@@ -1406,17 +1540,21 @@ function submitTeam(){
 function nextRound(){
   if(state.roundIdx === state.moments.length - 1){
     state.view = 'final';
+    saveState();
     render();
     window.scrollTo({top:0,behavior:'smooth'});
     return;
   }
   state.roundIdx++;
   resetRound();
+  saveState();
   render();
   window.scrollTo({top:0, behavior:'smooth'});
 }
 
 /* ---------------------- FINAL ---------------------- */
+let countdownTimer = null;
+
 function renderFinal(){
   const totalPts = state.scores.reduce((s,r)=>s+r.total,0);
   const maxPts = state.moments.length * TOTAL_PER_ROUND;
@@ -1432,10 +1570,13 @@ function renderFinal(){
                 : pct >= 25 ? 'A few classics in the locker.'
                 : 'Welcome to F1. Stick around — the racing’s good.';
 
+  const isDaily = state.mode === 'daily';
+  const dayLabel = isDaily ? `Day ${state.day}` : 'Practice';
+
   app.innerHTML = `
     ${renderTopbar()}
     <div class="score-card">
-      <div class="label">Final Result</div>
+      <div class="label">${isDaily ? 'Final Result · ' + dayLabel : 'Practice Result'}</div>
       <div class="pct">${pct}%</div>
       <div class="pts">${totalPts.toLocaleString()} / ${maxPts.toLocaleString()} PTS</div>
       <div class="split">
@@ -1444,6 +1585,18 @@ function renderFinal(){
       </div>
     </div>
     <div class="flavor">${verdict}</div>
+
+    ${isDaily ? `
+      <div class="share-card">
+        <div class="share-label">Spoiler-free share grid</div>
+        <pre class="share-grid" id="shareGrid">${escapeHtml(buildShareText())}</pre>
+        <button class="submit-btn" id="shareBtn">📋 Copy Result</button>
+        <div class="countdown" id="countdown">Next puzzle in —</div>
+      </div>
+    ` : `
+      <button class="submit-btn" id="playAgain">Play Again →</button>
+    `}
+
     <div class="round-list">
       ${state.scores.map((sc,i)=>{
         const m = state.moments[i];
@@ -1461,20 +1614,107 @@ function renderFinal(){
         `;
       }).join('')}
     </div>
-    <button class="submit-btn" id="playAgain">Play Again →</button>
+
+    ${isDaily ? `<button class="submit-btn dark" id="practiceFromFinal">Play Practice Round →</button>` : ''}
   `;
-  document.getElementById('playAgain').onclick = () => {
-    state.view = 'start';
-    state.roundIdx = 0;
-    state.scores = [];
-    resetRound();
-    render();
-    window.scrollTo({top:0});
+
+  if(isDaily){
+    const shareBtn = document.getElementById('shareBtn');
+    shareBtn.onclick = async () => {
+      const text = buildShareText();
+      try{
+        await navigator.clipboard.writeText(text);
+        shareBtn.textContent = '✓ Copied to clipboard';
+        setTimeout(() => shareBtn.textContent = '📋 Copy Result', 1800);
+      } catch(e){
+        // fallback: select the pre block
+        const pre = document.getElementById('shareGrid');
+        const range = document.createRange();
+        range.selectNode(pre);
+        window.getSelection().removeAllRanges();
+        window.getSelection().addRange(range);
+        shareBtn.textContent = 'Selected — press Cmd/Ctrl+C';
+      }
+    };
+    startCountdown();
+    const practiceBtn = document.getElementById('practiceFromFinal');
+    if(practiceBtn) practiceBtn.onclick = () => {
+      state.view = 'round';
+      state.mode = 'practice';
+      state.day = null;
+      state.roundIdx = 0;
+      state.scores = [];
+      state.moments = selectRandomMoments();
+      resetRound();
+      render();
+      window.scrollTo({top:0});
+    };
+  } else {
+    document.getElementById('playAgain').onclick = () => {
+      state.view = 'start';
+      state.roundIdx = 0;
+      state.scores = [];
+      resetRound();
+      render();
+      window.scrollTo({top:0});
+    };
+  }
+}
+
+function buildShareText(){
+  const day = state.day;
+  const totalPts = state.scores.reduce((s,r)=>s+r.total,0);
+  const maxPts = state.moments.length * TOTAL_PER_ROUND;
+  const pct = Math.round(totalPts/maxPts*100);
+  const grid = state.scores.map(sc => {
+    const trackBlock = sc.trackPts === PTS_PER_Q ? '🟩' : (sc.trackPts > 0 ? '🟨' : '🟥');
+    const teamBlock = sc.teamPts === PTS_PER_Q ? '🟩' : '🟥';
+    return trackBlock + teamBlock;
+  }).join('\n');
+  return `GridGuessr · Day ${day}\n${pct}% · ${totalPts}/${maxPts} pts\n\n${grid}\n\n🟩 hit · 🟨 right country · 🟥 miss`;
+}
+
+function escapeHtml(s){
+  return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+
+function startCountdown(){
+  if(countdownTimer) clearInterval(countdownTimer);
+  const el = document.getElementById('countdown');
+  if(!el) return;
+  const tick = () => {
+    const now = new Date();
+    const tomorrow = new Date(now);
+    tomorrow.setHours(24,0,0,0);
+    let diff = Math.max(0, tomorrow - now);
+    const h = Math.floor(diff / 3600000); diff -= h*3600000;
+    const m = Math.floor(diff / 60000);    diff -= m*60000;
+    const s = Math.floor(diff / 1000);
+    el.textContent = `Next puzzle in ${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
   };
+  tick();
+  countdownTimer = setInterval(tick, 1000);
 }
 
 /* ---------------------- BOOT ---------------------- */
-render();
+function boot(){
+  const saved = loadState();
+  if(saved){
+    // Restore an in-progress or completed daily game.
+    state.mode = 'daily';
+    state.day = saved.day;
+    state.moments = selectMomentsForDay(saved.day);
+    state.view = saved.view;
+    state.roundIdx = saved.roundIdx || 0;
+    state.scores = saved.scores || [];
+    state.trackPick = saved.trackPick || null;
+    state.teamPick = saved.teamPick || null;
+    state.trackSubmitted = !!saved.trackSubmitted;
+    state.teamSubmitted = !!saved.teamSubmitted;
+  }
+  render();
+}
+boot();
 </script>
 </body>
 </html>
