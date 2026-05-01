@@ -1,12 +1,16 @@
 :root {
-  --bg: #f6f1e8;
-  --paper: #fffbf3;
-  --ink: #1a1815;
-  --muted: #8b8579;
-  --line: #e3dccc;
-  --line-soft: #efe9da;
-  --accent: #b85a2e;        /* persimmon */
-  --accent-soft: #f3e6dd;
+  /* Vintage Tokyo coffee shop — warm cream walls, persimmon banquette,
+     brass hardware, art-deco signage. Old-money typography on top. */
+  --bg: #f3ecda;            /* aged paper / cream wall */
+  --paper: #faf4e3;         /* lit-tabletop card */
+  --ink: #1a1612;           /* iron-gall ink */
+  --muted: #8a8270;         /* warm taupe */
+  --line: #e2d8c0;          /* pale bone hairline */
+  --line-soft: #ece4cf;
+  --accent: #b85a2e;        /* persimmon — the leather banquette */
+  --accent-soft: #f0dfcf;
+  --brass: #9a7a3c;         /* gold-leaf metallic — fine details, signage */
+  --brass-soft: #ead6a8;
   --good: #5a7a3a;
   --warn: #a4452a;
   --serif: "Cormorant Garamond", Georgia, "Times New Roman", serif;
@@ -34,10 +38,14 @@ header {
   padding: 32px 48px 22px; gap: 24px;
 }
 header h1 {
-  margin: 0; font-family: var(--serif); font-weight: 600;
-  font-size: 36px; letter-spacing: -0.01em; line-height: 1;
+  margin: 0; font-family: var(--serif); font-weight: 500;
+  font-size: 38px; letter-spacing: 0.005em; line-height: 1;
+  font-variant: small-caps;
 }
-header .sub { margin: 6px 0 0; color: var(--muted); font-size: 13px; }
+header .sub {
+  margin: 6px 0 0; color: var(--muted); font-size: 11px;
+  letter-spacing: 0.16em; text-transform: uppercase; font-weight: 500;
+}
 
 .who { display: flex; gap: 6px; align-items: center; }
 .who input {
@@ -87,13 +95,24 @@ nav.tabs {
 }
 nav.tabs .tab {
   border: 0; background: transparent; padding: 14px 18px;
-  font: inherit; font-size: 13px; color: var(--muted); cursor: pointer;
-  border-bottom: 2px solid transparent;
+  font: inherit; font-size: 12px; color: var(--muted); cursor: pointer;
+  position: relative;
   margin-bottom: -1px;
-  letter-spacing: 0.01em;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  font-weight: 500;
+  font-family: var(--sans);
 }
 nav.tabs .tab:hover { color: var(--ink); }
-nav.tabs .tab.active { color: var(--ink); border-bottom-color: var(--ink); font-weight: 500; }
+nav.tabs .tab.active { color: var(--ink); }
+/* Art-deco double-rule under the active tab */
+nav.tabs .tab.active::before,
+nav.tabs .tab.active::after {
+  content: ""; position: absolute; left: 18px; right: 18px;
+  height: 1px; background: var(--ink);
+}
+nav.tabs .tab.active::before { bottom: 4px; }
+nav.tabs .tab.active::after  { bottom: 1px; height: 1px; background: var(--brass); }
 nav.tabs #search {
   margin-left: auto; min-width: 200px;
   font: inherit; padding: 7px 12px; background: transparent;
@@ -129,7 +148,7 @@ nav.tabs #search:focus { outline: none; border-bottom-color: var(--ink); }
   display: flex; flex-direction: column;
   transition: border-color 0.15s ease, transform 0.15s ease;
 }
-.card:hover { border-color: var(--muted); }
+.card:hover { border-color: var(--brass); }
 
 .card.with-image .img {
   display: block; aspect-ratio: 4 / 5; background: var(--line-soft);
