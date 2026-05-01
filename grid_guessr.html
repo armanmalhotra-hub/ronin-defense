@@ -1,0 +1,731 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>GridGuessr — Daily F1 Challenge</title>
+<style>
+  *{margin:0;padding:0;box-sizing:border-box}
+  :root{
+    --bg:#f4f4f4;
+    --card:#ffffff;
+    --ink:#111;
+    --muted:#666;
+    --line:#e5e5e5;
+    --accent:#1d6f42;
+    --accent-light:#a8d4b9;
+    --accent-soft:#e6f0ea;
+    --wrong:#c8453c;
+    --close:#d8a83a;
+    --locked:#bbb;
+    --chip:#f0f0f0;
+  }
+  html,body{background:var(--bg);color:var(--ink);font-family:-apple-system,BlinkMacSystemFont,"SF Pro Text","Helvetica Neue",sans-serif;-webkit-font-smoothing:antialiased}
+  body{min-height:100vh;display:flex;flex-direction:column;align-items:center;padding:1rem;padding-bottom:3rem}
+  .wrap{width:100%;max-width:480px}
+
+  /* HEADER */
+  .topbar{display:flex;align-items:center;justify-content:space-between;padding:0.5rem 0 1.25rem}
+  .top-icon{width:40px;height:40px;border-radius:50%;background:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;color:#0a4ec2;font-size:1.1rem;border:1px solid var(--line)}
+  .brand{font-weight:700;letter-spacing:0.18em;font-size:0.75rem;color:#222}
+  .progress-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem}
+  .progress-label{font-size:0.95rem;font-weight:600;color:#222}
+  .progress-pips{display:flex;gap:6px}
+  .pip{width:28px;height:4px;border-radius:2px;background:#d6d6d6}
+  .pip.done{background:var(--accent)}
+  .pip.active{background:#0a4ec2}
+
+  /* MOMENT CARD (replaces street view image) */
+  .moment{position:relative;border-radius:14px;overflow:hidden;height:260px;display:flex;flex-direction:column;justify-content:space-between;padding:1.1rem;color:#fff;box-shadow:0 2px 8px rgba(0,0,0,0.06);margin-bottom:1rem}
+  .moment.wet{background:linear-gradient(135deg,#1a2332 0%,#2d3e52 50%,#3a5070 100%)}
+  .moment.dusk{background:linear-gradient(135deg,#3a1f3d 0%,#7a3a4f 50%,#d97a4f 100%)}
+  .moment.night{background:linear-gradient(135deg,#0a0e1f 0%,#1a2540 60%,#2d3e6b 100%)}
+  .moment.sun{background:linear-gradient(135deg,#1f5fb5 0%,#3a8edb 60%,#a8d4f0 100%)}
+  .moment.heat{background:linear-gradient(135deg,#5a2d0a 0%,#a85020 60%,#e89548 100%)}
+  .moment.classic{background:linear-gradient(135deg,#2a2a2a 0%,#4a4a4a 50%,#6a6a6a 100%)}
+  .moment.history{background:linear-gradient(135deg,#3a2a1a 0%,#6a4a2a 50%,#a07a4a 100%)}
+  .moment::after{content:"";position:absolute;inset:0;background-image:repeating-linear-gradient(-45deg,transparent 0 18px,rgba(255,255,255,0.03) 18px 19px);pointer-events:none}
+  .moment-top{display:flex;justify-content:space-between;align-items:flex-start;position:relative;z-index:1}
+  .moment-year{font-size:2.6rem;font-weight:800;letter-spacing:-0.02em;line-height:1}
+  .moment-tags{display:flex;flex-direction:column;gap:0.3rem;align-items:flex-end}
+  .tag{font-size:0.65rem;letter-spacing:0.1em;text-transform:uppercase;background:rgba(255,255,255,0.18);padding:0.25rem 0.55rem;border-radius:3px;font-weight:600}
+  .moment-desc{font-size:0.95rem;line-height:1.45;font-weight:500;text-shadow:0 1px 2px rgba(0,0,0,0.25);position:relative;z-index:1;max-width:340px}
+  .moment-foot{display:flex;justify-content:space-between;font-size:0.7rem;letter-spacing:0.08em;text-transform:uppercase;opacity:0.85;position:relative;z-index:1}
+
+  /* STEP CARDS */
+  .step-card{background:var(--card);border-radius:14px;padding:1.1rem;margin-bottom:1rem;box-shadow:0 1px 3px rgba(0,0,0,0.04)}
+  .step-head{display:flex;align-items:center;gap:0.6rem;margin-bottom:0.9rem}
+  .step-num{width:26px;height:26px;border-radius:50%;background:#0a4ec2;color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:0.85rem;flex-shrink:0}
+  .step-num.done{background:var(--accent)}
+  .step-num.locked{background:var(--locked)}
+  .step-title{font-size:0.78rem;letter-spacing:0.12em;text-transform:uppercase;color:#444;font-weight:600}
+  .step-card.locked .step-title{color:var(--locked)}
+  .step-sub{font-size:0.78rem;color:var(--muted);margin-top:-0.3rem;margin-bottom:0.6rem;margin-left:2.2rem}
+
+  /* SEARCH INPUT + SUGGESTIONS */
+  .search-wrap{position:relative}
+  .search{width:100%;padding:0.85rem 1rem;font-size:1rem;border:1px solid var(--line);border-radius:10px;background:#fafafa;outline:none;font-family:inherit}
+  .search:focus{border-color:#0a4ec2;background:#fff}
+  .search:disabled{background:#f0f0f0;color:#aaa;cursor:not-allowed}
+  .suggestions{position:absolute;top:calc(100% + 4px);left:0;right:0;background:#fff;border:1px solid var(--line);border-radius:10px;max-height:220px;overflow-y:auto;z-index:10;box-shadow:0 6px 18px rgba(0,0,0,0.08);display:none}
+  .suggestions.open{display:block}
+  .sugg-item{padding:0.65rem 0.9rem;font-size:0.9rem;cursor:pointer;border-bottom:1px solid #f3f3f3;display:flex;justify-content:space-between;align-items:center}
+  .sugg-item:last-child{border-bottom:none}
+  .sugg-item:hover,.sugg-item.hover{background:#f5f9ff}
+  .sugg-meta{font-size:0.75rem;color:var(--muted)}
+
+  .selected-display{padding:0.85rem 1rem;background:var(--accent-soft);border:1px solid var(--accent-light);border-radius:10px;display:flex;justify-content:space-between;align-items:center;font-size:0.95rem;font-weight:600;color:#0d3a23}
+  .selected-display .clear{background:none;border:none;color:#0d3a23;font-size:1.2rem;cursor:pointer;padding:0;line-height:1;opacity:0.6}
+  .selected-display .clear:hover{opacity:1}
+
+  .submit-btn{width:100%;padding:0.95rem;border:none;border-radius:50px;background:var(--accent);color:#fff;font-size:1rem;font-weight:600;cursor:pointer;margin-top:0.9rem;font-family:inherit;transition:background 0.15s,opacity 0.15s}
+  .submit-btn:disabled{background:var(--accent-light);color:#fff;cursor:not-allowed;opacity:0.7}
+  .submit-btn:not(:disabled):hover{background:#175832}
+
+  .locked-msg{padding:0.85rem 1rem;background:#f5f5f5;border:1px dashed #ddd;border-radius:10px;color:var(--locked);font-size:0.9rem;text-align:center;font-weight:500}
+
+  /* RESULT VIEWS */
+  .result-line{display:flex;justify-content:space-between;align-items:center;padding:0.5rem 0;font-size:0.92rem}
+  .result-line + .result-line{border-top:1px solid var(--line)}
+  .result-label{color:var(--muted);font-size:0.75rem;letter-spacing:0.08em;text-transform:uppercase}
+  .result-val{font-weight:600}
+  .result-val.right{color:var(--accent)}
+  .result-val.wrong{color:var(--wrong)}
+  .result-val.close{color:var(--close)}
+
+  .step-result{display:flex;align-items:center;gap:0.5rem;font-size:0.85rem;color:var(--muted);margin-left:auto}
+  .step-result .badge{padding:0.15rem 0.55rem;border-radius:10px;font-size:0.7rem;font-weight:700;letter-spacing:0.04em}
+  .badge.right{background:var(--accent-soft);color:var(--accent)}
+  .badge.close{background:#fbf3dc;color:#7d5e0e}
+  .badge.wrong{background:#fbe5e3;color:var(--wrong)}
+
+  /* SCORE PANEL (round result + final) */
+  .score-card{background:#fff;border-radius:14px;padding:1.5rem;text-align:center;margin-bottom:1rem;box-shadow:0 1px 3px rgba(0,0,0,0.04)}
+  .score-card .label{font-size:0.72rem;letter-spacing:0.14em;text-transform:uppercase;color:var(--muted);font-weight:600;margin-bottom:0.4rem}
+  .score-card .pct{font-size:4rem;font-weight:800;letter-spacing:-0.04em;line-height:1;color:var(--ink)}
+  .score-card .pts{font-size:0.9rem;color:var(--muted);margin-top:0.3rem}
+  .split{display:flex;border-top:1px solid var(--line);margin-top:1.1rem;padding-top:1rem}
+  .split > div{flex:1;text-align:center}
+  .split > div + div{border-left:1px solid var(--line)}
+  .split .label{margin-bottom:0.3rem}
+  .split .v{font-size:1.6rem;font-weight:800;letter-spacing:-0.02em}
+
+  .answer-card{background:#fff;border-radius:14px;padding:1.1rem;margin-bottom:1rem;box-shadow:0 1px 3px rgba(0,0,0,0.04)}
+  .answer-grid{display:grid;grid-template-columns:1fr 1fr;gap:0.6rem}
+  .answer-cell{padding:0.85rem;background:#fafafa;border-radius:10px;border:1px solid var(--line)}
+  .answer-cell .label{font-size:0.65rem;letter-spacing:0.1em;text-transform:uppercase;color:var(--muted);margin-bottom:0.3rem}
+  .answer-cell .ans{font-weight:700;font-size:0.95rem;color:var(--accent)}
+  .answer-cell .guess{font-size:0.8rem;color:var(--muted);margin-top:0.15rem}
+  .answer-cell .guess.wrong{color:var(--wrong)}
+
+  .flavor{font-style:italic;text-align:center;color:#444;padding:0.5rem 1rem 1rem;font-size:0.9rem}
+
+  /* START SCREEN */
+  .start-card{background:#fff;border-radius:18px;padding:2rem 1.5rem;text-align:center;margin-top:2rem;box-shadow:0 4px 16px rgba(0,0,0,0.06)}
+  .start-card .eyebrow{font-size:0.75rem;letter-spacing:0.18em;text-transform:uppercase;color:var(--muted);font-weight:600;margin-bottom:0.7rem}
+  .start-card h1{font-size:2.2rem;font-weight:800;letter-spacing:-0.02em;margin-bottom:0.8rem}
+  .start-card .blurb{color:var(--muted);font-size:0.95rem;line-height:1.5;margin-bottom:1.5rem}
+  .start-features{display:flex;justify-content:center;gap:0;border-top:1px solid var(--line);border-bottom:1px solid var(--line);padding:1.2rem 0;margin-bottom:1.5rem}
+  .start-feat{flex:1;display:flex;flex-direction:column;align-items:center;gap:0.5rem}
+  .start-feat + .start-feat{border-left:1px solid var(--line)}
+  .start-feat .icon{font-size:1.5rem;opacity:0.7}
+  .start-feat .label{font-size:0.85rem;color:#333;font-weight:500}
+  .start-btn{width:100%;padding:1rem;background:#111;color:#fff;border:none;border-radius:50px;font-size:1.05rem;font-weight:600;cursor:pointer;font-family:inherit}
+  .start-btn:hover{background:#000}
+
+  /* FINAL SCREEN */
+  .round-list{background:#fff;border-radius:14px;padding:0.4rem 1rem;margin-bottom:1rem;box-shadow:0 1px 3px rgba(0,0,0,0.04)}
+  .round-row{display:flex;justify-content:space-between;align-items:center;padding:0.7rem 0;border-bottom:1px solid var(--line);font-size:0.88rem}
+  .round-row:last-child{border-bottom:none}
+  .round-row .rn{color:var(--muted);font-size:0.78rem;width:60px}
+  .round-row .rt{flex:1}
+  .round-row .rs{font-weight:700}
+
+  /* utility */
+  .hidden{display:none!important}
+</style>
+</head>
+<body>
+<div class="wrap" id="app"></div>
+
+<script>
+/* =========================================================
+   DATA — 7 iconic F1 moments
+   No copyrighted images; each moment is described in text +
+   styled atmospheric panel. Swap in real photos later.
+   ========================================================= */
+const MOMENTS = [
+  {
+    year: 2008,
+    track: 'interlagos',
+    driver: 'lewis-hamilton',
+    mood: 'wet',
+    tags: ['Wet finale', 'Title decider'],
+    desc: 'Last lap, last corner. The championship has just changed hands twice in 30 seconds. The pass for fifth place that wins a title.',
+    foot: ['Lap 71/71', 'Final corner'],
+    flavor: 'Glock running on dries, Hamilton hunts him down. "Is that Glock?!"'
+  },
+  {
+    year: 1993,
+    track: 'donington-park',
+    driver: 'ayrton-senna',
+    mood: 'wet',
+    tags: ['Wet', 'Lap 1 masterclass'],
+    desc: 'Started fifth. Through Redgate, Craner, the Old Hairpin and McLeans, the rain-mottled grass blurs as five cars become one in the lead.',
+    foot: ['Lap 1', 'European GP'],
+    flavor: 'Widely regarded as the greatest opening lap in F1 history.'
+  },
+  {
+    year: 2021,
+    track: 'yas-marina',
+    driver: 'max-verstappen',
+    mood: 'night',
+    tags: ['Night race', 'Title decider'],
+    desc: 'Soft tyres against worn hards. One lap left. The safety car peels in and the championship is decided in 70 seconds of green-flag racing.',
+    foot: ['Lap 58/58', 'Season finale'],
+    flavor: 'The most controversial championship finish in modern F1.'
+  },
+  {
+    year: 2000,
+    track: 'spa-francorchamps',
+    driver: 'mika-hakkinen',
+    mood: 'classic',
+    tags: ['Dry', 'Iconic overtake'],
+    desc: 'A backmarker is used as a moving chicane on the run down to Les Combes. Two cars dive past on either side of him at over 300 km/h.',
+    foot: ['Lap 41', 'Belgian GP'],
+    flavor: 'Schumacher waved his fist. The pass became legend.'
+  },
+  {
+    year: 1988,
+    track: 'monaco',
+    driver: 'ayrton-senna',
+    mood: 'sun',
+    tags: ['Qualifying', 'Pole lap'],
+    desc: '1.427 seconds clear of his teammate. In the same car. Around the streets. Later he described being on a "different conscious level" — outside himself, watching from above.',
+    foot: ['Q3', 'Saturday'],
+    flavor: '"I was no longer driving the car consciously."'
+  },
+  {
+    year: 2006,
+    track: 'hungaroring',
+    driver: 'jenson-button',
+    mood: 'wet',
+    tags: ['Wet', 'First win'],
+    desc: 'Started 14th after an engine penalty. Six years and 113 races into a career, finally on the top step — in conditions that swallowed half the grid.',
+    foot: ['Lap 70/70', 'Hungarian GP'],
+    flavor: 'A maiden victory delivered with raw skill in the rain.'
+  },
+  {
+    year: 2012,
+    track: 'interlagos',
+    driver: 'sebastian-vettel',
+    mood: 'wet',
+    tags: ['Wet', 'Title decider'],
+    desc: 'Spun on the opening lap, dropped to last with a damaged sidepod. By the flag, sixth place is enough — barely — to seal a third consecutive title.',
+    foot: ['Lap 71/71', 'Season finale'],
+    flavor: 'Decided by three points after a chaotic, rain-soaked race.'
+  }
+];
+
+const TRACKS = [
+  {id:'monaco',name:'Circuit de Monaco',country:'Monaco'},
+  {id:'silverstone',name:'Silverstone Circuit',country:'United Kingdom'},
+  {id:'monza',name:'Autodromo Nazionale Monza',country:'Italy'},
+  {id:'spa-francorchamps',name:'Spa-Francorchamps',country:'Belgium'},
+  {id:'suzuka',name:'Suzuka International',country:'Japan'},
+  {id:'interlagos',name:'Autódromo José Carlos Pace (Interlagos)',country:'Brazil'},
+  {id:'nurburgring',name:'Nürburgring',country:'Germany'},
+  {id:'hockenheim',name:'Hockenheimring',country:'Germany'},
+  {id:'imola',name:'Autodromo Enzo e Dino Ferrari (Imola)',country:'Italy'},
+  {id:'cota',name:'Circuit of the Americas',country:'United States'},
+  {id:'albert-park',name:'Albert Park',country:'Australia'},
+  {id:'bahrain',name:'Bahrain International Circuit',country:'Bahrain'},
+  {id:'yas-marina',name:'Yas Marina Circuit',country:'United Arab Emirates'},
+  {id:'marina-bay',name:'Marina Bay Street Circuit',country:'Singapore'},
+  {id:'hungaroring',name:'Hungaroring',country:'Hungary'},
+  {id:'catalunya',name:'Circuit de Barcelona-Catalunya',country:'Spain'},
+  {id:'zandvoort',name:'Circuit Zandvoort',country:'Netherlands'},
+  {id:'mexico-city',name:'Autódromo Hermanos Rodríguez',country:'Mexico'},
+  {id:'shanghai',name:'Shanghai International Circuit',country:'China'},
+  {id:'baku',name:'Baku City Circuit',country:'Azerbaijan'},
+  {id:'jeddah',name:'Jeddah Corniche Circuit',country:'Saudi Arabia'},
+  {id:'las-vegas',name:'Las Vegas Strip Circuit',country:'United States'},
+  {id:'miami',name:'Miami International Autodrome',country:'United States'},
+  {id:'lusail',name:'Lusail International Circuit',country:'Qatar'},
+  {id:'donington-park',name:'Donington Park',country:'United Kingdom'},
+  {id:'estoril',name:'Autódromo do Estoril',country:'Portugal'},
+  {id:'magny-cours',name:'Circuit de Nevers Magny-Cours',country:'France'},
+  {id:'paul-ricard',name:'Circuit Paul Ricard',country:'France'},
+  {id:'adelaide',name:'Adelaide Street Circuit',country:'Australia'},
+  {id:'kyalami',name:'Kyalami',country:'South Africa'},
+  {id:'sochi',name:'Sochi Autodrom',country:'Russia'},
+  {id:'istanbul',name:'Istanbul Park',country:'Turkey'},
+  {id:'red-bull-ring',name:'Red Bull Ring',country:'Austria'},
+  {id:'osterreichring',name:'Österreichring',country:'Austria'},
+  {id:'jerez',name:'Circuito de Jerez',country:'Spain'},
+  {id:'long-beach',name:'Long Beach Street Circuit',country:'United States'},
+  {id:'detroit',name:'Detroit Street Circuit',country:'United States'},
+  {id:'indianapolis',name:'Indianapolis Motor Speedway',country:'United States'}
+];
+
+const DRIVERS = [
+  {id:'lewis-hamilton',name:'Lewis Hamilton',era:'2007–'},
+  {id:'max-verstappen',name:'Max Verstappen',era:'2015–'},
+  {id:'michael-schumacher',name:'Michael Schumacher',era:'1991–2012'},
+  {id:'ayrton-senna',name:'Ayrton Senna',era:'1984–1994'},
+  {id:'alain-prost',name:'Alain Prost',era:'1980–1993'},
+  {id:'nigel-mansell',name:'Nigel Mansell',era:'1980–1995'},
+  {id:'fernando-alonso',name:'Fernando Alonso',era:'2001–'},
+  {id:'sebastian-vettel',name:'Sebastian Vettel',era:'2007–2022'},
+  {id:'kimi-raikkonen',name:'Kimi Räikkönen',era:'2001–2021'},
+  {id:'mika-hakkinen',name:'Mika Häkkinen',era:'1991–2001'},
+  {id:'niki-lauda',name:'Niki Lauda',era:'1971–1985'},
+  {id:'jackie-stewart',name:'Jackie Stewart',era:'1965–1973'},
+  {id:'jim-clark',name:'Jim Clark',era:'1960–1968'},
+  {id:'juan-manuel-fangio',name:'Juan Manuel Fangio',era:'1950–1958'},
+  {id:'damon-hill',name:'Damon Hill',era:'1992–1999'},
+  {id:'jacques-villeneuve',name:'Jacques Villeneuve',era:'1996–2006'},
+  {id:'gilles-villeneuve',name:'Gilles Villeneuve',era:'1977–1982'},
+  {id:'nelson-piquet',name:'Nelson Piquet',era:'1978–1991'},
+  {id:'jenson-button',name:'Jenson Button',era:'2000–2017'},
+  {id:'daniel-ricciardo',name:'Daniel Ricciardo',era:'2011–2024'},
+  {id:'charles-leclerc',name:'Charles Leclerc',era:'2018–'},
+  {id:'lando-norris',name:'Lando Norris',era:'2019–'},
+  {id:'george-russell',name:'George Russell',era:'2019–'},
+  {id:'carlos-sainz',name:'Carlos Sainz',era:'2015–'},
+  {id:'oscar-piastri',name:'Oscar Piastri',era:'2023–'},
+  {id:'pierre-gasly',name:'Pierre Gasly',era:'2017–'},
+  {id:'mark-webber',name:'Mark Webber',era:'2002–2013'},
+  {id:'felipe-massa',name:'Felipe Massa',era:'2002–2017'},
+  {id:'rubens-barrichello',name:'Rubens Barrichello',era:'1993–2011'},
+  {id:'david-coulthard',name:'David Coulthard',era:'1994–2008'},
+  {id:'eddie-irvine',name:'Eddie Irvine',era:'1993–2002'},
+  {id:'james-hunt',name:'James Hunt',era:'1973–1979'},
+  {id:'graham-hill',name:'Graham Hill',era:'1958–1975'},
+  {id:'emerson-fittipaldi',name:'Emerson Fittipaldi',era:'1970–1980'},
+  {id:'mario-andretti',name:'Mario Andretti',era:'1968–1982'},
+  {id:'keke-rosberg',name:'Keke Rosberg',era:'1978–1986'},
+  {id:'nico-rosberg',name:'Nico Rosberg',era:'2006–2016'},
+  {id:'valtteri-bottas',name:'Valtteri Bottas',era:'2013–'},
+  {id:'jacques-laffite',name:'Jacques Laffite',era:'1974–1986'},
+  {id:'rene-arnoux',name:'René Arnoux',era:'1978–1989'}
+];
+
+/* =========================================================
+   STATE
+   ========================================================= */
+let state = {
+  view: 'start',          // 'start' | 'round' | 'final'
+  roundIdx: 0,            // 0..6
+  trackPick: null,        // track id
+  driverPick: null,       // driver id
+  trackSubmitted: false,
+  driverSubmitted: false,
+  scores: []              // per round: {trackPts, driverPts, total, trackPick, driverPick}
+};
+
+const PTS_PER_Q = 500;
+const TOTAL_PER_ROUND = PTS_PER_Q * 2;
+
+/* =========================================================
+   RENDER ROOT
+   ========================================================= */
+const app = document.getElementById('app');
+
+function render(){
+  if(state.view==='start') return renderStart();
+  if(state.view==='final') return renderFinal();
+  return renderRound();
+}
+
+/* ---------------------- START ---------------------- */
+function renderStart(){
+  app.innerHTML = `
+    <div class="topbar">
+      <div class="top-icon">?</div>
+      <div class="brand">GRIDGUESSR</div>
+      <div class="top-icon" style="color:#777">✉</div>
+    </div>
+    <div class="start-card">
+      <div class="eyebrow">Daily Challenge</div>
+      <h1>GridGuessr</h1>
+      <p class="blurb">Guess the track and driver of 7 iconic Formula 1 moments — pulled from sixty years of grand prix history.</p>
+      <div class="start-features">
+        <div class="start-feat"><div class="icon">📍</div><div class="label">Find the Track</div></div>
+        <div class="start-feat"><div class="icon">🏎️</div><div class="label">Name the Driver</div></div>
+      </div>
+      <button class="start-btn" id="startBtn">Start Playing</button>
+    </div>
+  `;
+  document.getElementById('startBtn').onclick = () => {
+    state.view = 'round';
+    state.roundIdx = 0;
+    state.scores = [];
+    resetRound();
+    render();
+  };
+}
+
+/* ---------------------- ROUND ---------------------- */
+function resetRound(){
+  state.trackPick = null;
+  state.driverPick = null;
+  state.trackSubmitted = false;
+  state.driverSubmitted = false;
+}
+
+function renderRound(){
+  const m = MOMENTS[state.roundIdx];
+  const total = MOMENTS.length;
+
+  const pips = Array.from({length: total}, (_, i) => {
+    let cls = 'pip';
+    if(i < state.roundIdx) cls += ' done';
+    else if(i === state.roundIdx) cls += ' active';
+    return `<div class="${cls}"></div>`;
+  }).join('');
+
+  app.innerHTML = `
+    <div class="topbar">
+      <div class="top-icon">?</div>
+      <div class="brand">GRIDGUESSR</div>
+      <div class="top-icon" style="color:#777">✉</div>
+    </div>
+    <div class="progress-row">
+      <div class="progress-label">Round ${state.roundIdx+1} of ${total}</div>
+      <div class="progress-pips">${pips}</div>
+    </div>
+
+    <div class="moment ${m.mood}">
+      <div class="moment-top">
+        <div class="moment-year">${m.year}</div>
+        <div class="moment-tags">${m.tags.map(t=>`<span class="tag">${t}</span>`).join('')}</div>
+      </div>
+      <div class="moment-desc">${m.desc}</div>
+      <div class="moment-foot"><span>${m.foot[0]}</span><span>${m.foot[1]}</span></div>
+    </div>
+
+    <div id="step1"></div>
+    <div id="step2"></div>
+    <div id="roundResult"></div>
+  `;
+
+  renderTrackStep();
+  renderDriverStep();
+  renderRoundResult();
+}
+
+function renderTrackStep(){
+  const wrap = document.getElementById('step1');
+  if(state.trackSubmitted){
+    const m = MOMENTS[state.roundIdx];
+    const pickedTrack = TRACKS.find(t=>t.id===state.trackPick);
+    const correctTrack = TRACKS.find(t=>t.id===m.track);
+    const correct = state.trackPick === m.track;
+    const sameCountry = pickedTrack && correctTrack && pickedTrack.country === correctTrack.country;
+    const badgeCls = correct ? 'right' : (sameCountry ? 'close' : 'wrong');
+    const badgeLbl = correct ? 'CORRECT' : (sameCountry ? 'SAME COUNTRY' : 'INCORRECT');
+    wrap.innerHTML = `
+      <div class="step-card">
+        <div class="step-head">
+          <div class="step-num done">✓</div>
+          <div class="step-title">Track Result</div>
+          <div class="step-result"><span class="badge ${badgeCls}">${badgeLbl}</span></div>
+        </div>
+        <div style="padding-left:2.2rem">
+          <div style="font-size:0.95rem;font-weight:600;color:var(--accent)">${correctTrack.name}</div>
+          ${!correct ? `<div style="font-size:0.8rem;color:var(--muted);margin-top:0.2rem">You picked: ${pickedTrack ? pickedTrack.name : '—'}</div>` : ''}
+        </div>
+      </div>
+    `;
+    return;
+  }
+
+  wrap.innerHTML = `
+    <div class="step-card">
+      <div class="step-head">
+        <div class="step-num">1</div>
+        <div class="step-title">Guess the Track</div>
+      </div>
+      <div class="step-sub">Where in the world did this happen?</div>
+      ${state.trackPick
+        ? renderSelected('track', state.trackPick)
+        : renderSearch('track', 'Search circuits…')}
+      <button class="submit-btn" id="submitTrack" ${state.trackPick?'':'disabled'}>Submit Track →</button>
+    </div>
+  `;
+  bindSearch('track');
+  document.getElementById('submitTrack').onclick = submitTrack;
+}
+
+function renderDriverStep(){
+  const wrap = document.getElementById('step2');
+  if(!state.trackSubmitted){
+    wrap.innerHTML = `
+      <div class="step-card locked">
+        <div class="step-head">
+          <div class="step-num locked">2</div>
+          <div class="step-title">Name the Driver</div>
+        </div>
+        <div class="locked-msg">Submit your track first to unlock</div>
+      </div>
+    `;
+    return;
+  }
+  if(state.driverSubmitted){
+    const m = MOMENTS[state.roundIdx];
+    const pickedDriver = DRIVERS.find(d=>d.id===state.driverPick);
+    const correctDriver = DRIVERS.find(d=>d.id===m.driver);
+    const correct = state.driverPick === m.driver;
+    wrap.innerHTML = `
+      <div class="step-card">
+        <div class="step-head">
+          <div class="step-num done">✓</div>
+          <div class="step-title">Driver Result</div>
+          <div class="step-result"><span class="badge ${correct?'right':'wrong'}">${correct?'CORRECT':'INCORRECT'}</span></div>
+        </div>
+        <div style="padding-left:2.2rem">
+          <div style="font-size:0.95rem;font-weight:600;color:var(--accent)">${correctDriver.name}</div>
+          ${!correct ? `<div style="font-size:0.8rem;color:var(--muted);margin-top:0.2rem">You picked: ${pickedDriver ? pickedDriver.name : '—'}</div>` : ''}
+        </div>
+      </div>
+    `;
+    return;
+  }
+
+  wrap.innerHTML = `
+    <div class="step-card">
+      <div class="step-head">
+        <div class="step-num">2</div>
+        <div class="step-title">Name the Driver</div>
+      </div>
+      <div class="step-sub">Who was at the wheel?</div>
+      ${state.driverPick
+        ? renderSelected('driver', state.driverPick)
+        : renderSearch('driver', 'Search drivers…')}
+      <button class="submit-btn" id="submitDriver" ${state.driverPick?'':'disabled'}>Submit Driver →</button>
+    </div>
+  `;
+  bindSearch('driver');
+  document.getElementById('submitDriver').onclick = submitDriver;
+}
+
+function renderRoundResult(){
+  if(!(state.trackSubmitted && state.driverSubmitted)) return;
+  const wrap = document.getElementById('roundResult');
+  const m = MOMENTS[state.roundIdx];
+  const sc = state.scores[state.roundIdx];
+  const pct = Math.round(sc.total / TOTAL_PER_ROUND * 100);
+  const trackPct = Math.round(sc.trackPts / PTS_PER_Q * 100);
+  const driverPct = Math.round(sc.driverPts / PTS_PER_Q * 100);
+  const isLast = state.roundIdx === MOMENTS.length - 1;
+
+  wrap.innerHTML = `
+    <div class="score-card">
+      <div class="label">Round ${state.roundIdx+1} Result</div>
+      <div class="pct">${pct}%</div>
+      <div class="pts">${sc.total.toLocaleString()} / ${TOTAL_PER_ROUND.toLocaleString()} pts</div>
+      <div class="split">
+        <div><div class="label">Track</div><div class="v">${trackPct}%</div></div>
+        <div><div class="label">Driver</div><div class="v">${driverPct}%</div></div>
+      </div>
+    </div>
+    <div class="flavor">"${m.flavor}"</div>
+    <button class="submit-btn" id="nextBtn" style="background:#111">${isLast ? 'See Final Result →' : 'Next Moment →'}</button>
+  `;
+  document.getElementById('nextBtn').onclick = nextRound;
+  // scroll into view
+  setTimeout(() => wrap.scrollIntoView({behavior:'smooth',block:'start'}), 50);
+}
+
+/* ---------------------- SEARCH HELPERS ---------------------- */
+function renderSearch(kind, placeholder){
+  return `
+    <div class="search-wrap">
+      <input type="text" class="search" id="${kind}Search" placeholder="${placeholder}" autocomplete="off">
+      <div class="suggestions" id="${kind}Suggestions"></div>
+    </div>
+  `;
+}
+
+function renderSelected(kind, id){
+  const item = kind==='track' ? TRACKS.find(t=>t.id===id) : DRIVERS.find(d=>d.id===id);
+  const meta = kind==='track' ? item.country : item.era;
+  return `
+    <div class="selected-display">
+      <div>${item.name} <span style="font-weight:400;color:#666;font-size:0.82rem;margin-left:0.4rem">${meta}</span></div>
+      <button class="clear" onclick="clearPick('${kind}')">×</button>
+    </div>
+  `;
+}
+
+function bindSearch(kind){
+  const input = document.getElementById(`${kind}Search`);
+  if(!input) return;
+  const sugg = document.getElementById(`${kind}Suggestions`);
+  const list = kind==='track' ? TRACKS : DRIVERS;
+
+  let hoverIdx = -1;
+  let filtered = [];
+
+  function update(){
+    const q = input.value.trim().toLowerCase();
+    filtered = q.length === 0
+      ? list.slice(0, 50)
+      : list.filter(x => {
+          const hay = (x.name + ' ' + (x.country||x.era||'')).toLowerCase();
+          return hay.includes(q);
+        }).slice(0, 50);
+    if(filtered.length === 0){
+      sugg.innerHTML = `<div class="sugg-item" style="color:var(--muted);cursor:default">No matches</div>`;
+    } else {
+      sugg.innerHTML = filtered.map((x,i) => `
+        <div class="sugg-item ${i===hoverIdx?'hover':''}" data-id="${x.id}" data-i="${i}">
+          <span>${x.name}</span>
+          <span class="sugg-meta">${x.country||x.era||''}</span>
+        </div>
+      `).join('');
+      sugg.querySelectorAll('.sugg-item').forEach(el => {
+        el.onclick = () => pick(kind, el.dataset.id);
+      });
+    }
+    sugg.classList.add('open');
+  }
+
+  input.onfocus = update;
+  input.oninput = () => { hoverIdx = -1; update(); };
+  input.onkeydown = e => {
+    if(e.key === 'ArrowDown'){ e.preventDefault(); hoverIdx = Math.min(filtered.length-1, hoverIdx+1); update(); }
+    else if(e.key === 'ArrowUp'){ e.preventDefault(); hoverIdx = Math.max(0, hoverIdx-1); update(); }
+    else if(e.key === 'Enter' && hoverIdx >= 0 && filtered[hoverIdx]){ e.preventDefault(); pick(kind, filtered[hoverIdx].id); }
+    else if(e.key === 'Escape'){ sugg.classList.remove('open'); }
+  };
+  document.addEventListener('click', e => {
+    if(!input.contains(e.target) && !sugg.contains(e.target)) sugg.classList.remove('open');
+  });
+}
+
+function pick(kind, id){
+  if(kind === 'track') state.trackPick = id;
+  else state.driverPick = id;
+  if(kind === 'track') renderTrackStep(); else renderDriverStep();
+}
+
+window.clearPick = function(kind){
+  if(kind === 'track') state.trackPick = null;
+  else state.driverPick = null;
+  if(kind === 'track') renderTrackStep(); else renderDriverStep();
+};
+
+/* ---------------------- SUBMIT / SCORING ---------------------- */
+function submitTrack(){
+  const m = MOMENTS[state.roundIdx];
+  const pickedTrack = TRACKS.find(t=>t.id===state.trackPick);
+  const correctTrack = TRACKS.find(t=>t.id===m.track);
+  let pts = 0;
+  if(state.trackPick === m.track) pts = PTS_PER_Q;
+  else if(pickedTrack && correctTrack && pickedTrack.country === correctTrack.country) pts = Math.round(PTS_PER_Q * 0.3);
+
+  // stash partial score; finalize after driver
+  state.scores[state.roundIdx] = {
+    trackPts: pts,
+    driverPts: 0,
+    total: pts,
+    trackPick: state.trackPick,
+    driverPick: null
+  };
+  state.trackSubmitted = true;
+  renderTrackStep();
+  renderDriverStep();
+}
+
+function submitDriver(){
+  const m = MOMENTS[state.roundIdx];
+  let pts = 0;
+  if(state.driverPick === m.driver) pts = PTS_PER_Q;
+
+  const sc = state.scores[state.roundIdx];
+  sc.driverPts = pts;
+  sc.driverPick = state.driverPick;
+  sc.total = sc.trackPts + sc.driverPts;
+  state.driverSubmitted = true;
+  renderDriverStep();
+  renderRoundResult();
+}
+
+function nextRound(){
+  if(state.roundIdx === MOMENTS.length - 1){
+    state.view = 'final';
+    render();
+    return;
+  }
+  state.roundIdx++;
+  resetRound();
+  render();
+  window.scrollTo({top:0, behavior:'smooth'});
+}
+
+/* ---------------------- FINAL ---------------------- */
+function renderFinal(){
+  const totalPts = state.scores.reduce((s,r)=>s+r.total,0);
+  const maxPts = MOMENTS.length * TOTAL_PER_ROUND;
+  const pct = Math.round(totalPts/maxPts*100);
+  const trackPts = state.scores.reduce((s,r)=>s+r.trackPts,0);
+  const driverPts = state.scores.reduce((s,r)=>s+r.driverPts,0);
+  const trackPct = Math.round(trackPts / (MOMENTS.length * PTS_PER_Q) * 100);
+  const driverPct = Math.round(driverPts / (MOMENTS.length * PTS_PER_Q) * 100);
+
+  const verdict = pct >= 90 ? 'Tifosi tier. You watch the practice sessions.'
+                : pct >= 70 ? 'Solid garage hand. You know your eras.'
+                : pct >= 50 ? 'Casual fan with taste.'
+                : pct >= 25 ? 'A few classics in the locker.'
+                : 'Welcome to F1. Stick around.';
+
+  app.innerHTML = `
+    <div class="topbar">
+      <div class="top-icon">?</div>
+      <div class="brand">GRIDGUESSR</div>
+      <div class="top-icon" style="color:#777">✉</div>
+    </div>
+    <div class="score-card">
+      <div class="label">Final Result</div>
+      <div class="pct">${pct}%</div>
+      <div class="pts">${totalPts.toLocaleString()} / ${maxPts.toLocaleString()} pts</div>
+      <div class="split">
+        <div><div class="label">Tracks</div><div class="v">${trackPct}%</div></div>
+        <div><div class="label">Drivers</div><div class="v">${driverPct}%</div></div>
+      </div>
+    </div>
+    <div class="flavor">${verdict}</div>
+    <div class="round-list">
+      ${state.scores.map((sc,i)=>{
+        const m = MOMENTS[i];
+        const t = TRACKS.find(t=>t.id===m.track);
+        const d = DRIVERS.find(d=>d.id===m.driver);
+        const rpct = Math.round(sc.total/TOTAL_PER_ROUND*100);
+        return `
+          <div class="round-row">
+            <div class="rn">R${i+1} · ${m.year}</div>
+            <div class="rt">${t.name.split('(')[0].trim()} — ${d.name}</div>
+            <div class="rs">${rpct}%</div>
+          </div>
+        `;
+      }).join('')}
+    </div>
+    <button class="submit-btn" id="playAgain" style="background:#111">Play Again →</button>
+  `;
+  document.getElementById('playAgain').onclick = () => {
+    state.view = 'start';
+    state.roundIdx = 0;
+    state.scores = [];
+    resetRound();
+    render();
+    window.scrollTo({top:0});
+  };
+}
+
+/* ---------------------- BOOT ---------------------- */
+render();
+</script>
+</body>
+</html>
