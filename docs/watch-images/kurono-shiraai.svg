@@ -1,0 +1,116 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 1000" width="800" height="1000">
+  <title>Kurono Jubilee Sensu EOL "Shiraai" 白藍 — white-indigo guilloche (rendering)</title>
+  <defs>
+    <radialGradient id="shiraai-dial" cx="50%" cy="50%" r="55%">
+      <stop offset="0%" stop-color="#e7eef7"/>
+      <stop offset="60%" stop-color="#b9d0ea"/>
+      <stop offset="100%" stop-color="#8caed1"/>
+    </radialGradient>
+    <linearGradient id="shiraai-case" x1="0" x2="0" y1="0" y2="1">
+      <stop offset="0%" stop-color="#e8eaee"/>
+      <stop offset="50%" stop-color="#aeb3bb"/>
+      <stop offset="100%" stop-color="#7c8189"/>
+    </linearGradient>
+    <linearGradient id="shiraai-strap" x1="0" x2="0" y1="0" y2="1">
+      <stop offset="0%" stop-color="#1d2540"/>
+      <stop offset="100%" stop-color="#0d1226"/>
+    </linearGradient>
+
+    <!-- chrysanthemum guilloche: alternating concentric arcs to suggest light wave pattern -->
+    <pattern id="chrysanthemum" patternUnits="userSpaceOnUse" width="800" height="1000">
+      <g transform="translate(400 500)">
+        <g fill="none" stroke="#9bbada" stroke-width="0.6" opacity="0.55">
+          <circle r="20"/><circle r="35"/><circle r="50"/><circle r="65"/><circle r="80"/>
+          <circle r="95"/><circle r="110"/><circle r="125"/><circle r="140"/><circle r="155"/><circle r="170"/>
+        </g>
+        <!-- radiating petals -->
+        <g stroke="#7ea0c4" stroke-width="0.5" opacity="0.5">
+          <line x1="0" y1="0" x2="170" y2="0"/>
+          <line x1="0" y1="0" x2="148" y2="85"/>
+          <line x1="0" y1="0" x2="85" y2="148"/>
+          <line x1="0" y1="0" x2="0" y2="170"/>
+          <line x1="0" y1="0" x2="-85" y2="148"/>
+          <line x1="0" y1="0" x2="-148" y2="85"/>
+          <line x1="0" y1="0" x2="-170" y2="0"/>
+          <line x1="0" y1="0" x2="-148" y2="-85"/>
+          <line x1="0" y1="0" x2="-85" y2="-148"/>
+          <line x1="0" y1="0" x2="0" y2="-170"/>
+          <line x1="0" y1="0" x2="85" y2="-148"/>
+          <line x1="0" y1="0" x2="148" y2="-85"/>
+        </g>
+      </g>
+    </pattern>
+
+    <!-- sensu fan guilloche (semi-circle with radiating lines) for power reserve -->
+    <radialGradient id="sensu" cx="50%" cy="100%" r="100%">
+      <stop offset="0%" stop-color="#dde9f7"/>
+      <stop offset="100%" stop-color="#a8c2e0"/>
+    </radialGradient>
+  </defs>
+
+  <rect width="800" height="1000" fill="#f4f1ec"/>
+
+  <!-- straps -->
+  <path d="M310 60 L490 60 L500 320 L300 320 Z" fill="url(#shiraai-strap)"/>
+  <path d="M325 80 L475 80" stroke="#3a4a78" stroke-width="1.2" stroke-dasharray="5 5" fill="none"/>
+  <path d="M325 300 L475 300" stroke="#3a4a78" stroke-width="1.2" stroke-dasharray="5 5" fill="none"/>
+  <path d="M300 680 L500 680 L490 940 L310 940 Z" fill="url(#shiraai-strap)"/>
+  <path d="M325 700 L475 700" stroke="#3a4a78" stroke-width="1.2" stroke-dasharray="5 5" fill="none"/>
+  <path d="M325 920 L475 920" stroke="#3a4a78" stroke-width="1.2" stroke-dasharray="5 5" fill="none"/>
+
+  <!-- crown with onyx cabochon -->
+  <rect x="660" y="485" width="22" height="30" fill="url(#shiraai-case)" stroke="#5a5e64" stroke-width="1"/>
+  <circle cx="688" cy="500" r="6" fill="#0a0a0c" stroke="#2a2a2e" stroke-width="0.5"/>
+
+  <!-- case -->
+  <circle cx="400" cy="500" r="280" fill="url(#shiraai-case)" stroke="#3a3d42" stroke-width="2"/>
+  <circle cx="400" cy="500" r="255" fill="#c9ccd2"/>
+  <circle cx="400" cy="500" r="240" fill="#1f2125"/>
+  <circle cx="400" cy="500" r="232" fill="url(#shiraai-dial)"/>
+  <!-- guilloche overlay -->
+  <circle cx="400" cy="500" r="232" fill="url(#chrysanthemum)"/>
+
+  <!-- power reserve sub-dial (sensu fan) at 9 -->
+  <g transform="translate(280 500)">
+    <path d="M -55 0 A 55 55 0 0 1 55 0 Z" fill="url(#sensu)" stroke="#5d7ea3" stroke-width="0.6"/>
+    <g stroke="#3a5378" stroke-width="0.5" fill="none">
+      <line x1="0" y1="0" x2="-50" y2="0"/>
+      <line x1="0" y1="0" x2="-43" y2="-25"/>
+      <line x1="0" y1="0" x2="-25" y2="-43"/>
+      <line x1="0" y1="0" x2="0" y2="-50"/>
+      <line x1="0" y1="0" x2="25" y2="-43"/>
+      <line x1="0" y1="0" x2="43" y2="-25"/>
+      <line x1="0" y1="0" x2="50" y2="0"/>
+    </g>
+    <line x1="0" y1="0" x2="-30" y2="-30" stroke="#1a1f30" stroke-width="2"/>
+    <text x="0" y="18" font-family="Georgia, serif" font-size="9" text-anchor="middle" fill="#1a1f30">PR</text>
+  </g>
+
+  <!-- hour markers (applied baton style) -->
+  <g fill="#1a1f30">
+    <rect x="397" y="280" width="6" height="22"/>
+    <rect x="595" y="497" width="22" height="6"/>
+    <rect x="397" y="698" width="6" height="22"/>
+    <rect x="183" y="497" width="22" height="6"/>
+    <rect x="495" y="305" width="4" height="14" transform="rotate(30 497 312)"/>
+    <rect x="565" y="380" width="4" height="14" transform="rotate(60 567 387)"/>
+    <rect x="565" y="610" width="4" height="14" transform="rotate(120 567 617)"/>
+    <rect x="495" y="685" width="4" height="14" transform="rotate(150 497 692)"/>
+    <rect x="301" y="685" width="4" height="14" transform="rotate(210 303 692)"/>
+    <rect x="231" y="610" width="4" height="14" transform="rotate(240 233 617)"/>
+    <rect x="231" y="380" width="4" height="14" transform="rotate(300 233 387)"/>
+    <rect x="301" y="305" width="4" height="14" transform="rotate(330 303 312)"/>
+  </g>
+
+  <!-- hands -->
+  <line x1="400" y1="500" x2="400" y2="320" stroke="#1a1f30" stroke-width="5" stroke-linecap="round"/>
+  <line x1="400" y1="500" x2="500" y2="580" stroke="#1a1f30" stroke-width="6" stroke-linecap="round"/>
+  <line x1="400" y1="500" x2="350" y2="430" stroke="#3556a0" stroke-width="1.5"/>
+  <circle cx="400" cy="500" r="7" fill="#1a1f30"/>
+
+  <!-- caption -->
+  <g font-family="-apple-system, Helvetica, Arial, sans-serif" fill="#1a1c1f">
+    <text x="400" y="985" font-size="16" text-anchor="middle" font-weight="600">Kurono Jubilee Sensu EOL 白藍 "Shiraai"</text>
+    <text x="400" y="80" font-size="11" text-anchor="middle" fill="#888" font-style="italic">illustration · 38mm · white-indigo guilloche · sensu PR · onyx crown</text>
+  </g>
+</svg>

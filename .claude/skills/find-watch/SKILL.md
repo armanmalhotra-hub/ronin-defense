@@ -1,6 +1,6 @@
 ---
 name: find-watch
-description: Find watches matching Arman's preference profile (Japanese independents, 34-37mm, leather/rubber, no chronograph, warm tones). Use when the user asks to find/recommend/scout watches, check drop windows, monitor secondary-market prices, or evaluate a specific watch against their taste. Examples - "find me a watch", "any new Kurono drops?", "is the [X] a fit?", "what should I bid on?".
+description: Find watches matching Arman's preference profile (Japanese independents, 34-37mm, leather/rubber, no chronograph, warm tones). Also maintains the friend-group dashboard at `dashboard/` (cities/stores/brands/sellers/favorites). Use when the user asks to find/recommend/scout watches, check drop windows, monitor secondary-market prices, evaluate a specific watch, or update the dashboard. Examples - "find me a watch", "any new Kurono drops?", "is the [X] a fit?", "add this store to the dashboard", "publish the dashboard".
 ---
 
 # Find Watch
@@ -74,3 +74,49 @@ Use WatchCharts, Chrono24, EveryWatch, Bezel, Wristcheck. Report current ask ran
 ```
 
 End with one sentence: what to do next (bid / wait / set alert / enter lottery).
+
+## Screenshots (always include when scouting/evaluating)
+
+Renderings matter — text-only recs are not actionable. After shortlisting candidates, pull live photos via the bundled headless-browser helper.
+
+- One-shot:
+  ```
+  NODE_PATH=/opt/node22/lib/node_modules \
+  PLAYWRIGHT_BROWSERS_PATH=/opt/pw-browsers \
+  node .claude/skills/find-watch/screenshot.mjs <url> docs/watch-images/<id>.png --full --viewport 1280x1100
+  ```
+- Batch (preferred — reuses the curated target list):
+  ```
+  node .claude/skills/find-watch/shoot-watches.mjs            # all targets
+  node .claude/skills/find-watch/shoot-watches.mjs kurono-inseki  # one
+  ```
+- To add a new candidate, append it to the `TARGETS` array in `shoot-watches.mjs` with a stable `id`, `label`, `url`, `viewport`, and `full` flag.
+
+After running, embed the resulting PNGs in the response with `![label](docs/watch-images/<id>.png)` so the user sees the actual watch, not just a link.
+
+### Sandbox caveat
+The Claude Code sandbox this repo lives in has a strict outbound host allowlist (most watch sites return 403 / "Host not in allowlist"). If you hit that, do NOT silently fall back to text — tell the user, and have them run `node .claude/skills/find-watch/shoot-watches.mjs` from a machine with open internet access. The script is self-contained and writes PNGs directly into `docs/watch-images/`, which can then be committed and reviewed.
+
+Prereqs on a fresh machine:
+```
+npm i -g playwright
+npx playwright install chromium
+```
+
+## Dashboard (`dashboard/`)
+
+A static GitHub-Pages-deployable dashboard at `dashboard/` aggregates everything: Favorites, Brands, Sellers, Cities, Stores, Friends. Friend-group bookmarks + Reddit-style up/down votes via nickname-only "accounts" (no email, no password). LocalStorage by default; optional Pantry.cloud sync via `dashboard/config.js`.
+
+When updating:
+
+- **Add a watch** → push an entry into `dashboard/data.json` `favorites` array. Required: `id`, `brand`, `model`, `size_mm`, `strap`, `dial`, `url`, `status`, `fit`. Optional: `image` (path under `dashboard/images/`), `tags`, `price_*` fields, `note`.
+- **Add a store** → push into `stores` array with `name`, `city`, `type`, `address`, `hours`, `brands` (array), `url`. Make sure the city already exists in `cities` (or add it).
+- **Add a brand** → push into `brands` array. `tier` is 1/2/3 per the profile; `cities` lists where it has presence.
+- **Add a seller** → push into `sellers` array. `type` is one of `marketplace | auction | dealer | data`.
+- **Verify before commit** → `python3 -c "import json; json.load(open('dashboard/data.json'))"` to sanity check.
+- **Local preview** → `cd dashboard && python3 -m http.server 8765` then open `http://localhost:8765/`.
+- **Deploy** → push to a branch the Pages workflow watches (`main` or `claude/general-session-Jbawg`). Workflow at `.github/workflows/pages.yml` builds & publishes.
+
+When the user asks "add X to the dashboard", edit `data.json` directly — don't generate a separate file or list.
+
+When the user asks "what's on the dashboard?", read `data.json` and summarize counts per tab; don't re-scrape.
