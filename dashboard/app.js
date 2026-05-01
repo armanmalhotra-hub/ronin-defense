@@ -642,9 +642,9 @@ function locationPoints(km) {
   if (km <= 50) return 50;
   if (km <= 200) return 40;
   if (km <= 500) return 28;
-  if (km <= 1500) return 15;
-  if (km <= 5000) return 5;
-  return 0;
+  if (km <= 1500) return 18;
+  if (km <= 5000) return 8;
+  return 3; // consolation floor — at least you tried
 }
 
 // Brand-revealing words to mask in game-stage clue text.
@@ -747,17 +747,60 @@ function pricePoints(guess, w) {
   return 0;
 }
 
+const QUIPS = {
+  perfect: [
+    "Hajime would weep. You're a menace.",
+    "Cartier called — they'd like their oracle back.",
+    "Voutilainen sends his regards.",
+    "Are you a watchmaker or just very online?",
+  ],
+  bothGood: [
+    "Quietly excellent.",
+    "The kind of guess that earns a nod at the salon.",
+    "Tasteful and informed. The two-piece suit of guesses.",
+    "Restrained, like the watches themselves.",
+  ],
+  locOnly: [
+    "You found the workshop. Now figure out what it costs.",
+    "Right town, wrong tier.",
+    "You can read a map. The price tag is harder.",
+    "Geography: nailed it. Pricing: revisit.",
+  ],
+  priceOnly: [
+    "Your pricing is elite. Your geography is in witness protection.",
+    "You priced it like an insider. You located it like a tourist.",
+    "Spreadsheet brain, atlas heart.",
+    "If the watch is on the moon, you'll know what it costs.",
+  ],
+  partial: [
+    "Both guesses orbiting truth. Try again.",
+    "Hovering near the right answer without landing.",
+    "Half-credit on both fronts — tomorrow we converge.",
+    "You're in the neighborhood. Wrong street, wrong house.",
+  ],
+  flop: [
+    "Big swing, big miss. Tomorrow's another day.",
+    "The good news: there's only one direction to go.",
+    "We don't talk about this round.",
+    "Tactical retreat. Regroup at dawn.",
+    "Even the watchmaker would have been confused by that guess.",
+  ],
+};
+
+function pickQuip(bucket) {
+  const arr = QUIPS[bucket] || QUIPS.flop;
+  return arr[Math.floor(Math.random() * arr.length)];
+}
+
 function quipFor(locPts, pricePts) {
   const l = locPts >= 28;
   const p = pricePts >= 28;
-  if (locPts === 50 && pricePts === 50) return "Hajime would weep. You're a menace.";
-  if (l && p) return "Quietly excellent.";
-  if (l && !p) return "You found the workshop. Now figure out what it costs.";
-  if (!l && p) return "Your pricing is elite. Your geography is in witness protection.";
-  if (l && pricePts > 0) return "Right city. Wrong tier.";
-  if (locPts > 0 && p) return "Right tier. Wrong continent.";
-  if (locPts > 0 || pricePts > 0) return "Both guesses orbiting truth. Try again.";
-  return "Big swing, big miss. Tomorrow's another day.";
+  if (locPts === 50 && pricePts === 50) return pickQuip("perfect");
+  if (l && p) return pickQuip("bothGood");
+  if (l && !p) return pickQuip("locOnly");
+  if (!l && p) return pickQuip("priceOnly");
+  if (locPts > 5 || pricePts > 5) return pickQuip("partial");
+  return pickQuip("flop");
 }
 
 function savePlay() { localStorage.setItem(PLAY_KEY, JSON.stringify(playState)); }
