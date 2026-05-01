@@ -51,7 +51,7 @@ export default function HostPage() {
 
   if (data.phase === "lobby") {
     return (
-      <main className="min-h-screen p-6 sm:p-10 flex flex-col items-center">
+      <main className="min-h-[100dvh] p-6 sm:p-10 flex flex-col items-center">
         <div className="max-w-5xl w-full grid sm:grid-cols-2 gap-8">
           <div className="card flex flex-col items-center text-center gap-4">
             <p className="label">Scan to join</p>
@@ -100,7 +100,7 @@ export default function HostPage() {
   if (data.phase === "finished") {
     const winner = data.players[0];
     return (
-      <main className="min-h-screen p-6 sm:p-10 flex flex-col items-center">
+      <main className="min-h-[100dvh] p-6 sm:p-10 flex flex-col items-center">
         <div className="max-w-3xl w-full card text-center space-y-6">
           <p className="label">Final standings</p>
           <h1 className="text-5xl font-display text-sand">🏆 Champion 🏆</h1>
@@ -118,7 +118,7 @@ export default function HostPage() {
 
   // question or reveal
   return (
-    <main className="min-h-screen p-6 sm:p-10 grid lg:grid-cols-3 gap-6">
+    <main className="min-h-[100dvh] p-6 sm:p-10 grid lg:grid-cols-3 gap-6">
       <div className="lg:col-span-2 card flex flex-col gap-6">
         <HostQuestionPanel data={data} />
       </div>
@@ -238,7 +238,7 @@ function HostQuestionPanel({ data }: { data: PublicGameView }) {
 
 function Centered({ children }: { children: React.ReactNode }) {
   return (
-    <main className="min-h-screen flex items-center justify-center p-6 text-white/70">
+    <main className="min-h-[100dvh] flex items-center justify-center p-6 text-white/70">
       {children}
     </main>
   );

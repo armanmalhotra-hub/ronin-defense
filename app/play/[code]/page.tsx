@@ -43,7 +43,7 @@ export default function PlayPage() {
 
   if (!playerId) {
     return (
-      <main className="min-h-screen p-6 flex flex-col items-center justify-center">
+      <main className="min-h-[100dvh] p-6 flex flex-col items-center justify-center">
         <div className="max-w-md w-full card space-y-5">
           <div className="text-center">
             <p className="label">Joining game</p>
@@ -93,7 +93,7 @@ function PlayerInGame({ code, playerId }: { code: string; playerId: string }) {
 
   if (data.phase === "lobby") {
     return (
-      <main className="min-h-screen p-6 flex flex-col items-center">
+      <main className="min-h-[100dvh] p-6 flex flex-col items-center">
         <div className="max-w-md w-full card text-center space-y-5">
           <p className="label">In the lobby</p>
           <h1 className="text-3xl font-display text-sand">
@@ -110,7 +110,7 @@ function PlayerInGame({ code, playerId }: { code: string; playerId: string }) {
 
   if (data.phase === "finished") {
     return (
-      <main className="min-h-screen p-6 flex flex-col items-center">
+      <main className="min-h-[100dvh] p-6 flex flex-col items-center">
         <div className="max-w-md w-full card text-center space-y-5">
           <p className="label">Game over</p>
           <h1 className="text-3xl font-display text-sand">
@@ -123,7 +123,7 @@ function PlayerInGame({ code, playerId }: { code: string; playerId: string }) {
   }
 
   return (
-    <main className="min-h-screen p-4 flex flex-col items-center">
+    <main className="min-h-[100dvh] p-4 flex flex-col items-center">
       <div className="max-w-md w-full space-y-4">
         <div className="card space-y-4">
           <PlayerQuestion data={data} playerId={playerId} code={code} />
@@ -383,7 +383,7 @@ function RevealPanel({
 
 function Centered({ children }: { children: React.ReactNode }) {
   return (
-    <main className="min-h-screen flex items-center justify-center p-6 text-white/70">
+    <main className="min-h-[100dvh] flex items-center justify-center p-6 text-white/70">
       {children}
     </main>
   );

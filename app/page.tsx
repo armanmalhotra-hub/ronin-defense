@@ -26,7 +26,7 @@ export default function Landing() {
   }
 
   return (
-    <main className="min-h-screen flex flex-col items-center justify-center px-6 py-12">
+    <main className="min-h-[100dvh] flex flex-col items-center justify-center px-6 py-12">
       <div className="max-w-2xl w-full text-center space-y-10">
         <div>
           <p className="label mb-3">Bachelor Party · Joshua Tree</p>
