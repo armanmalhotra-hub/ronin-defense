@@ -52,6 +52,7 @@ header .sub { margin: 6px 0 0; color: var(--muted); font-size: 13px; }
   font-size: 14px; line-height: 1;
 }
 .who button:hover { background: var(--accent); border-color: var(--accent); }
+.who .lock.hidden { display: none; }
 .who .lock {
   font: inherit; width: 32px; height: 32px; border-radius: 999px;
   border: 1px solid var(--line); background: var(--paper); cursor: pointer;

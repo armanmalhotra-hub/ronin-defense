@@ -42,7 +42,22 @@ const PRIVATE = {
   pass: sessionStorage.getItem(PASS_KEY) || "",
   cache: new Map(), // id -> plaintext
   unlocked: false,
+  bundle: null,    // { algo, iterations, entries: { id: cipher } }
 };
+
+async function loadPrivateBundle() {
+  if (PRIVATE.bundle) return PRIVATE.bundle;
+  try {
+    const r = await fetch("./locations.enc.json", { cache: "no-store" });
+    if (!r.ok) return null;
+    PRIVATE.bundle = await r.json();
+    return PRIVATE.bundle;
+  } catch { return null; }
+}
+
+function privateCipherFor(id) {
+  return PRIVATE.bundle?.entries?.[id] || null;
+}
 
 function b64decode(s) {
   const bin = atob(s);
@@ -70,7 +85,8 @@ async function decryptCipher(cipher, passphrase) {
     const salt = b64decode(saltB64);
     const iv = b64decode(ivB64);
     const ct = b64decode(ctB64);
-    const key = await deriveKey(passphrase, salt, data.private_locations_meta?.iterations || 250000);
+    const iter = PRIVATE.bundle?.iterations || 250000;
+    const key = await deriveKey(passphrase, salt, iter);
     const pt = await crypto.subtle.decrypt({ name: "AES-GCM", iv }, key, ct);
     return new TextDecoder().decode(pt);
   } catch {
@@ -78,23 +94,37 @@ async function decryptCipher(cipher, passphrase) {
   }
 }
 
+const OWNER_KEY = "watch-watch:owner";
+const isOwner = () => {
+  const params = new URLSearchParams(location.search);
+  if (params.has("owner")) {
+    localStorage.setItem(OWNER_KEY, "1");
+    history.replaceState({}, "", location.pathname + location.hash);
+    return true;
+  }
+  return localStorage.getItem(OWNER_KEY) === "1";
+};
+
 const lockBtn = document.getElementById("lock-toggle");
+if (isOwner()) lockBtn.classList.remove("hidden");
 
 async function tryUnlock(passphrase) {
-  // try decrypting any one cipher to verify the passphrase
-  const sample = (data.favorites || []).find(w => w.private_cipher);
-  if (!sample) {
+  await loadPrivateBundle();
+  const entries = PRIVATE.bundle?.entries || {};
+  const sampleId = Object.keys(entries)[0];
+  if (!sampleId) {
+    // no entries yet — accept the passphrase optimistically
     PRIVATE.pass = passphrase;
     PRIVATE.unlocked = true;
     sessionStorage.setItem(PASS_KEY, passphrase);
     return true;
   }
-  const result = await decryptCipher(sample.private_cipher, passphrase);
+  const result = await decryptCipher(entries[sampleId], passphrase);
   if (result == null) return false;
   PRIVATE.pass = passphrase;
   PRIVATE.unlocked = true;
   sessionStorage.setItem(PASS_KEY, passphrase);
-  PRIVATE.cache.set(sample.id, result);
+  PRIVATE.cache.set(sampleId, result);
   return true;
 }
 
@@ -122,10 +152,12 @@ async function unlockFlow() {
 }
 lockBtn.addEventListener("click", unlockFlow);
 
-async function privateBlock(id, cipher) {
+async function privateBlock(id) {
+  if (!isOwner()) return "";
+  const cipher = privateCipherFor(id);
   if (!cipher) return "";
   if (!PRIVATE.unlocked) {
-    return `<p class="private-block locked">🔒 private location — unlock to view</p>`;
+    return `<p class="private-block locked">🔒 unlock to view</p>`;
   }
   if (!PRIVATE.cache.has(id)) {
     const pt = await decryptCipher(cipher, PRIVATE.pass);
@@ -183,15 +215,18 @@ let data, state;
   buildStoreCityFilter();
   document.getElementById("search").addEventListener("input", renderAll);
 
-  // restore unlock state from session if a passphrase is cached
-  if (PRIVATE.pass) {
-    const ok = await tryUnlock(PRIVATE.pass);
-    if (ok) {
-      lockBtn.textContent = "🔓";
-      lockBtn.classList.add("unlocked");
-    } else {
-      sessionStorage.removeItem(PASS_KEY);
-      PRIVATE.pass = "";
+  // owners eagerly load encrypted bundle so locked placeholders can show
+  if (isOwner()) {
+    await loadPrivateBundle();
+    if (PRIVATE.pass) {
+      const ok = await tryUnlock(PRIVATE.pass);
+      if (ok) {
+        lockBtn.textContent = "🔓";
+        lockBtn.classList.add("unlocked");
+      } else {
+        sessionStorage.removeItem(PASS_KEY);
+        PRIVATE.pass = "";
+      }
     }
   }
 
@@ -325,7 +360,7 @@ function renderFavorites() {
             ${w.fit != null ? `<span class="pill dim">fit ${w.fit}</span>` : ""}
           </div>
           ${w.note ? `<p class="note">${w.note}</p>` : ""}
-          ${w.private_cipher ? `<div class="private-slot" data-id="${w.id}" data-cipher="${w.private_cipher}">${PRIVATE.unlocked ? '' : '<p class="private-block locked">🔒 private location — unlock to view</p>'}</div>` : ""}
+          ${isOwner() && privateCipherFor(w.id) ? `<div class="private-slot" data-id="${w.id}">${PRIVATE.unlocked ? '' : '<p class="private-block locked">🔒 unlock to view</p>'}</div>` : ""}
           ${actionFoot(w.id, w.url, "view")}
         </div>
       </article>`);
@@ -339,9 +374,7 @@ async function hydratePrivateSlots(root) {
   if (!PRIVATE.unlocked) return;
   const slots = root.querySelectorAll(".private-slot");
   for (const slot of slots) {
-    const id = slot.dataset.id;
-    const cipher = slot.dataset.cipher;
-    slot.innerHTML = await privateBlock(id, cipher);
+    slot.innerHTML = await privateBlock(slot.dataset.id);
   }
 }
 
