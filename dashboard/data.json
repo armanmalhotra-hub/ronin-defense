@@ -444,6 +444,86 @@
     }
   ],
 
+  "drops": [
+    {
+      "id": "nh-2026-lottery",
+      "title": "Naoya Hida 2026 Lottery — ORDER tab",
+      "brand": "Naoya Hida & Co.",
+      "type": "lottery",
+      "starts_iso": "2026-05-18T01:00:00Z",
+      "ends_iso": "2026-05-21T01:00:00Z",
+      "tz_label": "10:00 JST → 10:00 JST",
+      "url": "https://naoyahidawatch.com/order/?lang=en",
+      "refs": ["Type 7A (chrono — REJECT)", "Type 8A 31mm (too small)", "verify other 2026 refs at open"],
+      "note": "Apply during the 3-day window. Allocation announced after; pickup at Tokyo atelier in June for trip."
+    },
+    {
+      "id": "kurono-special-drops",
+      "title": "Kurono Special Projects — monitor for next drop",
+      "brand": "Kurono Tokyo",
+      "type": "release",
+      "starts_iso": null,
+      "ends_iso": null,
+      "tz_label": "subscribe to newsletter",
+      "url": "https://kuronotokyo.com/",
+      "note": "Inseki sold out Jan 15. Next Special Projects drop typically lands Q3/Q4 — sign up for email + IG @kuronotokyo."
+    },
+    {
+      "id": "phillips-hk-spring-2026",
+      "title": "Phillips Hong Kong Spring 2026 watch sessions",
+      "brand": "Phillips",
+      "type": "auction",
+      "starts_iso": "2026-05-23T00:00:00Z",
+      "ends_iso": "2026-05-25T00:00:00Z",
+      "tz_label": "May 23-25 HK",
+      "url": "https://www.phillips.com/auctions/department/watches",
+      "note": "Spring sessions historically include Naoya Hida + Hajime Asaoka lots. Watch the catalog drop ~3 weeks prior."
+    },
+    {
+      "id": "loupethis-weekly",
+      "title": "LoupeThis weekly auction — Kurono Shiraai watch",
+      "brand": "LoupeThis",
+      "type": "auction",
+      "starts_iso": null,
+      "ends_iso": null,
+      "tz_label": "weekly",
+      "url": "https://loupethis.com/",
+      "note": "Set max-bid at $2,800 for any Shiraai listing. Recent comps: $3,520 (Mar), $3,960 (Apr) — trend softening."
+    },
+    {
+      "id": "armoury-trunk-show",
+      "title": "Armoury Naoya Hida trunk show (HK / NY)",
+      "brand": "The Armoury",
+      "type": "trunk-show",
+      "starts_iso": null,
+      "ends_iso": null,
+      "tz_label": "irregular — 2-3x/yr per location",
+      "url": "https://www.thearmoury.com/artisans/naoya-hida",
+      "note": "Subscribe to Armoury newsletter; trunk shows are often the only way to handle pieces in person outside Tokyo."
+    },
+    {
+      "id": "kurono-aoyama-walkin",
+      "title": "Kurono Aoyama Salon — walk-in / appointment",
+      "brand": "Kurono Tokyo",
+      "type": "showroom",
+      "starts_iso": null,
+      "ends_iso": null,
+      "tz_label": "Mon-Sat 11:00-19:00 JST",
+      "url": "https://kuronotokyo.com/pages/kurono-tokyo-aoyama-salon",
+      "note": "Tokyo trip June 2026 → email info@kuronotokyo.com a week ahead to ask about Salon Edition allocation."
+    },
+    {
+      "id": "naoya-hida-atelier-friday",
+      "title": "Naoya Hida atelier visit (Tokyo, Fridays only)",
+      "brand": "Naoya Hida & Co.",
+      "type": "showroom",
+      "starts_iso": null,
+      "ends_iso": null,
+      "tz_label": "Fridays JST, by appointment",
+      "url": "https://naoyahidawatch.com/?lang=en",
+      "note": "Required if you win the lottery to pick up. Book early — limited Friday slots."
+    }
+  ],
   "stores": [
     {
       "name": "Kurono Tokyo Aoyama Salon",

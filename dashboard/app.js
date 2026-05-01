@@ -1,4 +1,4 @@
-// Watch Watch — single-file dashboard logic.
+// Watch Watch — minimal dashboard logic.
 // Storage is pluggable: localStorage by default, Pantry.cloud if config.js sets a PANTRY_ID.
 
 const CONFIG = window.WATCH_WATCH_CONFIG || { PANTRY_ID: "", BASKET: "watch-watch", STORAGE_BACKEND: "auto" };
@@ -15,8 +15,8 @@ const Storage = (() => {
       try {
         const r = await fetch(pantryUrl, { cache: "no-store" });
         if (r.ok) return await r.json();
-        if (r.status === 400) return empty(); // Pantry returns 400 if basket missing — first run
-      } catch (e) { /* fall through to local */ }
+        if (r.status === 400) return empty();
+      } catch (e) {}
     }
     try { return JSON.parse(localStorage.getItem(localKey)) || empty(); }
     catch { return empty(); }
@@ -41,23 +41,23 @@ const NICK_KEY = "watch-watch:nick";
 let me = localStorage.getItem(NICK_KEY) || "";
 const nickInput = document.getElementById("nick-input");
 const nickSave = document.getElementById("nick-save");
-const nickStatus = document.getElementById("nick-status");
 const syncStatus = document.getElementById("sync-status");
 nickInput.value = me;
-syncStatus.textContent = Storage.usingPantry ? "synced (Pantry)" : "local-only";
+syncStatus.textContent = Storage.usingPantry ? "synced" : "local";
 syncStatus.classList.toggle("synced", Storage.usingPantry);
 
-nickSave.addEventListener("click", async () => {
+async function saveNick() {
   const v = nickInput.value.trim().toLowerCase().replace(/\s+/g, "-").slice(0, 24);
-  if (!v) { nickStatus.textContent = "type a nickname first"; return; }
+  if (!v) { nickInput.focus(); return; }
   me = v;
   localStorage.setItem(NICK_KEY, me);
   nickInput.value = me;
   if (!state.users[me]) state.users[me] = { nickname: me, bookmarks: [], joined: new Date().toISOString().slice(0, 10) };
   await Storage.save(state);
-  nickStatus.textContent = `hi, ${me} 👋`;
   renderAll();
-});
+}
+nickSave.addEventListener("click", saveNick);
+nickInput.addEventListener("keydown", (e) => { if (e.key === "Enter") saveNick(); });
 
 // ---------- main ----------
 let data, state;
@@ -68,11 +68,7 @@ let data, state;
   if (!state.users) state.users = {};
   if (!state.votes) state.votes = {};
 
-  document.getElementById("updated").textContent = `last updated: ${data.updated}`;
-  document.getElementById("count").textContent =
-    `${data.favorites.length} watches · ${data.brands.length} brands · ${data.sellers.length} sellers · ${data.stores.length} stores · ${data.cities.length} cities`;
-
-  if (me) nickStatus.textContent = `hi, ${me} 👋`;
+  document.getElementById("updated").textContent = `updated ${data.updated}`;
 
   // tab switching
   const tabs = document.querySelectorAll("nav.tabs .tab");
@@ -84,23 +80,26 @@ let data, state;
     })
   );
 
-  populateCityOptions();
-  bindFilterEvents();
+  buildStoreCityFilter();
+  document.getElementById("search").addEventListener("input", renderAll);
   renderAll();
 })();
 
 // ---------- helpers ----------
+function $(id) { return document.getElementById(id); }
+function q() { return $("search").value.trim().toLowerCase(); }
+
 function formatPrice(w) {
   if (w.price_label) return w.price_label;
   if (w.price_usd != null) return `$${w.price_usd.toLocaleString()}`;
   if (w.price_usd_low != null && w.price_usd_high != null)
     return `$${w.price_usd_low.toLocaleString()}–${w.price_usd_high.toLocaleString()}`;
   if (w.price_jpy != null) return `¥${w.price_jpy.toLocaleString()}`;
-  return "price tbd";
+  return "—";
 }
 
 function getVotes(id) { return state.votes[id] || (state.votes[id] = { up: [], down: [] }); }
-function bookmarksFor(id) { return Object.values(state.users).filter(u => (u.bookmarks || []).includes(id)); }
+function bookmarkers(id) { return Object.values(state.users).filter(u => (u.bookmarks || []).includes(id)); }
 function isBookmarked(id) { return me && (state.users[me]?.bookmarks || []).includes(id); }
 function myVote(id) {
   const v = getVotes(id);
@@ -114,7 +113,7 @@ function score(id) {
 }
 
 async function toggleBookmark(id) {
-  if (!ensureNick()) return;
+  if (!me) { nickInput.focus(); return; }
   const u = state.users[me] || (state.users[me] = { nickname: me, bookmarks: [], joined: new Date().toISOString().slice(0, 10) });
   u.bookmarks = u.bookmarks || [];
   const i = u.bookmarks.indexOf(id);
@@ -124,7 +123,7 @@ async function toggleBookmark(id) {
 }
 
 async function vote(id, dir) {
-  if (!ensureNick()) return;
+  if (!me) { nickInput.focus(); return; }
   const v = getVotes(id);
   v.up = v.up.filter(n => n !== me);
   v.down = v.down.filter(n => n !== me);
@@ -134,30 +133,24 @@ async function vote(id, dir) {
   renderAll();
 }
 
-function ensureNick() {
-  if (!me) {
-    nickStatus.textContent = "type a nickname first ↑";
-    nickInput.focus();
-    return false;
-  }
-  return true;
-}
-
-function actionBar(id) {
-  const score_ = score(id);
+function actionFoot(id, ctaHref, ctaLabel) {
+  const sc = score(id);
   const v = myVote(id);
   const bm = isBookmarked(id);
-  const bookmarkers = bookmarksFor(id);
-  const chips = bookmarkers.length
-    ? `<span class="chips">${bookmarkers.map(u => `<span class="chip" title="${u.nickname} bookmarked">${u.nickname}</span>`).join("")}</span>`
+  const others = bookmarkers(id).filter(u => u.nickname !== me).slice(0, 3);
+  const chips = others.length
+    ? `<span class="who-chips">${others.map(u => `<span class="who-chip" title="${u.nickname} bookmarked">${u.nickname}</span>`).join("")}</span>`
     : "";
   return `
-    <div class="actions">
-      <button class="action star ${bm ? "on" : ""}" data-act="bookmark" data-id="${id}" title="${bm ? "Bookmarked" : "Bookmark"}">★</button>
-      <button class="action vote up ${v === 1 ? "on" : ""}" data-act="up" data-id="${id}" title="Upvote">▲</button>
-      <span class="score ${score_ > 0 ? "pos" : score_ < 0 ? "neg" : ""}">${score_}</span>
-      <button class="action vote down ${v === -1 ? "on" : ""}" data-act="down" data-id="${id}" title="Downvote">▼</button>
-      ${chips}
+    <div class="foot">
+      <div class="actions">
+        <button class="action star ${bm ? "on" : ""}" data-act="bookmark" data-id="${id}" aria-label="${bm ? "Remove bookmark" : "Bookmark"}">${bm ? "★" : "☆"}</button>
+        <button class="action vote up ${v === 1 ? "on" : ""}" data-act="up" data-id="${id}" aria-label="Upvote">▲</button>
+        <span class="score ${sc > 0 ? "pos" : sc < 0 ? "neg" : ""}">${sc || ""}</span>
+        <button class="action vote down ${v === -1 ? "on" : ""}" data-act="down" data-id="${id}" aria-label="Downvote">▼</button>
+        ${chips}
+      </div>
+      ${ctaHref ? `<span class="cta"><a href="${ctaHref}" target="_blank" rel="noopener">${ctaLabel || "open"} ↗</a></span>` : ""}
     </div>`;
 }
 
@@ -173,259 +166,245 @@ function bindCardActions(root) {
   });
 }
 
-// ---------- filters ----------
-const $ = (id) => document.getElementById(id);
-
-function populateCityOptions() {
-  const brandCities = [...new Set(data.brands.flatMap(b => b.cities || []))].sort();
-  for (const c of brandCities) $("f-brand-city").appendChild(new Option(c, c));
-  const storeCities = [...new Set(data.stores.map(s => s.city))].sort();
-  for (const c of storeCities) $("f-store-city").appendChild(new Option(c, c));
+function matchesSearch(...fields) {
+  const Q = q();
+  if (!Q) return true;
+  return fields.filter(Boolean).join(" ").toLowerCase().includes(Q);
 }
-
-function bindFilterEvents() {
-  ["f-status", "f-price", "f-show", "f-tier", "f-brand-city", "f-seller-type", "f-store-city", "f-store-type", "search"]
-    .forEach(id => $(id).addEventListener("input", renderAll));
-}
-
-function q() { return $("search").value.trim().toLowerCase(); }
 
 // ---------- renderers ----------
 function renderAll() {
   renderFavorites();
+  renderDrops();
   renderBrands();
-  renderSellers();
-  renderCities();
   renderStores();
+  renderCities();
+  renderSellers();
   renderFriends();
 }
 
+// Favorites: status pill, price, note, action foot. Image when present.
 function renderFavorites() {
   const grid = $("grid-favorites");
-  const status = $("f-status").value;
-  const max = $("f-price").value ? +$("f-price").value : Infinity;
-  const show = $("f-show").value;
-  const Q = q();
-
-  let list = [...data.favorites];
-  if (show === "bookmarked-by-me") list = list.filter(w => isBookmarked(w.id));
-  if (show === "top-voted") list = list.filter(w => score(w.id) > 0);
-  list.sort((a, b) => {
+  grid.innerHTML = "";
+  const list = [...data.favorites].sort((a, b) => {
     const sa = score(a.id), sb = score(b.id);
     if (sb !== sa) return sb - sa;
     return (b.fit || 0) - (a.fit || 0);
   });
-
-  grid.innerHTML = "";
   for (const w of list) {
-    if (status && w.status !== status) continue;
-    const lo = w.price_usd_low ?? w.price_usd ?? Infinity;
-    if (lo > max) continue;
-    if (Q && !`${w.brand} ${w.model} ${(w.tags || []).join(" ")} ${w.dial || ""}`.toLowerCase().includes(Q)) continue;
-    grid.insertAdjacentHTML("beforeend", favoriteCard(w));
+    if (!matchesSearch(w.brand, w.model, (w.tags || []).join(" "), w.dial)) continue;
+    const img = w.image
+      ? `<a class="img" href="${w.url}" target="_blank" rel="noopener"><img loading="lazy" alt="${w.brand} ${w.model}" src="${w.image}"/></a>`
+      : "";
+    const statusClass = w.status === "own-target" || w.status === "lottery" ? "accent"
+      : w.status === "available" ? "good"
+      : w.status === "salon-only" ? "accent" : "dim";
+    grid.insertAdjacentHTML("beforeend", `
+      <article class="card${w.image ? " with-image" : ""}" data-id="${w.id}">
+        ${img}
+        <div class="body">
+          <h2>${w.model}</h2>
+          <p class="sub">${w.brand} · ${w.size_mm}mm</p>
+          <p class="price">${formatPrice(w)}</p>
+          <div class="pills">
+            <span class="pill ${statusClass}">${w.status.replace("-", " ")}</span>
+            ${w.fit != null ? `<span class="pill dim">fit ${w.fit}</span>` : ""}
+          </div>
+          ${w.note ? `<p class="note">${w.note}</p>` : ""}
+          ${actionFoot(w.id, w.url, "view")}
+        </div>
+      </article>`);
   }
-  if (!grid.children.length) grid.innerHTML = `<p class="hint">No favorites match.</p>`;
+  if (!grid.children.length) grid.innerHTML = `<p class="kv">Nothing matches.</p>`;
   bindCardActions(grid);
 }
 
-function favoriteCard(w) {
-  const tags = (w.tags || []).map(t => `<li>${t}</li>`).join("");
-  const img = w.image
-    ? `<a class="img" href="${w.url}" target="_blank" rel="noopener"><img loading="lazy" alt="${w.brand} ${w.model}" src="${w.image}"/></a>`
-    : "";
-  return `
-    <article class="card${w.image ? " with-image" : ""}" data-id="${w.id}">
-      ${img}
-      <div class="body">
-        <div class="row1">
-          <h2>${w.model}</h2>
-          <span class="badge ${w.status}">${w.status.replace("-", " ")}</span>
+// Drops: title, brand, window, refs, action foot
+function renderDrops() {
+  const grid = $("grid-drops");
+  if (!grid) return;
+  grid.innerHTML = "";
+  const drops = (data.drops || []).slice().sort((a, b) => {
+    const aS = a.starts_iso ? Date.parse(a.starts_iso) : Infinity;
+    const bS = b.starts_iso ? Date.parse(b.starts_iso) : Infinity;
+    return aS - bS;
+  });
+  const now = Date.now();
+  for (const d of drops) {
+    if (!matchesSearch(d.title, d.brand, d.note)) continue;
+    const start = d.starts_iso ? Date.parse(d.starts_iso) : null;
+    const end = d.ends_iso ? Date.parse(d.ends_iso) : null;
+    const isOpen = start && end && start <= now && now <= end;
+    const isUpcoming = start && start > now;
+    const statusLabel = isOpen ? "open now" : isUpcoming ? `in ${Math.max(0, Math.ceil((start - now) / 86400000))}d` : "ongoing";
+    const statusClass = isOpen ? "good" : isUpcoming ? "accent" : "dim";
+    const id = `drop:${d.id}`;
+    grid.insertAdjacentHTML("beforeend", `
+      <article class="card" data-id="${id}">
+        <div class="body">
+          <h2>${d.title}</h2>
+          <p class="sub">${d.brand} · ${d.type.replace("-", " ")}</p>
+          <p class="price">${d.tz_label || ""}</p>
+          <div class="pills">
+            <span class="pill ${statusClass}">${statusLabel}</span>
+          </div>
+          ${d.note ? `<p class="note">${d.note}</p>` : ""}
+          ${actionFoot(id, d.url, isOpen ? "apply" : "open")}
         </div>
-        <p class="sub">${w.brand} · ${w.size_mm}mm · ${w.strap || "—"}</p>
-        <ul class="tags">${tags}</ul>
-        <div class="price-row">
-          <span class="price">${formatPrice(w)}</span>
-          <span class="fit">${w.fit != null ? `fit ${w.fit}/10` : ""}</span>
-        </div>
-        <p class="note">${w.note || ""}</p>
-        ${actionBar(w.id)}
-        <div class="cta">
-          <a class="primary" href="${w.url}" target="_blank" rel="noopener">${w.cta_label || "View"}</a>
-          <span class="src">${w.source || ""}</span>
-        </div>
-      </div>
-    </article>`;
+      </article>`);
+  }
+  if (!grid.children.length) grid.innerHTML = `<p class="kv">No drops match.</p>`;
+  bindCardActions(grid);
 }
 
+// Brands: name, tier pill, cities, range, note, stockists. No filters.
 function renderBrands() {
   const grid = $("grid-brands");
-  const tier = $("f-tier").value;
-  const city = $("f-brand-city").value;
-  const Q = q();
   grid.innerHTML = "";
   const list = [...data.brands].sort((a, b) => a.tier - b.tier || a.name.localeCompare(b.name));
   for (const b of list) {
-    if (tier && String(b.tier) !== tier) continue;
-    if (city && !(b.cities || []).includes(city)) continue;
-    if (Q && !`${b.name} ${(b.tags || []).join(" ")} ${b.note || ""}`.toLowerCase().includes(Q)) continue;
+    if (!matchesSearch(b.name, (b.tags || []).join(" "), b.note, b.style)) continue;
     const id = `brand:${b.name}`;
-    const tags = (b.tags || []).map(t => `<li>${t}</li>`).join("");
-    const stockists = (b.stockists || []).map(s => `<a href="${s.url}" target="_blank" rel="noopener">${s.name}</a>`).join(" · ");
+    const stockists = (b.stockists || []).slice(0, 3).map(s => `<a href="${s.url}" target="_blank" rel="noopener">${s.name}</a>`).join(" · ");
     grid.insertAdjacentHTML("beforeend", `
       <article class="card" data-id="${id}">
         <div class="body">
-          <div class="row1">
-            <h2>${b.name}</h2>
-            <span class="badge tier-${b.tier}">Tier ${b.tier}</span>
-          </div>
+          <h2>${b.name}</h2>
           <p class="sub">${(b.cities || []).join(" · ")}${b.founded ? ` · est. ${b.founded}` : ""}</p>
-          <p class="kv"><b>Style:</b> ${b.style || "—"}</p>
-          <p class="kv"><b>Range:</b> ${b.price_range || "—"}</p>
-          <ul class="tags">${tags}</ul>
-          <p class="note">${b.note || ""}</p>
-          ${stockists ? `<p class="kv"><b>Stockists:</b> ${stockists}</p>` : ""}
-          ${actionBar(id)}
-          <div class="cta">
-            <a class="primary" href="${b.url}" target="_blank" rel="noopener">Brand site</a>
-            <span class="src">${b.handle || ""}</span>
+          <p class="price">${b.price_range || ""}</p>
+          <div class="pills">
+            <span class="pill accent">Tier ${b.tier}</span>
           </div>
+          ${b.note ? `<p class="note">${b.note}</p>` : ""}
+          ${stockists ? `<p class="kv">Through: ${stockists}</p>` : ""}
+          ${actionFoot(id, b.url, "site")}
         </div>
       </article>`);
   }
-  if (!grid.children.length) grid.innerHTML = `<p class="hint">No brands match.</p>`;
   bindCardActions(grid);
 }
 
-function renderSellers() {
-  const grid = $("grid-sellers");
-  const type = $("f-seller-type").value;
-  const Q = q();
-  grid.innerHTML = "";
-  for (const s of data.sellers) {
-    if (type && s.type !== type) continue;
-    if (Q && !`${s.name} ${(s.tags || []).join(" ")} ${s.note || ""}`.toLowerCase().includes(Q)) continue;
-    const id = `seller:${s.name}`;
-    const tags = (s.tags || []).map(t => `<li>${t}</li>`).join("");
-    grid.insertAdjacentHTML("beforeend", `
-      <article class="card" data-id="${id}">
-        <div class="body">
-          <div class="row1">
-            <h2>${s.name}</h2>
-            <span class="badge ${s.type}">${s.type}</span>
-          </div>
-          <p class="sub">${s.based_in || ""}</p>
-          <p class="kv"><b>Best for:</b> ${s.best_for || "—"}</p>
-          <p class="kv"><b>Fees:</b> ${s.fees || "—"}</p>
-          <ul class="tags">${tags}</ul>
-          <p class="note">${s.note || ""}</p>
-          ${actionBar(id)}
-          <div class="cta">
-            <a class="primary" href="${s.url}" target="_blank" rel="noopener">Visit</a>
-          </div>
-        </div>
-      </article>`);
-  }
-  if (!grid.children.length) grid.innerHTML = `<p class="hint">No sellers match.</p>`;
-  bindCardActions(grid);
-}
-
-function renderCities() {
-  const grid = $("grid-cities");
-  const Q = q();
-  grid.innerHTML = "";
-  for (const c of data.cities) {
-    if (Q && !`${c.name} ${c.country} ${(c.tags || []).join(" ")}`.toLowerCase().includes(Q)) continue;
-    const id = `city:${c.name}`;
-    const stores = data.stores.filter(s => s.city === c.name);
-    const storeLinks = stores.map(s => `<li>${s.name} <span style="color:var(--muted);font-size:11px">· ${s.type.replace("-", " ")}</span></li>`).join("");
-    const tags = (c.tags || []).map(t => `<li>${t}</li>`).join("");
-    grid.insertAdjacentHTML("beforeend", `
-      <article class="card" data-id="${id}">
-        <div class="body">
-          <div class="row1">
-            <h2>${c.name}</h2>
-            <span class="badge available">${c.country}</span>
-          </div>
-          <p class="sub">${c.neighborhoods?.join(" · ") || ""}</p>
-          <ul class="tags">${tags}</ul>
-          <p class="note">${c.note || ""}</p>
-          <p class="kv"><b>${stores.length} store${stores.length === 1 ? "" : "s"}:</b></p>
-          <ul class="kv" style="margin:0;padding-left:18px">${storeLinks}</ul>
-          ${actionBar(id)}
-        </div>
-      </article>`);
-  }
-  bindCardActions(grid);
+// Stores: city chips at top, then grid. Tap a chip to filter.
+let activeStoreCity = "";
+function buildStoreCityFilter() {
+  const wrap = $("store-cities");
+  const cities = [...new Set(data.stores.map(s => s.city))].sort((a, b) => {
+    const order = ["Tokyo", "Kobe", "Kyoto", "Osaka", "Hong Kong", "New York", "London"];
+    return order.indexOf(a) - order.indexOf(b);
+  });
+  wrap.innerHTML = `<button class="chip-btn active" data-city="">all</button>` +
+    cities.map(c => `<button class="chip-btn" data-city="${c}">${c}</button>`).join("");
+  wrap.querySelectorAll(".chip-btn").forEach(btn => {
+    btn.addEventListener("click", () => {
+      activeStoreCity = btn.dataset.city;
+      wrap.querySelectorAll(".chip-btn").forEach(b => b.classList.toggle("active", b === btn));
+      renderStores();
+    });
+  });
 }
 
 function renderStores() {
   const grid = $("grid-stores");
-  const city = $("f-store-city").value;
-  const type = $("f-store-type").value;
-  const Q = q();
   grid.innerHTML = "";
   const list = [...data.stores].sort((a, b) => a.city.localeCompare(b.city) || a.name.localeCompare(b.name));
   for (const s of list) {
-    if (city && s.city !== city) continue;
-    if (type && s.type !== type) continue;
-    if (Q && !`${s.name} ${s.city} ${s.neighborhood || ""} ${(s.brands || []).join(" ")} ${(s.tags || []).join(" ")}`.toLowerCase().includes(Q)) continue;
+    if (activeStoreCity && s.city !== activeStoreCity) continue;
+    if (!matchesSearch(s.name, s.city, s.neighborhood, (s.brands || []).join(" "), (s.tags || []).join(" "), s.note)) continue;
     const id = `store:${s.city}:${s.name}`;
-    const tags = (s.tags || []).map(t => `<li>${t}</li>`).join("");
-    const brands = (s.brands || []).map(b => `<li>${b}</li>`).join("");
     const mapsHref = s.address ? `https://www.google.com/maps/search/${encodeURIComponent(s.name + " " + s.address)}` : null;
+    const brands = (s.brands || []).slice(0, 4).map(b => `<span class="pill dim">${b}</span>`).join("");
+    const typePill = s.type === "brand-salon" || s.type === "atelier" ? "accent" : "dim";
     grid.insertAdjacentHTML("beforeend", `
       <article class="card" data-id="${id}">
         <div class="body">
-          <div class="row1">
-            <h2>${s.name}</h2>
-            <span class="badge ${s.type}">${s.type.replace("-", " ")}</span>
-          </div>
+          <h2>${s.name}</h2>
           <p class="sub">${s.city}${s.neighborhood ? " · " + s.neighborhood : ""}</p>
-          <p class="kv"><b>Carries:</b></p>
-          <ul class="tags">${brands}</ul>
-          <p class="kv"><b>Hours:</b> ${s.hours || "—"}</p>
-          <p class="kv"><b>Address:</b> ${s.address || "—"}</p>
-          ${s.appointment ? `<p class="kv"><b>Appointment:</b> ${s.appointment}</p>` : ""}
-          <ul class="tags">${tags}</ul>
-          <p class="note">${s.note || ""}</p>
-          ${actionBar(id)}
-          <div class="cta">
-            <a class="primary" href="${s.url || (mapsHref || "#")}" target="_blank" rel="noopener">${s.url ? "Visit site" : "Map it"}</a>
-            ${mapsHref ? `<a class="src" href="${mapsHref}" target="_blank" rel="noopener">Google Maps ↗</a>` : ""}
+          <div class="pills">
+            <span class="pill ${typePill}">${s.type.replace("-", " ")}</span>
+            ${brands}
           </div>
+          ${s.hours ? `<p class="kv">${s.hours}</p>` : ""}
+          ${s.appointment ? `<p class="kv">By: ${s.appointment}</p>` : ""}
+          ${s.note ? `<p class="note">${s.note}</p>` : ""}
+          ${actionFoot(id, s.url || mapsHref, s.url ? "site" : "map")}
         </div>
       </article>`);
   }
-  if (!grid.children.length) grid.innerHTML = `<p class="hint">No stores match.</p>`;
+  if (!grid.children.length) grid.innerHTML = `<p class="kv">No stores match.</p>`;
   bindCardActions(grid);
 }
 
+// Cities: each card lists every store in that city (compact)
+function renderCities() {
+  const grid = $("grid-cities");
+  grid.innerHTML = "";
+  for (const c of data.cities) {
+    if (!matchesSearch(c.name, c.country, (c.tags || []).join(" "), c.note)) continue;
+    const stores = data.stores.filter(s => s.city === c.name);
+    const items = stores.map(s => `<li>${s.name} <span class="kv">· ${s.type.replace("-", " ")}</span></li>`).join("");
+    const id = `city:${c.name}`;
+    grid.insertAdjacentHTML("beforeend", `
+      <article class="card" data-id="${id}">
+        <div class="body">
+          <h2>${c.name}</h2>
+          <p class="sub">${c.country}${c.neighborhoods ? " · " + c.neighborhoods.slice(0, 3).join(", ") : ""}</p>
+          ${c.note ? `<p class="note">${c.note}</p>` : ""}
+          <p class="kv">${stores.length} store${stores.length === 1 ? "" : "s"}</p>
+          <ul class="kv" style="margin:0;padding-left:18px">${items}</ul>
+          ${actionFoot(id, null, null)}
+        </div>
+      </article>`);
+  }
+  bindCardActions(grid);
+}
+
+// Sellers: name, type pill, best for, link.
+function renderSellers() {
+  const grid = $("grid-sellers");
+  grid.innerHTML = "";
+  for (const s of data.sellers) {
+    if (!matchesSearch(s.name, (s.tags || []).join(" "), s.note, s.best_for)) continue;
+    const id = `seller:${s.name}`;
+    grid.insertAdjacentHTML("beforeend", `
+      <article class="card" data-id="${id}">
+        <div class="body">
+          <h2>${s.name}</h2>
+          <p class="sub">${s.based_in || ""}</p>
+          <div class="pills">
+            <span class="pill accent">${s.type}</span>
+          </div>
+          ${s.best_for ? `<p class="note">${s.best_for}</p>` : ""}
+          ${actionFoot(id, s.url, "visit")}
+        </div>
+      </article>`);
+  }
+  bindCardActions(grid);
+}
+
+// Friends: each card = a person and their stars
 function renderFriends() {
   const grid = $("grid-friends");
   grid.innerHTML = "";
   const users = Object.values(state.users);
   if (!users.length) {
-    grid.innerHTML = `<p class="hint">No nicknames yet — be the first. Set yours up top.</p>`;
+    grid.innerHTML = `<p class="kv">No nicknames yet — set yours up top.</p>`;
     return;
   }
   for (const u of users) {
     const items = (u.bookmarks || []).map(id => {
       const w = data.favorites.find(x => x.id === id);
-      if (w) return `<li><a href="${w.url}" target="_blank" rel="noopener">${w.brand} — ${w.model}</a> <span style="color:var(--muted);font-size:11px">(${formatPrice(w)})</span></li>`;
-      // brand / city / store / seller bookmarks
-      const m = id.match(/^(brand|city|seller|store):(.+)$/);
-      if (m) return `<li><span style="color:var(--muted);font-size:11px">${m[1]}</span> ${m[2]}</li>`;
+      if (w) return `<li><a href="${w.url}" target="_blank" rel="noopener">${w.brand} — ${w.model}</a></li>`;
+      const m = id.match(/^(brand|city|seller|store|drop):(.+)$/);
+      if (m) return `<li><span class="kv">${m[1]}</span> ${m[2]}</li>`;
       return `<li>${id}</li>`;
     }).join("");
     grid.insertAdjacentHTML("beforeend", `
       <article class="card">
         <div class="body">
-          <div class="row1">
-            <h2>${u.nickname}</h2>
-            ${u.nickname === me ? `<span class="badge own-target">you</span>` : ""}
-          </div>
-          <p class="sub">${(u.bookmarks || []).length} bookmark${(u.bookmarks || []).length === 1 ? "" : "s"}${u.joined ? ` · joined ${u.joined}` : ""}</p>
-          <ul class="kv" style="margin:8px 0 0; padding-left:18px">${items || "<li class='hint'>no bookmarks yet</li>"}</ul>
+          <h2>${u.nickname}</h2>
+          <p class="sub">${(u.bookmarks || []).length} bookmark${(u.bookmarks || []).length === 1 ? "" : "s"}${u.nickname === me ? " · you" : ""}</p>
+          <ul class="kv" style="margin:8px 0 0; padding-left:18px">${items || "<li>nothing yet</li>"}</ul>
         </div>
       </article>`);
   }

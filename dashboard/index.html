@@ -4,143 +4,70 @@
   <meta charset="utf-8"/>
   <meta name="viewport" content="width=device-width,initial-scale=1"/>
   <title>Watch Watch</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet"/>
   <link rel="stylesheet" href="./style.css"/>
 </head>
 <body>
   <header>
-    <div class="brand">
+    <div>
       <h1>Watch Watch</h1>
-      <p class="sub">Japanese independents · curated by friends · no accounts, just a nickname</p>
+      <p class="sub">Japanese independents · curated for friends</p>
     </div>
-    <div class="meta">
-      <span id="updated">last updated: —</span>
-      <span id="count">—</span>
+    <div class="who" id="who">
+      <input id="nick-input" placeholder="your name" maxlength="24"/>
+      <button id="nick-save" title="Save nickname">→</button>
+      <span class="sync-status" id="sync-status">local</span>
     </div>
   </header>
 
-  <div class="who" id="who">
-    <span class="label">You are</span>
-    <input id="nick-input" placeholder="type your nickname…" maxlength="24"/>
-    <button id="nick-save">Set</button>
-    <span class="hint" id="nick-status"></span>
-    <span class="sync-status" id="sync-status">local-only</span>
-  </div>
-
   <nav class="tabs" role="tablist">
     <button class="tab active" data-tab="favorites">Favorites</button>
+    <button class="tab" data-tab="drops">Drops</button>
     <button class="tab" data-tab="brands">Brands</button>
-    <button class="tab" data-tab="sellers">Sellers</button>
-    <button class="tab" data-tab="cities">Cities</button>
     <button class="tab" data-tab="stores">Stores</button>
+    <button class="tab" data-tab="cities">Cities</button>
+    <button class="tab" data-tab="sellers">Sellers</button>
     <button class="tab" data-tab="friends">Friends</button>
-    <input id="search" type="search" placeholder="search anything…"/>
+    <input id="search" type="search" placeholder="search…"/>
   </nav>
 
   <section class="panel" id="panel-favorites">
-    <div class="filterbar">
-      <label>Status
-        <select id="f-status">
-          <option value="">all</option>
-          <option value="own-target">own target</option>
-          <option value="lottery">in lottery</option>
-          <option value="salon-only">salon only</option>
-          <option value="available">available</option>
-          <option value="watching">watching</option>
-        </select>
-      </label>
-      <label>Max budget
-        <select id="f-price">
-          <option value="">any</option>
-          <option value="2500">≤ $2,500</option>
-          <option value="5000">≤ $5,000</option>
-          <option value="10000">≤ $10,000</option>
-          <option value="25000">≤ $25,000 (dream)</option>
-        </select>
-      </label>
-      <label>Show
-        <select id="f-show">
-          <option value="all">all</option>
-          <option value="bookmarked-by-me">★ my bookmarks</option>
-          <option value="top-voted">↑ top voted</option>
-        </select>
-      </label>
-      <span class="hint">Click ★ to bookmark · ↑/↓ to vote</span>
-    </div>
     <div class="grid" id="grid-favorites"></div>
   </section>
 
+  <section class="panel hidden" id="panel-drops">
+    <div class="grid" id="grid-drops"></div>
+  </section>
+
   <section class="panel hidden" id="panel-brands">
-    <div class="filterbar">
-      <label>Tier
-        <select id="f-tier">
-          <option value="">all tiers</option>
-          <option value="1">Tier 1</option>
-          <option value="2">Tier 2</option>
-          <option value="3">Tier 3</option>
-        </select>
-      </label>
-      <label>City
-        <select id="f-brand-city">
-          <option value="">any city</option>
-        </select>
-      </label>
-      <span class="hint">Bookmark a brand to track new drops</span>
-    </div>
     <div class="grid" id="grid-brands"></div>
   </section>
 
-  <section class="panel hidden" id="panel-sellers">
-    <div class="filterbar">
-      <label>Type
-        <select id="f-seller-type">
-          <option value="">all</option>
-          <option value="marketplace">marketplace</option>
-          <option value="auction">auction</option>
-          <option value="dealer">dealer</option>
-          <option value="data">price data</option>
-        </select>
-      </label>
-      <span class="hint">Where to buy / monitor on the secondary market</span>
-    </div>
-    <div class="grid" id="grid-sellers"></div>
-  </section>
-
-  <section class="panel hidden" id="panel-cities">
-    <span class="hint" style="display:block; margin-bottom:8px">Each card lists every store we've catalogued there</span>
-    <div class="grid" id="grid-cities"></div>
-  </section>
-
   <section class="panel hidden" id="panel-stores">
-    <div class="filterbar">
-      <label>City
-        <select id="f-store-city">
-          <option value="">any city</option>
-        </select>
-      </label>
-      <label>Type
-        <select id="f-store-type">
-          <option value="">all</option>
-          <option value="brand-salon">brand salon</option>
-          <option value="atelier">atelier (appt)</option>
-          <option value="grey-market">grey-market dealer</option>
-          <option value="vintage">vintage shop</option>
-          <option value="auction-house">auction house</option>
-          <option value="dealer">dealer</option>
-        </select>
-      </label>
-      <span class="hint">Click "Map it" for Google Maps</span>
-    </div>
+    <div class="chip-row" id="store-cities"></div>
     <div class="grid" id="grid-stores"></div>
   </section>
 
+  <section class="panel hidden" id="panel-cities">
+    <div class="grid" id="grid-cities"></div>
+  </section>
+
+  <section class="panel hidden" id="panel-sellers">
+    <div class="grid" id="grid-sellers"></div>
+  </section>
+
   <section class="panel hidden" id="panel-friends">
-    <p class="hint" style="display:block; margin:0 0 12px">Set a nickname (top-right) and your stars become visible here for everyone in the group. Useful for gifts.</p>
     <div class="grid" id="grid-friends"></div>
   </section>
 
   <footer>
-    <p>Profile: <a href="https://github.com/armanmalhotra-hub/ronin-defense/blob/main/docs/watch-profile.md">watch-profile.md</a> · Skill: <a href="https://github.com/armanmalhotra-hub/ronin-defense/blob/main/.claude/skills/find-watch/SKILL.md">find-watch</a> · Data: <a href="./data.json">data.json</a> · <a href="https://github.com/armanmalhotra-hub/ronin-defense">repo</a></p>
-    <p class="disclaimer">Stars/votes save locally by default. To sync across friends, configure a Pantry ID in <code>config.js</code> — see <a href="./README.md">README</a>.</p>
+    <a href="https://github.com/armanmalhotra-hub/ronin-defense">repo</a>
+    <span>·</span>
+    <a href="https://github.com/armanmalhotra-hub/ronin-defense/blob/main/dashboard/README.md">readme</a>
+    <span>·</span>
+    <span id="updated"></span>
   </footer>
 
   <script src="./config.js" defer></script>

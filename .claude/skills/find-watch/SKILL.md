@@ -120,3 +120,20 @@ When updating:
 When the user asks "add X to the dashboard", edit `data.json` directly — don't generate a separate file or list.
 
 When the user asks "what's on the dashboard?", read `data.json` and summarize counts per tab; don't re-scrape.
+
+## Design philosophy (do not violate)
+
+The dashboard's UI must match the same restraint Arman demands in his watches. When adding features:
+
+- **Minimal filters.** One filter per tab maximum, ideally zero. Do not add multi-dropdown "filter bars". Use chips or a single search box if needed. Sorting > filtering.
+- **Less copy.** Cards are short. No "Best for:" / "Fees:" labels — let the content speak. Cut header subtitles, redundant "Source:" lines, repeated hint text.
+- **Restrained typography.** Cormorant Garamond (serif) for headings, Inter (sans) for body. No emoji decoration. No inline icons unless functional (★ ▲ ▼).
+- **Warm palette only.** Cream `#f6f1e8` background, paper `#fffbf3` cards, ink `#1a1815` text, persimmon `#b85a2e` as the single accent. Do not add second/third accent colors.
+- **Pills, not badges.** Small, square-ish, low-saturation. Status differentiation via color tone, not shape change.
+- **Breathing room.** ≥24px gap between cards. ≥18-20px card padding. Underutilize, do not crowd.
+- **Hierarchy, not decoration.** Bold headlines (serif), thin metadata (muted sans), single price line. No drop shadows on cards (use border-color hover instead).
+- **No nested filtering.** Don't ship "show only my bookmarks" type pseudo-filters — surface those via a separate tab (Friends).
+- **Don't pad cards** with empty sections. If a watch lacks `note` or `tags`, render the card without that block.
+- **Sticky header tabs** only; no second sticky bar. Search lives in the tab bar.
+
+If the user pushes back with "too many filters / words / variables", the answer is to remove, not rearrange.
