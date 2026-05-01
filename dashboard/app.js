@@ -596,8 +596,33 @@ function renderSurveys() {
 // ---------- Play: HomeGuessr-style daily challenge ----------
 const PLAY_KEY = "watch-watch:play";
 const ROUNDS_PER_DAY = 5;
-const PRICE_MIN = 500;
-const PRICE_MAX = 60000;
+const PRICE_MIN = 1000;
+const PRICE_MAX = 120000;
+
+// Brand-revealing words to mask in game-stage clue text.
+// Includes brand names, model names, signature design words, and craft markers
+// that would tip a knowledgeable player to the right brand.
+const BRAND_STOPWORDS = new Set([
+  "kurono", "asaoka", "hajime", "naoya", "hida", "kikuchi", "nakagawa",
+  "murakumo", "ichimonji", "genmon", "masa", "pastime", "nayuta", "sohkoku",
+  "nagi", "minase", "divido", "yusai", "daizoh", "makihara", "kazuo", "maeda",
+  "heures", "quiet", "club", "kikuno", "masahiro", "wadokei", "otsuka", "lotec",
+  "voutilainen", "vingt", "akrivia", "rexhepi", "laurent", "ferrier", "journe",
+  "fpjourne", "fp", "garrick", "rgm", "shapiro", "sarpaneva", "korona", "moser",
+  "endeavour", "lang", "heyne", "georg", "friedrich", "august", "anordain",
+  "paulin", "fears", "brunswick", "weiss",
+  "shiraai", "akane", "mori", "persimmon", "darkmist", "toki", "bunkyo",
+  "hagane", "inseki", "aoyama", "sensu", "calligra", "kikutsunagimon", "kikutsunagi",
+  "tsunami", "resurgence", "souverain", "souveraine",
+  "edo", "kiriko",
+]);
+
+function scrubBrandWords(text) {
+  if (!text) return text;
+  return text.replace(/[A-Za-z']+/g, tok =>
+    BRAND_STOPWORDS.has(tok.toLowerCase()) ? "▒".repeat(Math.min(tok.length, 6)) : tok
+  );
+}
 
 function todayISO() { return new Date().toISOString().slice(0, 10); }
 
@@ -919,16 +944,19 @@ function renderPlay() {
       <p class="day-label">Round ${playState.idx + 1} of ${playState.watches.length}</p>
       <div class="progress">${segs}</div>
       <p class="clue-line"><b>Strap:</b> ${w.strap || "—"}</p>
-      <p class="clue-line"><b>Dial:</b> ${w.dial || "—"}</p>
+      <p class="clue-line"><b>Dial:</b> ${scrubBrandWords(w.dial) || "—"}</p>
       ${(() => {
         const safe = (w.tags || []).filter(t => {
           const s = t.toLowerCase();
-          if (/\d+\s*(pcs|pieces)/.test(s)) return false;
-          if (s.includes("hajime") || s.includes("aoyama") || s.includes("armoury")) return false;
-          if (s.includes(w.brand.split(" ")[0].toLowerCase())) return false;
+          if (/\d+\s*(pcs|pieces|pc\b)/.test(s)) return false;
+          if (s.includes("armoury")) return false;
+          // any tag containing a stopword is dropped
+          for (const word of s.split(/[^a-z]+/)) {
+            if (word && BRAND_STOPWORDS.has(word)) return false;
+          }
           return true;
         }).slice(0, 3);
-        return safe.length ? `<div class="pills">${safe.map(t => `<span class="pill dim">${t}</span>`).join("")}</div>` : "";
+        return safe.length ? `<div class="pills">${safe.map(t => `<span class="pill dim">${scrubBrandWords(t)}</span>`).join("")}</div>` : "";
       })()}
       ${stageBody}
       <p class="survey-meta">${me ? `Playing as ${me}` : "Set a nickname to save your score on the leaderboard."}</p>
@@ -989,7 +1017,7 @@ function renderStagePrice(w) {
     <p class="stage-label">Step 2 — Guess the retail price</p>
     <div class="price-display" id="price-display">$${cur.toLocaleString()}</div>
     <input type="range" id="price-slider" min="0" max="100" step="0.1" value="${priceToSlider(cur)}" class="price-slider"/>
-    <div class="price-scale"><span>$500</span><span>$5K</span><span>$60K</span></div>
+    <div class="price-scale"><span>$1K</span><span>$10K</span><span>$120K</span></div>
     <div class="play-buttons">
       <button id="g-submit-price">Submit price →</button>
     </div>`;

@@ -350,6 +350,10 @@ nav.tabs #search:focus { outline: none; border-bottom-color: var(--ink); }
   display: flex; justify-content: space-between;
   font-size: 11px; color: var(--muted); margin-top: -4px;
 }
+/* match the slider's actual range labels */
+.price-scale .lo::before { content: "$1K"; }
+.price-scale .mid::before { content: "$10K"; }
+.price-scale .hi::before { content: "$120K"; }
 
 .big-pct {
   font-family: var(--serif); font-weight: 600;
