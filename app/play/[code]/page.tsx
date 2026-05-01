@@ -4,6 +4,8 @@ import { useEffect, useMemo, useState } from "react";
 import { useParams } from "next/navigation";
 import { usePoll } from "@/lib/usePoll";
 import { Leaderboard } from "@/components/Leaderboard";
+import { RoundDots } from "@/components/RoundDots";
+import { roast } from "@/lib/roast";
 import type { PublicGameView, PublicQuestion } from "@/lib/types";
 
 export default function PlayPage() {
@@ -166,22 +168,30 @@ function PlayerQuestion({
   if (!q) return null;
 
   return (
-    <div className="space-y-4">
-      <div className="flex items-baseline justify-between">
-        <p className="label">
-          Q {data.questionIndex + 1} / {data.totalQuestions}
-        </p>
-        {remaining !== null && (
-          <p className="font-display text-2xl text-sunset tabular-nums">
-            {remaining}s
+    <div className="space-y-5">
+      <div className="space-y-2">
+        <div className="flex items-baseline justify-between">
+          <p className="label">
+            Round {data.questionIndex + 1} of {data.totalQuestions}
           </p>
-        )}
+          {remaining !== null && (
+            <p className="font-display text-2xl text-sunset tabular-nums">
+              {remaining}s
+            </p>
+          )}
+        </div>
+        <RoundDots current={data.questionIndex} total={data.totalQuestions} />
       </div>
+
       <h2 className="text-2xl font-display text-sand leading-tight">
         {q.prompt}
       </h2>
       {q.image && (
-        <img src={q.image} alt="" className="rounded-2xl max-h-64 object-cover w-full" />
+        <img
+          src={q.image}
+          alt=""
+          className="rounded-2xl max-h-64 object-cover w-full"
+        />
       )}
 
       {data.phase === "question" && !submitted && (
@@ -346,37 +356,55 @@ function RevealPanel({
 }) {
   const reveal = data.reveal!;
   const mine = reveal.perPlayer.find((x) => x.playerId === playerId);
+  const pts = mine?.pointsEarned ?? 0;
+  const pct = Math.round((pts / 1000) * 100);
+  const roastLine = roast(pts, `${reveal.questionId}:${playerId}`);
+
   return (
-    <div className="space-y-3">
-      <div className="rounded-2xl bg-sunset/15 border border-sunset/40 p-4 text-center">
-        <p className="label">Answer</p>
-        <p className="text-3xl font-display text-sunset">
-          {String(reveal.answer)}
-          {reveal.unit ? ` ${reveal.unit}` : ""}
+    <div className="space-y-4">
+      <div className="rounded-3xl bg-white/5 border border-white/10 p-6 text-center">
+        <p className="label mb-2">Round result</p>
+        <p
+          className={`font-display tracking-tight text-7xl ${
+            pct >= 70
+              ? "text-green-300"
+              : pct >= 40
+              ? "text-sand"
+              : "text-white/70"
+          }`}
+        >
+          {pct}%
         </p>
-        {reveal.funFact && (
-          <p className="text-white/70 italic mt-2 text-sm">{reveal.funFact}</p>
-        )}
+        <p className="text-white/60 tabular-nums">
+          {pts.toLocaleString()} / 1,000 pts
+        </p>
       </div>
-      <div
-        className={`rounded-2xl p-4 text-center border ${
-          (mine?.pointsEarned ?? 0) > 0
-            ? "bg-green-400/10 border-green-400/40 text-green-200"
-            : "bg-white/5 border-white/10 text-white/70"
-        }`}
-      >
-        <p className="text-sm">
-          You guessed:{" "}
-          <span className="font-semibold">
+
+      <div className="grid grid-cols-2 gap-3">
+        <div className="rounded-2xl bg-white/5 border border-white/10 p-3">
+          <p className="label text-[10px]">You said</p>
+          <p className="font-semibold text-base mt-1">
             {mine?.value !== null && mine?.value !== undefined
               ? String(mine.value)
-              : "no answer"}
-          </span>
-        </p>
-        <p className="font-display text-2xl">
-          +{(mine?.pointsEarned ?? 0).toLocaleString()} pts
-        </p>
+              : "—"}
+          </p>
+        </div>
+        <div className="rounded-2xl bg-sunset/15 border border-sunset/40 p-3">
+          <p className="label text-[10px] text-sunset/80">Truth</p>
+          <p className="font-semibold text-base mt-1 text-sunset">
+            {String(reveal.answer)}
+            {reveal.unit ? ` ${reveal.unit}` : ""}
+          </p>
+        </div>
       </div>
+
+      {reveal.funFact && (
+        <p className="text-center text-white/60 italic text-sm">
+          {reveal.funFact}
+        </p>
+      )}
+
+      <p className="text-center text-white/80 italic">{roastLine}</p>
     </div>
   );
 }

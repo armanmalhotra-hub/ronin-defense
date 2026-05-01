@@ -5,6 +5,7 @@ import { useParams } from "next/navigation";
 import { usePoll } from "@/lib/usePoll";
 import { QrCode } from "@/components/QrCode";
 import { Leaderboard } from "@/components/Leaderboard";
+import { RoundDots } from "@/components/RoundDots";
 import type { PublicGameView } from "@/lib/types";
 
 export default function HostPage() {
@@ -168,15 +169,18 @@ function HostQuestionPanel({ data }: { data: PublicGameView }) {
 
   return (
     <div className="flex flex-col gap-6 h-full">
-      <div className="flex items-baseline justify-between">
-        <p className="label">
-          Question {data.questionIndex + 1} of {data.totalQuestions}
-        </p>
-        {remaining !== null && (
-          <p className="font-display text-3xl text-sunset tabular-nums">
-            {remaining}s
+      <div className="space-y-3">
+        <div className="flex items-baseline justify-between">
+          <p className="label">
+            Question {data.questionIndex + 1} of {data.totalQuestions}
           </p>
-        )}
+          {remaining !== null && (
+            <p className="font-display text-3xl text-sunset tabular-nums">
+              {remaining}s
+            </p>
+          )}
+        </div>
+        <RoundDots current={data.questionIndex} total={data.totalQuestions} />
       </div>
 
       <h2 className="text-3xl sm:text-4xl font-display text-sand leading-tight">
