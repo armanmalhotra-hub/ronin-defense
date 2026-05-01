@@ -593,6 +593,60 @@ const ROUNDS_PER_DAY = 5;
 const PRICE_MIN = 1000;
 const PRICE_MAX = 120000;
 
+// City coordinates for the map-based location guess
+const CITY_COORDS = {
+  "Tokyo": [35.6762, 139.6503], "Akita": [39.7186, 140.1024],
+  "Saitama": [35.8617, 139.6455], "Kyoto": [35.0116, 135.7681],
+  "Kobe": [34.6901, 135.1956], "Shanghai": [31.2304, 121.4737],
+  "Schaffhausen": [47.6975, 8.6346], "Geneva": [46.2044, 6.1432],
+  "Môtiers": [46.9128, 6.6225], "Sainte-Croix": [46.8189, 6.5060],
+  "Le Locle": [47.0581, 6.7475], "Bienne": [47.1378, 7.2469],
+  "Le Sentier": [46.6233, 6.2336],
+  "Glashütte": [50.8543, 13.7805], "Schramberg": [48.2289, 8.3854],
+  "Dresden": [51.0504, 13.7373], "Radeberg": [51.1142, 13.9128],
+  "Vienna": [48.2082, 16.3738],
+  "Paris": [48.8566, 2.3522], "Brittany": [48.0000, -2.7000],
+  "Prague": [50.0755, 14.4378],
+  "Seoul": [37.5665, 126.9780],
+  "Stockholm": [59.3293, 18.0686], "Linköping": [58.4108, 15.6214],
+  "Glasgow": [55.8642, -4.2518],
+  "Helsinki": [60.1699, 24.9384],
+  "Norfolk": [52.6309, 1.2974], "Bristol": [51.4545, -2.5879],
+  "Isle of Man": [54.2361, -4.5481],
+  "Mount Joy, PA": [40.1109, -76.5025],
+  "Los Angeles": [34.0522, -118.2437],
+  "Moscow": [55.7558, 37.6173],
+};
+
+function coordsForWatch(w) {
+  const made = w.made_in;
+  if (CITY_COORDS[made]) return CITY_COORDS[made];
+  // try best-effort match by prefix
+  for (const k of Object.keys(CITY_COORDS)) {
+    if (made && made.toLowerCase().includes(k.toLowerCase())) return CITY_COORDS[k];
+  }
+  return null;
+}
+
+function haversineKm(a, b) {
+  const R = 6371;
+  const toRad = (d) => d * Math.PI / 180;
+  const dLat = toRad(b[0] - a[0]);
+  const dLon = toRad(b[1] - a[1]);
+  const s = Math.sin(dLat/2)**2 + Math.cos(toRad(a[0])) * Math.cos(toRad(b[0])) * Math.sin(dLon/2)**2;
+  return R * 2 * Math.atan2(Math.sqrt(s), Math.sqrt(1 - s));
+}
+
+function locationPoints(km) {
+  if (km == null) return 0;
+  if (km <= 50) return 50;
+  if (km <= 200) return 40;
+  if (km <= 500) return 28;
+  if (km <= 1500) return 15;
+  if (km <= 5000) return 5;
+  return 0;
+}
+
 // Brand-revealing words to mask in game-stage clue text.
 // Includes brand names, model names, signature design words, and craft markers
 // that would tip a knowledgeable player to the right brand.
@@ -638,16 +692,26 @@ function seededPicker(seed) {
 }
 
 function dailyWatchIds(dateStr) {
-  const pool = (data.favorites || []).filter(w => priceBucket(w) !== "unknown");
-  if (!pool.length) return [];
+  const all = (data.favorites || []).filter(w => priceBucket(w) !== "unknown" && coordsForWatch(w));
+  const primers = all.filter(w => w.category === "primer");
+  const indies = all.filter(w => w.category !== "primer");
+  if (!all.length) return [];
   const rng = seededPicker(dateStr);
-  const ids = pool.map(w => w.id);
-  // Fisher-Yates shuffle with seeded rng, then take ROUNDS_PER_DAY
-  for (let i = ids.length - 1; i > 0; i--) {
-    const j = Math.floor(rng() * (i + 1));
-    [ids[i], ids[j]] = [ids[j], ids[i]];
-  }
-  return ids.slice(0, Math.min(ROUNDS_PER_DAY, ids.length));
+  const shuffle = (arr) => {
+    const a = arr.slice();
+    for (let i = a.length - 1; i > 0; i--) {
+      const j = Math.floor(rng() * (i + 1));
+      [a[i], a[j]] = [a[j], a[i]];
+    }
+    return a;
+  };
+  const out = [];
+  // Round 1: primer if available
+  if (primers.length) out.push(shuffle(primers)[0].id);
+  // Rounds 2..N: indies
+  const indiePicks = shuffle(indies).slice(0, ROUNDS_PER_DAY - out.length);
+  for (const w of indiePicks) out.push(w.id);
+  return out;
 }
 
 let playState = JSON.parse(localStorage.getItem(PLAY_KEY) || "null") || null;
@@ -661,9 +725,9 @@ function initPlayStateOnce() {
     watches: dailyWatchIds(today),
     rounds: [],
     idx: 0,
-    stage: "brand",
+    stage: "map",
+    guessLatLng: null,
     selectedBrand: "",
-    sliderPrice: 5000,
   };
   savePlay();
 }
@@ -686,15 +750,15 @@ function pricePoints(guess, w) {
   return 0;
 }
 
-function quipFor(brandPts, pricePts) {
+function quipFor(brandPts, locPts) {
   const b = brandPts > 0;
-  const p = pricePts >= 35;
-  if (brandPts === 50 && pricePts === 50) return "Hajime would weep. You're a menace.";
-  if (b && p) return "Quietly excellent.";
-  if (b && pricePts > 0) return "You know the maker. The market — getting there.";
-  if (b && !p) return "Right house. Wrong price tag.";
-  if (!b && p) return "Your pricing is elite. Your eye is in witness protection.";
-  if (!b && pricePts > 0) return "Both guesses orbiting truth. Try again.";
+  const l = locPts >= 28;
+  if (brandPts === 50 && locPts === 50) return "Hajime would weep. You're a menace.";
+  if (b && l) return "Quietly excellent.";
+  if (b && locPts > 0) return "You know the maker. The geography — close-ish.";
+  if (b && !l) return "Right maker. Wrong continent.";
+  if (!b && l) return "Your geography is elite. Your eye is in witness protection.";
+  if (!b && locPts > 0) return "Both guesses orbiting truth. Try again.";
   return "Big swing, big miss. Tomorrow's another day.";
 }
 
@@ -709,9 +773,9 @@ function startNewDayIfNeeded() {
       watches: dailyWatchIds(today),
       rounds: [],
       idx: 0,
-      stage: "brand",
+      stage: "map",
+      guessLatLng: null,
       selectedBrand: "",
-      sliderPrice: 5000,
     };
     savePlay();
   }
@@ -803,24 +867,30 @@ async function commitDayResultIfComplete() {
   await Storage.save(state);
 }
 
-async function submitBrand() {
-  if (!playState.selectedBrand) return;
-  playState.stage = "price";
+async function submitMap() {
+  if (!playState.guessLatLng) return;
+  playState.stage = "brand";
   savePlay();
   renderPlay();
 }
 
-async function submitPrice() {
+async function submitBrand() {
+  if (!playState.selectedBrand) return;
   const w = data.favorites.find(x => x.id === playState.watches[playState.idx]);
   if (!w) return;
+  const truth = coordsForWatch(w);
+  const km = playState.guessLatLng && truth ? haversineKm(playState.guessLatLng, truth) : null;
+  const locPts = locationPoints(km);
   const brandPts = brandPoints(playState.selectedBrand, w);
-  const pricePts = pricePoints(playState.sliderPrice, w);
   const round = {
     watchId: w.id,
+    guessLatLng: playState.guessLatLng,
+    actualLatLng: truth,
+    locKm: km,
+    locPts,
     brand: playState.selectedBrand,
-    price: playState.sliderPrice,
-    brandPts, pricePts,
-    total: brandPts + pricePts,
+    brandPts,
+    total: locPts + brandPts,
   };
   playState.rounds.push(round);
   playState.stage = "reveal";
@@ -837,9 +907,9 @@ async function nextRound() {
     return;
   }
   playState.idx += 1;
-  playState.stage = "brand";
+  playState.stage = "map";
+  playState.guessLatLng = null;
   playState.selectedBrand = "";
-  playState.sliderPrice = 5000;
   savePlay();
   renderPlay();
 }
@@ -896,8 +966,8 @@ function renderPlay() {
   if (playState.stage === "reveal") {
     const r = playState.rounds[playState.rounds.length - 1];
     const isLast = playState.idx + 1 >= playState.watches.length;
-    const truth = priceFor(w);
     const pct = Math.round(100 * r.total / 100);
+    const kmStr = r.locKm == null ? "—" : r.locKm < 1 ? "<1 km" : `${Math.round(r.locKm).toLocaleString()} km`;
     stage.className = "play-stage" + (hasImg ? " with-image" : "");
     stage.innerHTML = `
       <img class="silhouette" src="${imgSrc}" alt="${w.brand} ${w.model}" onerror="this.style.display='none'"/>
@@ -907,33 +977,35 @@ function renderPlay() {
         <div class="big-pct">${pct}<span>%</span></div>
         <p class="day-sub">${r.total} / 100 pts</p>
         <h4 class="reveal-watch">${w.brand} — ${w.model}</h4>
+        ${r.actualLatLng && r.guessLatLng ? `<div id="reveal-map" class="reveal-map"></div>` : ""}
         <div class="reveal-grid">
+          <div class="reveal-row">
+            <span class="rl">Made in</span>
+            <span class="rg">${kmStr} off</span>
+            <span class="rc">${r.locPts > 0 ? `<span class="pts">+${r.locPts}</span>` : ""} <span class="rwrong">${w.made_in || "—"}</span></span>
+          </div>
           <div class="reveal-row">
             <span class="rl">Brand</span>
             <span class="rg">${r.brand || "—"}</span>
             <span class="rc">${r.brandPts > 0 ? `<span class="pts">+${r.brandPts}</span>` : `<span class="rwrong">${w.brand}</span>`}</span>
           </div>
-          <div class="reveal-row">
-            <span class="rl">Price</span>
-            <span class="rg">$${r.price.toLocaleString()}</span>
-            <span class="rc">${r.pricePts > 0 ? `<span class="pts">+${r.pricePts}</span>` : ""} <span class="rwrong">$${truth.toLocaleString()}</span></span>
-          </div>
         </div>
-        <p class="quip">${quipFor(r.brandPts, r.pricePts)}</p>
+        <p class="quip">${quipFor(r.brandPts, r.locPts)}</p>
         ${w.note ? `<p class="clue-line" style="color:var(--muted)">${w.note}</p>` : ""}
         ${brandBio(w.brand) ? `<p class="bio reveal-bio"><span class="bio-label">About ${w.brand}</span> ${brandBio(w.brand)}</p>` : ""}
         <div class="play-buttons" style="margin-top:8px">
           <button id="g-next">${isLast ? "See day result →" : "Next watch →"}</button>
         </div>
       </div>`;
+    if (r.actualLatLng && r.guessLatLng) showRevealMap(r.guessLatLng, r.actualLatLng, r.locKm);
     stage.querySelector("#g-next").addEventListener("click", nextRound);
     renderLeaderboard();
     return;
   }
 
-  // STAGE: brand or price
+  // STAGE: map or brand
   stage.className = "play-stage" + (hasImg ? " with-image" : "");
-  const stageBody = playState.stage === "brand" ? renderStageBrand(w, brands) : renderStagePrice(w);
+  const stageBody = playState.stage === "map" ? renderStageMap(w) : renderStageBrand(w, brands);
   stage.innerHTML = `
     <img class="silhouette hidden-img" src="${imgSrc}" alt="mystery watch" onerror="this.style.display='none'"/>
     <div class="clue">
@@ -958,7 +1030,11 @@ function renderPlay() {
       <p class="survey-meta">${me ? `Playing as ${me}` : "Set a nickname to save your score on the leaderboard."}</p>
     </div>`;
 
-  if (playState.stage === "brand") {
+  if (playState.stage === "map") {
+    initMap();
+    stage.querySelector("#g-submit-map")?.addEventListener("click", submitMap);
+    stage.querySelector("#g-skip-map")?.addEventListener("click", nextRound);
+  } else if (playState.stage === "brand") {
     stage.querySelectorAll(".brand-tile").forEach(b => {
       b.addEventListener("click", () => {
         playState.selectedBrand = b.dataset.brand;
@@ -968,21 +1044,20 @@ function renderPlay() {
     });
     stage.querySelector("#g-submit-brand")?.addEventListener("click", submitBrand);
     stage.querySelector("#g-skip-brand")?.addEventListener("click", nextRound);
-  } else if (playState.stage === "price") {
-    const slider = stage.querySelector("#price-slider");
-    const display = stage.querySelector("#price-display");
-    slider.addEventListener("input", e => {
-      const pct = +e.target.value;
-      const v = Math.round(sliderToPrice(pct));
-      playState.sliderPrice = v;
-      display.textContent = `$${v.toLocaleString()}`;
-    });
-    slider.addEventListener("change", () => savePlay());
-    stage.querySelector("#g-submit-price")?.addEventListener("click", submitPrice);
-    stage.querySelector("#g-skip-price")?.addEventListener("click", nextRound);
   }
 
   renderLeaderboard();
+}
+
+function renderStageMap(w) {
+  return `
+    <p class="stage-label">Step 1 — Where is this watch made?</p>
+    <div id="play-map" class="play-map"></div>
+    <p class="map-hint" id="map-hint">${playState.guessLatLng ? "Pin dropped — submit or click again to move" : "Click the map to drop a pin"}</p>
+    <div class="play-buttons sticky-cta">
+      <button id="g-submit-map" ${playState.guessLatLng ? "" : "disabled"}>Submit location →</button>
+      <button id="g-skip-map" class="secondary">Skip</button>
+    </div>`;
 }
 
 function renderStageBrand(w, brands) {
@@ -990,12 +1065,74 @@ function renderStageBrand(w, brands) {
     <button class="brand-tile ${playState.selectedBrand === b ? "selected" : ""}" data-brand="${b}">${b}</button>
   `).join("");
   return `
-    <p class="stage-label">Step 1 — Guess the brand</p>
+    <p class="stage-label">Step 2 — Name the brand</p>
     <div class="brand-grid">${tiles}</div>
     <div class="play-buttons sticky-cta">
       <button id="g-submit-brand" ${playState.selectedBrand ? "" : "disabled"}>Submit brand →</button>
       <button id="g-skip-brand" class="secondary">Skip</button>
     </div>`;
+}
+
+let _map, _pin, _truthPin, _line;
+function initMap() {
+  if (!window.L) return; // Leaflet not loaded yet
+  setTimeout(() => {
+    const el = document.getElementById("play-map");
+    if (!el || el.dataset.init === "1") {
+      if (_map) _map.invalidateSize();
+      return;
+    }
+    el.dataset.init = "1";
+    _map = L.map(el, {
+      worldCopyJump: true, attributionControl: false,
+      zoomControl: true, minZoom: 1, maxZoom: 8,
+    }).setView([30, 10], 1);
+    L.tileLayer("https://{s}.basemaps.cartocdn.com/light_nolabels/{z}/{x}/{y}{r}.png", {
+      subdomains: "abcd", maxZoom: 10,
+    }).addTo(_map);
+    _map.on("click", (e) => {
+      if (_pin) _map.removeLayer(_pin);
+      _pin = L.circleMarker([e.latlng.lat, e.latlng.lng], {
+        radius: 7, color: "#1a1612", fillColor: "#b85a2e", fillOpacity: 1, weight: 2,
+      }).addTo(_map);
+      playState.guessLatLng = [e.latlng.lat, e.latlng.lng];
+      savePlay();
+      const btn = document.getElementById("g-submit-map");
+      if (btn) btn.disabled = false;
+      const hint = document.getElementById("map-hint");
+      if (hint) hint.textContent = "Pin dropped — submit or click again to move";
+    });
+    if (playState.guessLatLng) {
+      _pin = L.circleMarker(playState.guessLatLng, {
+        radius: 7, color: "#1a1612", fillColor: "#b85a2e", fillOpacity: 1, weight: 2,
+      }).addTo(_map);
+    }
+  }, 30);
+}
+
+function showRevealMap(guess, truth, kmAway) {
+  if (!window.L) return;
+  setTimeout(() => {
+    const el = document.getElementById("reveal-map");
+    if (!el) return;
+    const mp = L.map(el, {
+      attributionControl: false, zoomControl: false,
+      scrollWheelZoom: false, dragging: false, doubleClickZoom: false,
+      minZoom: 1, maxZoom: 8,
+    });
+    L.tileLayer("https://{s}.basemaps.cartocdn.com/light_nolabels/{z}/{x}/{y}{r}.png", {
+      subdomains: "abcd",
+    }).addTo(mp);
+    const guessIcon = L.circleMarker(guess, {
+      radius: 7, color: "#1a1612", fillColor: "#b85a2e", fillOpacity: 1, weight: 2,
+    }).addTo(mp);
+    const truthIcon = L.circleMarker(truth, {
+      radius: 8, color: "#1a1612", fillColor: "#1f4536", fillOpacity: 1, weight: 2,
+    }).addTo(mp);
+    L.polyline([guess, truth], { color: "#1a1612", weight: 1, dashArray: "4 4" }).addTo(mp);
+    const bounds = L.latLngBounds([guess, truth]).pad(0.4);
+    mp.fitBounds(bounds);
+  }, 30);
 }
 
 // log scale: position 0..100 -> $500..$60K
