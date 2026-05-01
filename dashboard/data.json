@@ -4011,6 +4011,141 @@
       ]
     }
   ],
-  "markets": [],
-  "auctions": []
+  "markets": [
+    {
+      "id": "mkt-phillips-hk-tsunami-steel-2026",
+      "auction_id": "phillips-hk-spring-2026",
+      "lot_number": "142",
+      "watch_id": "asaoka-tsunami-edition-blanche",
+      "title": "Hajime Asaoka \u2014 Tsunami \u00c9dition Blanche (Steel)",
+      "house": "Phillips Hong Kong",
+      "house_url": "https://www.phillips.com/auctions/department/watches",
+      "estimate_low": 40000,
+      "estimate_high": 60000,
+      "estimate_currency": "USD",
+      "close_iso": "2026-05-24T08:00:00Z",
+      "status": "open",
+      "settled_price": null,
+      "note": "Sold-out atelier piece. Last comparable Tsunami sold $41,200 at Phillips Geneva 2024."
+    },
+    {
+      "id": "mkt-sothebys-ny-nh-type3a",
+      "auction_id": "sothebys-ny-important-watches-spring-2026",
+      "lot_number": "77",
+      "watch_id": "naoya-hida-type-3a",
+      "title": "Naoya Hida & Co. \u2014 NH Type 3A Moonphase (only 15 made)",
+      "house": "Sotheby's New York",
+      "house_url": "https://www.sothebys.com/en/buy/watches",
+      "estimate_low": 22000,
+      "estimate_high": 30000,
+      "estimate_currency": "USD",
+      "close_iso": "2026-06-12T15:00:00Z",
+      "status": "open",
+      "settled_price": null,
+      "note": "Discontinued ref \u2014 successor Type 3B-3 has lapis dial. Auction estimates underweight scarcity historically."
+    },
+    {
+      "id": "mkt-christies-geneva-vingt8",
+      "auction_id": "christies-geneva-rare-watches-spring-2026",
+      "lot_number": "23",
+      "watch_id": "voutilainen-vingt-8",
+      "title": "Voutilainen \u2014 Vingt-8 (frosted silver, 2018)",
+      "house": "Christie's Geneva",
+      "house_url": "https://www.christies.com/en/department/watches",
+      "estimate_low": 90000,
+      "estimate_high": 130000,
+      "estimate_currency": "CHF",
+      "close_iso": "2026-05-16T13:00:00Z",
+      "status": "open",
+      "settled_price": null,
+      "note": "Used Vingt-8s have been climbing \u2014 $116K at Phillips HK fall 2025."
+    },
+    {
+      "id": "mkt-loupethis-shiraai-may",
+      "auction_id": "loupethis-weekly-2026-05",
+      "lot_number": "3127",
+      "watch_id": "kurono-shiraai",
+      "title": "Kurono Tokyo \u2014 2025 Jubilee Sensu EOL 'Shiraai'",
+      "house": "LoupeThis",
+      "house_url": "https://loupethis.com/",
+      "estimate_low": 3000,
+      "estimate_high": 4500,
+      "estimate_currency": "USD",
+      "close_iso": "2026-05-14T22:00:00Z",
+      "status": "open",
+      "settled_price": null,
+      "note": "Recent comps: $3,520 (Mar), $3,960 (Apr). Trend is softening \u2014 could break into the $2,800s."
+    },
+    {
+      "id": "mkt-phillips-hk-fpjourne-cs",
+      "auction_id": "phillips-hk-spring-2026",
+      "lot_number": "201",
+      "watch_id": "fpjourne-chronometre-souverain",
+      "title": "F.P. Journe \u2014 Chronom\u00e8tre Souverain (platinum, 2014)",
+      "house": "Phillips Hong Kong",
+      "house_url": "https://www.phillips.com/auctions/department/watches",
+      "estimate_low": 90000,
+      "estimate_high": 130000,
+      "estimate_currency": "USD",
+      "close_iso": "2026-05-25T08:00:00Z",
+      "status": "open",
+      "settled_price": null,
+      "note": "Pre-2018 dial variant typically commands a 15-25% premium over modern."
+    },
+    {
+      "id": "mkt-loupethis-inseki-april",
+      "auction_id": "loupethis-weekly-2026-05",
+      "lot_number": "3104",
+      "watch_id": "kurono-inseki",
+      "title": "Kurono Tokyo \u2014 Special Projects 37mm 'Inseki'",
+      "house": "LoupeThis",
+      "house_url": "https://loupethis.com/",
+      "estimate_low": 2200,
+      "estimate_high": 3000,
+      "estimate_currency": "USD",
+      "close_iso": "2026-04-23T22:00:00Z",
+      "status": "settled",
+      "settled_price": 2680,
+      "settled_currency": "USD",
+      "note": "Sold $2,680 \u2014 at the low end of estimate; cooler than expected."
+    }
+  ],
+  "auctions": [
+    {
+      "id": "phillips-hk-spring-2026",
+      "house": "Phillips",
+      "name": "Phillips Watches: The Hong Kong Sessions, Spring 2026",
+      "city": "Hong Kong",
+      "starts_iso": "2026-05-23T00:00:00Z",
+      "ends_iso": "2026-05-25T00:00:00Z",
+      "url": "https://www.phillips.com/auctions/department/watches"
+    },
+    {
+      "id": "sothebys-ny-important-watches-spring-2026",
+      "house": "Sotheby's",
+      "name": "Sotheby's New York: Important Watches, Spring 2026",
+      "city": "New York",
+      "starts_iso": "2026-06-12T00:00:00Z",
+      "ends_iso": "2026-06-12T00:00:00Z",
+      "url": "https://www.sothebys.com/en/buy/watches"
+    },
+    {
+      "id": "christies-geneva-rare-watches-spring-2026",
+      "house": "Christie's",
+      "name": "Christie's Geneva: Rare Watches, Spring 2026",
+      "city": "Geneva",
+      "starts_iso": "2026-05-16T00:00:00Z",
+      "ends_iso": "2026-05-16T00:00:00Z",
+      "url": "https://www.christies.com/en/department/watches"
+    },
+    {
+      "id": "loupethis-weekly-2026-05",
+      "house": "LoupeThis",
+      "name": "LoupeThis Weekly Auction (May 11-14)",
+      "city": "online",
+      "starts_iso": "2026-05-11T00:00:00Z",
+      "ends_iso": "2026-05-14T23:59:00Z",
+      "url": "https://loupethis.com/"
+    }
+  ]
 }

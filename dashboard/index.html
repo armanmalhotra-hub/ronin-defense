@@ -27,6 +27,7 @@
 
   <nav class="tabs" role="tablist">
     <button class="tab active" data-tab="play">Offhand</button>
+    <button class="tab" data-tab="markets">Markets</button>
     <button class="tab" data-tab="favorites">Catalog</button>
     <button class="tab" data-tab="brands">Brands</button>
     <button class="tab" data-tab="survey">Survey</button>
@@ -38,6 +39,14 @@
     <div class="play-stage" id="play-stage"></div>
     <h3 class="play-title">Offhand leaderboard</h3>
     <div class="grid" id="grid-leaderboard"></div>
+  </section>
+
+  <section class="panel hidden" id="panel-markets">
+    <div class="markets-intro">
+      <h2>Auction Markets</h2>
+      <p class="sub">Predict the hammer price on top auction lots. No real money — leaderboard reputation only. Submit your guess before the lot closes; settle when the result drops.</p>
+    </div>
+    <div class="market-list" id="grid-markets"></div>
   </section>
 
   <section class="panel hidden" id="panel-favorites">

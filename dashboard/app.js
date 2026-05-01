@@ -320,6 +320,7 @@ function renderAll() {
   renderSellers();
   renderSurveys();
   renderPlay();
+  renderMarkets();
   renderFriends();
 }
 
@@ -1271,6 +1272,160 @@ function renderLeaderboard() {
   }
 }
 
+// ---------- Auction Markets ----------
+function marketScoreFor(guess, settled) {
+  if (guess == null || settled == null) return 0;
+  const off = Math.abs(guess - settled) / settled;
+  if (off <= 0.05) return 100;
+  if (off <= 0.10) return 80;
+  if (off <= 0.20) return 55;
+  if (off <= 0.35) return 30;
+  if (off <= 0.60) return 12;
+  return 3;
+}
+
+function marketGuessesFor(marketId) {
+  return state.market_guesses?.[marketId] || {};
+}
+
+async function placeMarketGuess(marketId, value) {
+  if (!me) { nickInput.focus(); return; }
+  const v = Number(value);
+  if (!isFinite(v) || v <= 0) return;
+  state.market_guesses = state.market_guesses || {};
+  state.market_guesses[marketId] = state.market_guesses[marketId] || {};
+  state.market_guesses[marketId][me] = Math.round(v);
+  await Storage.save(state);
+  renderMarkets();
+  renderFriends();
+}
+
+function fmtClose(iso) {
+  const d = new Date(iso);
+  const now = Date.now();
+  const diff = d.getTime() - now;
+  const days = Math.ceil(diff / 86400000);
+  const dateStr = d.toLocaleDateString(undefined, { month: "short", day: "numeric" });
+  if (diff < 0) return `closed ${dateStr}`;
+  if (days <= 1) return `closes today`;
+  return `closes ${dateStr} · in ${days}d`;
+}
+
+function renderMarkets() {
+  const grid = $("grid-markets");
+  if (!grid) return;
+  const Q = q();
+  const mkts = (data.markets || []).slice().sort((a, b) => {
+    // open first by close date, then settled by close date desc
+    const ao = a.status === "open", bo = b.status === "open";
+    if (ao !== bo) return bo - ao;
+    return Date.parse(a.close_iso) - Date.parse(b.close_iso);
+  });
+  grid.innerHTML = "";
+  for (const m of mkts) {
+    if (Q && !`${m.title} ${m.house} ${m.note || ""}`.toLowerCase().includes(Q)) continue;
+    const watch = data.favorites.find(w => w.id === m.watch_id);
+    const imgSrc = watch?.image || (watch ? `./images/${watch.id}.png` : "");
+    const guesses = marketGuessesFor(m.id);
+    const myGuess = me && guesses[me];
+    const isOpen = m.status === "open";
+    const isSettled = m.status === "settled" && m.settled_price != null;
+    const friendChips = Object.entries(guesses).map(([nick, g]) => {
+      if (isSettled) {
+        const off = Math.abs(g - m.settled_price);
+        const offPct = (off / m.settled_price * 100).toFixed(1);
+        return `<span class="market-chip ${nick === me ? 'mine' : ''}">${nick}: $${g.toLocaleString()} <span class="off">${offPct}% off</span></span>`;
+      }
+      // open market — hide other guesses' values, just show count
+      if (nick === me) {
+        return `<span class="market-chip mine">${nick}: $${g.toLocaleString()}</span>`;
+      }
+      return `<span class="market-chip">${nick}: 🔒</span>`;
+    }).join("");
+
+    const sortedByOff = isSettled ? Object.entries(guesses).map(([n, g]) => ({ n, g, off: Math.abs(g - m.settled_price) })).sort((a, b) => a.off - b.off) : null;
+    const winner = sortedByOff?.[0]?.n;
+    const lb = isSettled && sortedByOff ? sortedByOff.map((row, i) => {
+      const pts = marketScoreFor(row.g, m.settled_price);
+      return `<div class="mkt-lb-row ${i === 0 ? 'winner' : ''}">
+        <span class="mkt-lb-name">${i === 0 ? '★ ' : ''}${row.n}${row.n === me ? ' (you)' : ''}</span>
+        <span class="mkt-lb-guess">$${row.g.toLocaleString()}</span>
+        <span class="mkt-lb-pts">+${pts}</span>
+      </div>`;
+    }).join("") : "";
+
+    grid.insertAdjacentHTML("beforeend", `
+      <article class="market-card ${isSettled ? 'settled' : ''}" data-id="market:${m.id}">
+        ${imgSrc ? `<a class="market-img" href="${m.house_url}" target="_blank" rel="noopener"><img loading="lazy" alt="${m.title}" src="${imgSrc}" onerror="this.style.display='none'"/></a>` : ""}
+        <div class="market-body">
+          <div class="market-head">
+            <div>
+              <p class="market-house">${m.house} · Lot ${m.lot_number || "—"}</p>
+              <h3 class="market-title">${m.title}</h3>
+            </div>
+            <span class="market-status ${m.status}">${isSettled ? "settled" : isOpen ? fmtClose(m.close_iso) : m.status}</span>
+          </div>
+          <p class="market-est">Estimate: ${m.estimate_currency} ${m.estimate_low.toLocaleString()}–${m.estimate_high.toLocaleString()}</p>
+          ${m.note ? `<p class="market-note">${m.note}</p>` : ""}
+
+          ${isSettled ? `
+            <div class="market-settled">
+              <div class="market-result">
+                <span class="rl">Hammer</span>
+                <span class="rg">${m.settled_currency || m.estimate_currency} ${m.settled_price.toLocaleString()}</span>
+              </div>
+              <div class="market-leaderboard">${lb || '<p class="kv">No friends predicted this lot.</p>'}</div>
+            </div>
+          ` : `
+            <form class="market-bet" onsubmit="return false">
+              <label class="bet-label">Your prediction <span class="kv">(${m.estimate_currency})</span>
+                <div class="bet-input-row">
+                  <span class="bet-prefix">$</span>
+                  <input type="number" class="bet-input" data-market="${m.id}"
+                         min="500" max="500000" step="100"
+                         placeholder="${Math.round((m.estimate_low + m.estimate_high) / 2).toLocaleString()}"
+                         value="${myGuess || ''}"/>
+                  <button class="bet-submit" data-market="${m.id}">${myGuess ? "Update" : "Submit"}</button>
+                </div>
+              </label>
+            </form>
+            ${friendChips ? `<div class="market-chips">${friendChips}</div>` : ''}
+          `}
+        </div>
+      </article>`);
+  }
+  if (!grid.children.length) grid.innerHTML = `<p class="kv">No markets match.</p>`;
+
+  grid.querySelectorAll(".bet-submit").forEach(btn => {
+    btn.addEventListener("click", (e) => {
+      e.preventDefault();
+      const marketId = btn.dataset.market;
+      const input = grid.querySelector(`.bet-input[data-market="${marketId}"]`);
+      placeMarketGuess(marketId, input.value);
+    });
+  });
+  grid.querySelectorAll(".bet-input").forEach(inp => {
+    inp.addEventListener("keydown", (e) => {
+      if (e.key === "Enter") {
+        e.preventDefault();
+        placeMarketGuess(inp.dataset.market, inp.value);
+      }
+    });
+  });
+}
+
+function lifetimeMarketScore(nick) {
+  let pts = 0, plays = 0;
+  for (const m of (data.markets || [])) {
+    if (m.status !== "settled" || m.settled_price == null) continue;
+    const g = state.market_guesses?.[m.id]?.[nick];
+    if (g == null) continue;
+    pts += marketScoreFor(g, m.settled_price);
+    plays += 1;
+  }
+  return { pts, plays };
+}
+
 // Friends: each card = a person and their stars
 function renderFriends() {
   const grid = $("grid-friends");
@@ -1288,11 +1443,14 @@ function renderFriends() {
       if (m) return `<li><span class="kv">${m[1]}</span> ${m[2]}</li>`;
       return `<li>${id}</li>`;
     }).join("");
+    const mkt = lifetimeMarketScore(u.nickname);
+    const mktLine = mkt.plays > 0 ? `<p class="kv"><b>Auction wagers:</b> ${mkt.plays} settled · ${mkt.pts} pts</p>` : "";
     grid.insertAdjacentHTML("beforeend", `
       <article class="card">
         <div class="body">
           <h2>${u.nickname}</h2>
           <p class="sub">${(u.bookmarks || []).length} bookmark${(u.bookmarks || []).length === 1 ? "" : "s"}${u.nickname === me ? " · you" : ""}</p>
+          ${mktLine}
           <ul class="kv" style="margin:8px 0 0; padding-left:18px">${items || "<li>nothing yet</li>"}</ul>
         </div>
       </article>`);
