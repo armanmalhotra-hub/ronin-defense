@@ -688,10 +688,20 @@ function renderPlay() {
   stage.innerHTML = `
     ${hasImg ? `<img class="silhouette ${r.revealed ? "" : "hidden-img"}" src="${w.image}" alt="mystery watch"/>` : ""}
     <div class="clue">
-      <h3>Guess the watch</h3>
+      <h3>Offhand</h3>
+      <p class="sub">a game to explore the unknown</p>
       <p class="clue-line"><b>Case:</b> ${w.size_mm}mm · ${w.strap || "—"}</p>
       <p class="clue-line"><b>Dial:</b> ${w.dial || "—"}</p>
-      ${w.tags?.length ? `<div class="pills">${w.tags.slice(0, 3).map(t => `<span class="pill dim">${t}</span>`).join("")}</div>` : ""}
+      ${(() => {
+        const safe = (w.tags || []).filter(t => {
+          const s = t.toLowerCase();
+          if (/\d+\s*(pcs|pieces)/.test(s)) return false;
+          if (s.includes("hajime") || s.includes("aoyama") || s.includes("armoury")) return false;
+          if (s.includes(w.brand.split(" ")[0].toLowerCase())) return false;
+          return true;
+        }).slice(0, 3);
+        return safe.length ? `<div class="pills">${safe.map(t => `<span class="pill dim">${t}</span>`).join("")}</div>` : "";
+      })()}
       ${r.revealed ? renderReveal(w, r) : `
         <form class="play-form" onsubmit="return false">
           <label>Brand
