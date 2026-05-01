@@ -21,7 +21,9 @@
       ],
       "note": "#1 want. Recent LoupeThis sold $3,520 (Mar) / $3,960 (Apr). Target sub-$2,500.",
       "country": "Japan",
-      "made_in": "Tokyo"
+      "made_in": "Tokyo",
+      "category": "indie",
+      "difficulty": 2
     },
     {
       "id": "naoya-hida-type-3a",
@@ -43,7 +45,9 @@
       ],
       "note": "Discontinued at 15pcs \u2014 successor is Type 3B-3 with lapis lazuli moon (5pc 2025-26).",
       "country": "Japan",
-      "made_in": "Tokyo"
+      "made_in": "Tokyo",
+      "category": "indie",
+      "difficulty": 3
     },
     {
       "id": "naoya-hida-type-3b3",
@@ -66,7 +70,9 @@
       ],
       "note": "Type 3A successor. Just 5 pieces total 2025-2026. Apply via 2026 lottery.",
       "country": "Japan",
-      "made_in": "Tokyo"
+      "made_in": "Tokyo",
+      "category": "indie",
+      "difficulty": 3
     },
     {
       "id": "naoya-hida-type-1d",
@@ -88,7 +94,9 @@
       ],
       "note": "Dress-watch flagship. 36mm hits the sweet spot. Secondary appears occasionally at Mr Watchley.",
       "country": "Japan",
-      "made_in": "Tokyo"
+      "made_in": "Tokyo",
+      "category": "indie",
+      "difficulty": 3
     },
     {
       "id": "naoya-hida-type-2c",
@@ -109,7 +117,9 @@
       ],
       "note": "Originally Armoury HK collaboration. Occasionally surfaces on secondary.",
       "country": "Japan",
-      "made_in": "Tokyo"
+      "made_in": "Tokyo",
+      "category": "indie",
+      "difficulty": 3
     },
     {
       "id": "naoya-hida-type-5a1",
@@ -131,7 +141,9 @@
       ],
       "note": "Small rectangular tank. Below your round-case sweet spot but a deep-cut indie play.",
       "country": "Japan",
-      "made_in": "Tokyo"
+      "made_in": "Tokyo",
+      "category": "indie",
+      "difficulty": 3
     },
     {
       "id": "kurono-grand-urushi-brown",
@@ -154,7 +166,9 @@
       ],
       "note": "Email info@kuronotokyo.com before trip to ask about allocation.",
       "country": "Japan",
-      "made_in": "Tokyo"
+      "made_in": "Tokyo",
+      "category": "indie",
+      "difficulty": 2
     },
     {
       "id": "kurono-grand-urushi-green",
@@ -177,7 +191,9 @@
       ],
       "note": "Same trio as Brown Cinnamon, green variant.",
       "country": "Japan",
-      "made_in": "Tokyo"
+      "made_in": "Tokyo",
+      "category": "indie",
+      "difficulty": 2
     },
     {
       "id": "kurono-grand-urushi-red",
@@ -200,7 +216,9 @@
       ],
       "note": "Boldest of the trio. Red is brighter than your usual range.",
       "country": "Japan",
-      "made_in": "Tokyo"
+      "made_in": "Tokyo",
+      "category": "indie",
+      "difficulty": 2
     },
     {
       "id": "kurono-grand-akane",
@@ -222,7 +240,9 @@
       ],
       "note": "Very rare on secondary. Set search alerts.",
       "country": "Japan",
-      "made_in": "Tokyo"
+      "made_in": "Tokyo",
+      "category": "indie",
+      "difficulty": 2
     },
     {
       "id": "kurono-grand-hagane",
@@ -244,7 +264,9 @@
       ],
       "note": "Hamon blade-pattern dial. Same case family as Urushi Aoyama.",
       "country": "Japan",
-      "made_in": "Tokyo"
+      "made_in": "Tokyo",
+      "category": "indie",
+      "difficulty": 2
     },
     {
       "id": "kurono-mori-2020",
@@ -266,7 +288,9 @@
       ],
       "note": "Hits the muted-green sweet spot.",
       "country": "Japan",
-      "made_in": "Tokyo"
+      "made_in": "Tokyo",
+      "category": "indie",
+      "difficulty": 2
     },
     {
       "id": "kurono-toki",
@@ -288,7 +312,9 @@
       ],
       "note": "Classic-line sector dial in warm brown. Often the first piece for new collectors.",
       "country": "Japan",
-      "made_in": "Tokyo"
+      "made_in": "Tokyo",
+      "category": "indie",
+      "difficulty": 2
     },
     {
       "id": "kurono-bunkyo",
@@ -310,7 +336,9 @@
       ],
       "note": "50 pieces in eggshell. Two other colorways (Midnight Blue, Mystic Grey) also exist.",
       "country": "Japan",
-      "made_in": "Tokyo"
+      "made_in": "Tokyo",
+      "category": "indie",
+      "difficulty": 2
     },
     {
       "id": "kurono-anniversary-azuki",
@@ -332,7 +360,9 @@
       ],
       "note": "38mm pushes the upper bound but rich red-bean dial fits palette.",
       "country": "Japan",
-      "made_in": "Tokyo"
+      "made_in": "Tokyo",
+      "category": "indie",
+      "difficulty": 2
     },
     {
       "id": "kurono-persimmon-34",
@@ -354,7 +384,9 @@
       ],
       "note": "Smallest case in the Kurono family \u2014 perfect proportions for you.",
       "country": "Japan",
-      "made_in": "Tokyo"
+      "made_in": "Tokyo",
+      "category": "indie",
+      "difficulty": 2
     },
     {
       "id": "kurono-darkmist-34",
@@ -376,7 +408,9 @@
       ],
       "note": "Most affordable of the small-case favorites.",
       "country": "Japan",
-      "made_in": "Tokyo"
+      "made_in": "Tokyo",
+      "category": "indie",
+      "difficulty": 2
     },
     {
       "id": "kurono-akane-34",
@@ -398,7 +432,9 @@
       ],
       "note": "From the 2023 34mm collection. Brighter red than your usual.",
       "country": "Japan",
-      "made_in": "Tokyo"
+      "made_in": "Tokyo",
+      "category": "indie",
+      "difficulty": 2
     },
     {
       "id": "kurono-inseki",
@@ -419,7 +455,9 @@
       ],
       "note": "Sold out Jan 15. Secondary listings appearing now. Best June-buy candidate.",
       "country": "Japan",
-      "made_in": "Tokyo"
+      "made_in": "Tokyo",
+      "category": "indie",
+      "difficulty": 2
     },
     {
       "id": "kikuchi-ichimonji",
@@ -440,7 +478,9 @@
       ],
       "note": "36.8mm, Combl\u00e9mine dial, ~8 pcs/year total. Closed waitlist; secondary occasionally at A Collected Man.",
       "country": "Japan",
-      "made_in": "Tokyo"
+      "made_in": "Tokyo",
+      "category": "indie",
+      "difficulty": 3
     },
     {
       "id": "kikuchi-murakumo",
@@ -461,7 +501,9 @@
       ],
       "note": "7+ year waitlist, currently closed. Trunk-show or A Collected Man secondary only.",
       "country": "Japan",
-      "made_in": "Tokyo"
+      "made_in": "Tokyo",
+      "category": "indie",
+      "difficulty": 3
     },
     {
       "id": "kikuchi-genmon",
@@ -482,7 +524,9 @@
       ],
       "note": "Newest of the three. Even more restrained than the Ichimonji.",
       "country": "Japan",
-      "made_in": "Tokyo"
+      "made_in": "Tokyo",
+      "category": "indie",
+      "difficulty": 3
     },
     {
       "id": "masa-nayuta",
@@ -503,7 +547,9 @@
       ],
       "note": "38.6mm pushes the upper bound. Atelier-direct via lottery. Watchmaker is Walter Lange Award winner.",
       "country": "Japan",
-      "made_in": "Tokyo"
+      "made_in": "Tokyo",
+      "category": "indie",
+      "difficulty": 2
     },
     {
       "id": "asaoka-tsunami",
@@ -524,7 +570,9 @@
       ],
       "note": "Father atelier of Kurono. Tsunami is the accessible Asaoka piece (relatively).",
       "country": "Japan",
-      "made_in": "Tokyo"
+      "made_in": "Tokyo",
+      "category": "indie",
+      "difficulty": 3
     },
     {
       "id": "minase-divido-urushi",
@@ -545,7 +593,9 @@
       ],
       "note": "40.6mm \u2014 over your sweet spot \u2014 but case finishing is exceptional.",
       "country": "Japan",
-      "made_in": "Akita"
+      "made_in": "Akita",
+      "category": "indie",
+      "difficulty": 3
     },
     {
       "id": "asaoka-tsunami-edition-blanche",
@@ -568,7 +618,9 @@
       ],
       "note": "Asaoka's white-dial evolution of the Tsunami in fully polished steel.",
       "country": "Japan",
-      "made_in": "Tokyo"
+      "made_in": "Tokyo",
+      "category": "indie",
+      "difficulty": 3
     },
     {
       "id": "daizoh-kikutsunagi-sakura",
@@ -591,7 +643,9 @@
       ],
       "note": "First wristwatch with Edo Kiriko hand-cut sapphire crystal \u2014 one-man Saitama atelier.",
       "country": "Japan",
-      "made_in": "Saitama"
+      "made_in": "Saitama",
+      "category": "indie",
+      "difficulty": 3
     },
     {
       "id": "kazuo-maeda-heures-universelles",
@@ -615,7 +669,9 @@
       ],
       "note": "Kyoto debut maker, GPHG 2024 nominee. First watch use of tantalum-tungsten alloy.",
       "country": "Japan",
-      "made_in": "Kyoto"
+      "made_in": "Kyoto",
+      "category": "indie",
+      "difficulty": 3
     },
     {
       "id": "naoya-hida-type-1d-3",
@@ -637,7 +693,9 @@
       ],
       "note": "Latest Type 1D iteration with screw caseback and refined hand-engraved Breguet numerals.",
       "country": "Japan",
-      "made_in": "Tokyo"
+      "made_in": "Tokyo",
+      "category": "indie",
+      "difficulty": 3
     },
     {
       "id": "naoya-hida-type-4a-1",
@@ -659,7 +717,9 @@
       ],
       "note": "36mm sportier Type 4 in dark DLC grey \u2014 smallest in the NH lineup.",
       "country": "Japan",
-      "made_in": "Tokyo"
+      "made_in": "Tokyo",
+      "category": "indie",
+      "difficulty": 3
     },
     {
       "id": "kurono-grand-jubilee-calendar",
@@ -681,7 +741,9 @@
       ],
       "note": "60th Diamond Jubilee triple-calendar with salmon dial inspired by frost-column leaves.",
       "country": "Japan",
-      "made_in": "Tokyo"
+      "made_in": "Tokyo",
+      "category": "indie",
+      "difficulty": 2
     },
     {
       "id": "kurono-gmt-1",
@@ -703,7 +765,9 @@
       ],
       "note": "Kurono's first world-time complication; bi-directional glazed 24h bezel.",
       "country": "Japan",
-      "made_in": "Tokyo"
+      "made_in": "Tokyo",
+      "category": "indie",
+      "difficulty": 2
     },
     {
       "id": "minase-divido-yusai",
@@ -725,7 +789,9 @@
       ],
       "note": "Akita case-finishing flagship with hand-finished Yusai dial \u2014 under 400/yr total.",
       "country": "Japan",
-      "made_in": "Akita"
+      "made_in": "Akita",
+      "category": "indie",
+      "difficulty": 3
     },
     {
       "id": "lang-heyne-georg",
@@ -748,7 +814,9 @@
       ],
       "note": "Dresden atelier; hand-engraved silver dial, Breguet hands. Pure Saxon classicism.",
       "country": "Germany",
-      "made_in": "Dresden"
+      "made_in": "Dresden",
+      "category": "indie",
+      "difficulty": 3
     },
     {
       "id": "lang-heyne-friedrich-august-i",
@@ -771,7 +839,9 @@
       ],
       "note": "Lang & Heyne's flagship \u2014 visible Saxon three-quarter plate, swan-neck regulator, gold chatons.",
       "country": "Germany",
-      "made_in": "Dresden"
+      "made_in": "Dresden",
+      "category": "indie",
+      "difficulty": 3
     },
     {
       "id": "anordain-model-1",
@@ -794,7 +864,9 @@
       ],
       "note": "The original anOrdain \u2014 Paulin Studio sans-serif numerals on grand-feu enamel.",
       "country": "Scotland",
-      "made_in": "Glasgow"
+      "made_in": "Glasgow",
+      "category": "indie",
+      "difficulty": 2
     },
     {
       "id": "anordain-model-2-fume",
@@ -817,7 +889,9 @@
       ],
       "note": "Glasgow workshop; hand-painted vitreous enamel fum\u00e9 dials \u2014 the indie enamel reference at accessible tier.",
       "country": "Scotland",
-      "made_in": "Glasgow"
+      "made_in": "Glasgow",
+      "category": "indie",
+      "difficulty": 2
     },
     {
       "id": "moser-endeavour-centre-seconds-concept",
@@ -839,7 +913,9 @@
       ],
       "note": "The definitive logo-less fum\u00e9 dial \u2014 Moser's purest minimalist statement.",
       "country": "Switzerland",
-      "made_in": "Schaffhausen"
+      "made_in": "Schaffhausen",
+      "category": "indie",
+      "difficulty": 3
     },
     {
       "id": "garrick-s6",
@@ -861,7 +937,9 @@
       ],
       "note": "Norfolk-based; UT base hand-finished into a frost-and-guilloch\u00e9 dress watch.",
       "country": "United Kingdom",
-      "made_in": "Norfolk"
+      "made_in": "Norfolk",
+      "category": "indie",
+      "difficulty": 3
     },
     {
       "id": "rgm-pennsylvania-801",
@@ -883,7 +961,9 @@
       ],
       "note": "Lancaster-county made; in-house 801 caliber, rose-engine-turned dial. The American indie reference.",
       "country": "USA",
-      "made_in": "Mount Joy, PA"
+      "made_in": "Mount Joy, PA",
+      "category": "indie",
+      "difficulty": 3
     },
     {
       "id": "sarpaneva-korona-northern-lights",
@@ -906,7 +986,9 @@
       ],
       "note": "Finnish indie; signature scalloped case and grimacing moon-face \u2014 distinctive but restrained.",
       "country": "Finland",
-      "made_in": "Helsinki"
+      "made_in": "Helsinki",
+      "category": "indie",
+      "difficulty": 3
     },
     {
       "id": "asaoka-project-t-tourbillon",
@@ -928,7 +1010,9 @@
       ],
       "note": "Asaoka's debut tourbillon \u2014 collab with OSG and Yuki Precision.",
       "country": "Japan",
-      "made_in": "Tokyo"
+      "made_in": "Tokyo",
+      "category": "indie",
+      "difficulty": 3
     },
     {
       "id": "naoya-hida-type-6a",
@@ -951,7 +1035,9 @@
       ],
       "note": "First NH perpetual calendar. 10 pieces total 2025-2026.",
       "country": "Japan",
-      "made_in": "Tokyo"
+      "made_in": "Tokyo",
+      "category": "indie",
+      "difficulty": 3
     },
     {
       "id": "naoya-hida-type-3b3-yellow-gold",
@@ -973,7 +1059,9 @@
       ],
       "note": "Yellow-gold moonphase variant \u2014 lapis night sky and engraved gold moon. 5 pieces.",
       "country": "Japan",
-      "made_in": "Tokyo"
+      "made_in": "Tokyo",
+      "category": "indie",
+      "difficulty": 3
     },
     {
       "id": "masa-sohkoku",
@@ -996,7 +1084,9 @@
       ],
       "note": "MP1 in-house movement. May lottery \u2014 10 pieces.",
       "country": "Japan",
-      "made_in": "Tokyo"
+      "made_in": "Tokyo",
+      "category": "indie",
+      "difficulty": 3
     },
     {
       "id": "masa-nagi",
@@ -1018,7 +1108,9 @@
       ],
       "note": "Anonymous case (no logo). Companion to Sohkoku.",
       "country": "Japan",
-      "made_in": "Tokyo"
+      "made_in": "Tokyo",
+      "category": "indie",
+      "difficulty": 3
     },
     {
       "id": "quiet-club-qc01",
@@ -1040,7 +1132,9 @@
       ],
       "note": "Norifumi Seki's debut: vertically-mounted hammer striking the dial as gong.",
       "country": "Japan",
-      "made_in": "Tokyo"
+      "made_in": "Tokyo",
+      "category": "indie",
+      "difficulty": 3
     },
     {
       "id": "kikuno-tourbillon",
@@ -1063,7 +1157,9 @@
       ],
       "note": "Self-taught AHCI master's almost-entirely-hand-made tourbillon in 18k rose gold.",
       "country": "Japan",
-      "made_in": "Tokyo"
+      "made_in": "Tokyo",
+      "category": "indie",
+      "difficulty": 3
     },
     {
       "id": "laurent-ferrier-classic-micro-rotor",
@@ -1085,7 +1181,9 @@
       ],
       "note": "Ex-Patek master's restrained micro-rotor \u2014 assegai hands are the signature.",
       "country": "Switzerland",
-      "made_in": "Geneva"
+      "made_in": "Geneva",
+      "category": "indie",
+      "difficulty": 3
     },
     {
       "id": "fpjourne-chronometre-souverain",
@@ -1107,7 +1205,9 @@
       ],
       "note": "Twin-barrel chronometer with 18k rose-gold movement.",
       "country": "Switzerland",
-      "made_in": "Geneva"
+      "made_in": "Geneva",
+      "category": "indie",
+      "difficulty": 3
     },
     {
       "id": "jn-shapiro-resurgence",
@@ -1129,7 +1229,9 @@
       ],
       "note": "First fully US-sourced watch in modern era.",
       "country": "USA",
-      "made_in": "Los Angeles"
+      "made_in": "Los Angeles",
+      "category": "indie",
+      "difficulty": 3
     },
     {
       "id": "voutilainen-vingt-8",
@@ -1151,7 +1253,9 @@
       ],
       "note": "Finnish-Swiss hand-finishing benchmark. In-house movement with direct-impulse escapement.",
       "country": "Switzerland",
-      "made_in": "M\u00f4tiers"
+      "made_in": "M\u00f4tiers",
+      "category": "indie",
+      "difficulty": 3
     },
     {
       "id": "asaoka-tourbillon-pura",
@@ -1174,7 +1278,9 @@
       ],
       "note": "Atelier tourbillon predecessor to Noir \u2014 polished steel with skeleton dial.",
       "country": "Japan",
-      "made_in": "Tokyo"
+      "made_in": "Tokyo",
+      "category": "indie",
+      "difficulty": 3
     },
     {
       "id": "kikuno-wadokei",
@@ -1197,7 +1303,9 @@
       ],
       "note": "First Japanese AHCI member; world's only wristwatch wadokei converting traditional seasonal time.",
       "country": "Japan",
-      "made_in": "Tokyo"
+      "made_in": "Tokyo",
+      "category": "indie",
+      "difficulty": 3
     },
     {
       "id": "kurono-calendrier-type-i",
@@ -1218,7 +1326,9 @@
       ],
       "note": "Original 2022 calendar; line is now retired so secondary only.",
       "country": "Japan",
-      "made_in": "Tokyo"
+      "made_in": "Tokyo",
+      "category": "indie",
+      "difficulty": 2
     },
     {
       "id": "kurono-tokio-classic-ct003p-bronze",
@@ -1240,7 +1350,9 @@
       ],
       "note": "TiCTAC \u00d7 Asaoka 36mm Reiwa edition limited to 50 pieces.",
       "country": "Japan",
-      "made_in": "Tokyo"
+      "made_in": "Tokyo",
+      "category": "indie",
+      "difficulty": 2
     },
     {
       "id": "kurono-bunkyo-midnight-blue",
@@ -1261,7 +1373,9 @@
       ],
       "note": "First-series 2019 Bunkyo Tokyo in deep blue.",
       "country": "Japan",
-      "made_in": "Tokyo"
+      "made_in": "Tokyo",
+      "category": "indie",
+      "difficulty": 2
     },
     {
       "id": "kurono-bunkyo-mystic-grey",
@@ -1283,7 +1397,9 @@
       ],
       "note": "Most under-the-radar of the original 2019 trio.",
       "country": "Japan",
-      "made_in": "Tokyo"
+      "made_in": "Tokyo",
+      "category": "indie",
+      "difficulty": 2
     },
     {
       "id": "kurono-34mm-calligra-silver-white",
@@ -1305,7 +1421,9 @@
       ],
       "note": "First Kurono with Asaoka's bespoke Breguet numerals.",
       "country": "Japan",
-      "made_in": "Tokyo"
+      "made_in": "Tokyo",
+      "category": "indie",
+      "difficulty": 2
     },
     {
       "id": "kurono-34mm-calligra-stark-black",
@@ -1326,7 +1444,9 @@
       ],
       "note": "Black-dial sibling of the Calligra trio.",
       "country": "Japan",
-      "made_in": "Tokyo"
+      "made_in": "Tokyo",
+      "category": "indie",
+      "difficulty": 2
     },
     {
       "id": "kurono-34mm-calligra-dark-mop",
@@ -1347,7 +1467,9 @@
       ],
       "note": "MOP variant \u2014 most visually intricate of the Calligra dial trio.",
       "country": "Japan",
-      "made_in": "Tokyo"
+      "made_in": "Tokyo",
+      "category": "indie",
+      "difficulty": 2
     },
     {
       "id": "kurono-34mm-star-dial-2025",
@@ -1369,7 +1491,9 @@
       ],
       "note": "2025 successor to the Calligra special-project line.",
       "country": "Japan",
-      "made_in": "Tokyo"
+      "made_in": "Tokyo",
+      "category": "indie",
+      "difficulty": 2
     },
     {
       "id": "kurono-anniversary-reiwa-2024",
@@ -1391,7 +1515,9 @@
       ],
       "note": "Final Reiwa ever \u2014 only ~5% of dials passed QC. Line retired permanently.",
       "country": "Japan",
-      "made_in": "Tokyo"
+      "made_in": "Tokyo",
+      "category": "indie",
+      "difficulty": 2
     },
     {
       "id": "naoya-hida-type-4a",
@@ -1412,7 +1538,9 @@
       ],
       "note": "Sub-40 sports-positioned variant in the Type 4 family.",
       "country": "Japan",
-      "made_in": "Tokyo"
+      "made_in": "Tokyo",
+      "category": "indie",
+      "difficulty": 3
     },
     {
       "id": "naoya-hida-type-5a",
@@ -1434,7 +1562,9 @@
       ],
       "note": "26\u00d743.5mm tonneau case, custom calibre 2524SS. 10 pieces 2024-2025.",
       "country": "Japan",
-      "made_in": "Tokyo"
+      "made_in": "Tokyo",
+      "category": "indie",
+      "difficulty": 3
     },
     {
       "id": "naoya-hida-type-8a-31mm",
@@ -1456,7 +1586,9 @@
       ],
       "note": "Smallest NH ever at 31mm with new Cal. 2326SS. 2026 release.",
       "country": "Japan",
-      "made_in": "Tokyo"
+      "made_in": "Tokyo",
+      "category": "indie",
+      "difficulty": 3
     },
     {
       "id": "anordain-model-1-paynes-grey",
@@ -1477,7 +1609,9 @@
       ],
       "note": "Smoke-grey enamel fum\u00e9 \u2014 collector favorite.",
       "country": "Scotland",
-      "made_in": "Glasgow"
+      "made_in": "Glasgow",
+      "category": "indie",
+      "difficulty": 2
     },
     {
       "id": "anordain-model-1-oxblood",
@@ -1498,7 +1632,9 @@
       ],
       "note": "Rich oxblood/burgundy enamel \u2014 saturated alternative to the Plum Fum\u00e9.",
       "country": "Scotland",
-      "made_in": "Glasgow"
+      "made_in": "Glasgow",
+      "category": "indie",
+      "difficulty": 2
     },
     {
       "id": "anordain-model-1-parisian-blue",
@@ -1519,7 +1655,9 @@
       ],
       "note": "Solid (non-fum\u00e9) vitreous enamel blue with crisp gloss surface.",
       "country": "Scotland",
-      "made_in": "Glasgow"
+      "made_in": "Glasgow",
+      "category": "indie",
+      "difficulty": 2
     },
     {
       "id": "anordain-model-2-brown-fume",
@@ -1541,7 +1679,9 @@
       ],
       "note": "Final fum\u00e9 in the Model 2 series \u2014 30 pieces, tropical-dial vibe.",
       "country": "Scotland",
-      "made_in": "Glasgow"
+      "made_in": "Glasgow",
+      "category": "indie",
+      "difficulty": 2
     },
     {
       "id": "anordain-model-3-method-aqua",
@@ -1563,7 +1703,9 @@
       ],
       "note": "Method dials carve wood under translucent enamel \u2014 unique technique.",
       "country": "Scotland",
-      "made_in": "Glasgow"
+      "made_in": "Glasgow",
+      "category": "indie",
+      "difficulty": 2
     },
     {
       "id": "lang-heyne-konrad",
@@ -1585,7 +1727,9 @@
       ],
       "note": "Classical small-seconds dress piece in the Saxon ruler-named series.",
       "country": "Germany",
-      "made_in": "Radeberg"
+      "made_in": "Radeberg",
+      "category": "indie",
+      "difficulty": 3
     },
     {
       "id": "lang-heyne-anton-tourbillon",
@@ -1607,7 +1751,9 @@
       ],
       "note": "House flagship tourbillon \u2014 atelier-flagship size exception at 41mm.",
       "country": "Germany",
-      "made_in": "Radeberg"
+      "made_in": "Radeberg",
+      "category": "indie",
+      "difficulty": 3
     },
     {
       "id": "moser-concept-funky-blue-wg",
@@ -1629,7 +1775,9 @@
       ],
       "note": "WG version of the Funky Blue Concept \u2014 limited 100.",
       "country": "Switzerland",
-      "made_in": "Schaffhausen"
+      "made_in": "Schaffhausen",
+      "category": "indie",
+      "difficulty": 3
     },
     {
       "id": "moser-concept-blue-lagoon",
@@ -1651,7 +1799,9 @@
       ],
       "note": "SIHH 2019 Blue Lagoon, 50pc WG.",
       "country": "Switzerland",
-      "made_in": "Schaffhausen"
+      "made_in": "Schaffhausen",
+      "category": "indie",
+      "difficulty": 3
     },
     {
       "id": "moser-concept-cosmic-green",
@@ -1673,7 +1823,9 @@
       ],
       "note": "Limited to 20 pieces \u2014 rarest of the Concept colors.",
       "country": "Switzerland",
-      "made_in": "Schaffhausen"
+      "made_in": "Schaffhausen",
+      "category": "indie",
+      "difficulty": 3
     },
     {
       "id": "moser-concept-burgundy",
@@ -1695,7 +1847,9 @@
       ],
       "note": "5th-anniversary Concept color.",
       "country": "Switzerland",
-      "made_in": "Schaffhausen"
+      "made_in": "Schaffhausen",
+      "category": "indie",
+      "difficulty": 3
     },
     {
       "id": "garrick-s2-deadbeat",
@@ -1716,7 +1870,9 @@
       ],
       "note": "Norwich-built Cal. DB-G06; 24-month build queue.",
       "country": "United Kingdom",
-      "made_in": "Norfolk"
+      "made_in": "Norfolk",
+      "category": "indie",
+      "difficulty": 3
     },
     {
       "id": "garrick-s3-mk2",
@@ -1737,7 +1893,9 @@
       ],
       "note": "Updated S3 with openworked Calibre UT-G04.",
       "country": "United Kingdom",
-      "made_in": "Norfolk"
+      "made_in": "Norfolk",
+      "category": "indie",
+      "difficulty": 3
     },
     {
       "id": "carl-suchy-waltz-blue-danube",
@@ -1758,7 +1916,9 @@
       ],
       "note": "Dial pattern echoes Adolf Loos / Josef Hoffmann ornament.",
       "country": "Austria",
-      "made_in": "Vienna"
+      "made_in": "Vienna",
+      "category": "indie",
+      "difficulty": 3
     },
     {
       "id": "carl-suchy-waltz-hoffmann",
@@ -1780,7 +1940,9 @@
       ],
       "note": "Architectural Hoffmann-grid dial \u2014 Vienna's clearest design statement.",
       "country": "Austria",
-      "made_in": "Vienna"
+      "made_in": "Vienna",
+      "category": "indie",
+      "difficulty": 3
     },
     {
       "id": "carl-suchy-waltz-skeleton",
@@ -1801,7 +1963,9 @@
       ],
       "note": "Skeleton variant exposing hand-finished Soprod-base movement.",
       "country": "Austria",
-      "made_in": "Vienna"
+      "made_in": "Vienna",
+      "category": "indie",
+      "difficulty": 3
     },
     {
       "id": "auffret-tourbillon-a-paris",
@@ -1823,7 +1987,9 @@
       ],
       "note": "Subscription tourbillon by France's most-watched young watchmaker.",
       "country": "France",
-      "made_in": "Paris"
+      "made_in": "Paris",
+      "category": "indie",
+      "difficulty": 3
     },
     {
       "id": "brivet-naudot-eccentricity",
@@ -1845,7 +2011,9 @@
       ],
       "note": "Made entirely without CNC \u2014 every part hand-cut. Single-maker in Brittany.",
       "country": "France",
-      "made_in": "Brittany"
+      "made_in": "Brittany",
+      "category": "indie",
+      "difficulty": 3
     },
     {
       "id": "brivet-naudot-eccentricity-rdm",
@@ -1867,7 +2035,9 @@
       ],
       "note": "Updated Eccentricity with retrograde PR; entirely hand-fabricated.",
       "country": "France",
-      "made_in": "Brittany"
+      "made_in": "Brittany",
+      "category": "indie",
+      "difficulty": 3
     },
     {
       "id": "prokop-broz-fenix",
@@ -1889,7 +2059,9 @@
       ],
       "note": "Designer-watchmaker pairing in Prague; private and limited editions.",
       "country": "Czech Republic",
-      "made_in": "Prague"
+      "made_in": "Prague",
+      "category": "indie",
+      "difficulty": 2
     },
     {
       "id": "minhoon-yoo-carved-piece",
@@ -1910,7 +2082,9 @@
       ],
       "note": "Seoul's first internationally-recognized indie watchmaker.",
       "country": "South Korea",
-      "made_in": "Seoul"
+      "made_in": "Seoul",
+      "category": "indie",
+      "difficulty": 3
     },
     {
       "id": "moi-watch-tourbillon-ii",
@@ -1931,7 +2105,9 @@
       ],
       "note": "Han Moi Kim's atelier \u2014 Korea's quietest indie pioneer.",
       "country": "South Korea",
-      "made_in": "Seoul"
+      "made_in": "Seoul",
+      "category": "indie",
+      "difficulty": 3
     },
     {
       "id": "sjoo-sandstrom-royal-steel-36",
@@ -1952,7 +2128,9 @@
       ],
       "note": "Each watch assembled and fine-tuned in Stockholm.",
       "country": "Sweden",
-      "made_in": "Stockholm"
+      "made_in": "Stockholm",
+      "category": "indie",
+      "difficulty": 2
     },
     {
       "id": "gos-sarek-damascus",
@@ -1973,7 +2151,9 @@
       ],
       "note": "Master bladesmith + master watchmaker partnership; each Damascus dial unique.",
       "country": "Sweden",
-      "made_in": "Link\u00f6ping"
+      "made_in": "Link\u00f6ping",
+      "category": "indie",
+      "difficulty": 3
     },
     {
       "id": "gos-fullero-sword",
@@ -1994,7 +2174,9 @@
       ],
       "note": "Dial forged from sword steel \u2014 literal Viking craft story.",
       "country": "Sweden",
-      "made_in": "Link\u00f6ping"
+      "made_in": "Link\u00f6ping",
+      "category": "indie",
+      "difficulty": 3
     },
     {
       "id": "lehmann-intemporal-1",
@@ -2016,7 +2198,9 @@
       ],
       "note": "Schramberg manufacture in old Junghans building.",
       "country": "Germany",
-      "made_in": "Schramberg"
+      "made_in": "Schramberg",
+      "category": "indie",
+      "difficulty": 3
     },
     {
       "id": "andersen-jumping-hours-platinum",
@@ -2038,7 +2222,9 @@
       ],
       "note": "Svend Andersen's signature jumping hour at his 40th anniversary.",
       "country": "Switzerland",
-      "made_in": "Geneva"
+      "made_in": "Geneva",
+      "category": "indie",
+      "difficulty": 3
     },
     {
       "id": "andersen-rising-sun",
@@ -2060,7 +2246,9 @@
       ],
       "note": "Japan-only platinum LE; rising-sun motif by Eric Ertz.",
       "country": "Switzerland",
-      "made_in": "Geneva"
+      "made_in": "Geneva",
+      "category": "indie",
+      "difficulty": 3
     },
     {
       "id": "debethune-db28xs-meteorite",
@@ -2082,7 +2270,9 @@
       ],
       "note": "39mm DB28; meteorite dial \u2014 most cosmic of the line.",
       "country": "Switzerland",
-      "made_in": "Sainte-Croix"
+      "made_in": "Sainte-Croix",
+      "category": "indie",
+      "difficulty": 3
     },
     {
       "id": "debethune-db28xp-steel-wheels",
@@ -2104,7 +2294,9 @@
       ],
       "note": "Ultra-thin variant with floating lug system and exposed balance.",
       "country": "Switzerland",
-      "made_in": "Sainte-Croix"
+      "made_in": "Sainte-Croix",
+      "category": "indie",
+      "difficulty": 3
     },
     {
       "id": "chaykin-joker-classic",
@@ -2126,7 +2318,243 @@
       ],
       "note": "Most iconic Wristmon \u2014 multi-layer hand-finished face dial.",
       "country": "Russia",
-      "made_in": "Moscow"
+      "made_in": "Moscow",
+      "category": "indie",
+      "difficulty": 3
+    },
+    {
+      "id": "primer-cartier-tank-must",
+      "brand": "Cartier",
+      "model": "Tank Must (Large)",
+      "size_mm": 34,
+      "strap": "leather",
+      "dial": "silvered with Roman numerals, blued sword hands",
+      "url": "https://www.cartier.com/en-us/watches/collections/tank/tank-must.html",
+      "price_usd_low": 3050,
+      "price_usd_high": 3650,
+      "price_label": "$3,050 retail",
+      "status": "available",
+      "fit": 6,
+      "tags": [
+        "dress",
+        "Cartier signature"
+      ],
+      "note": "The watch most non-collectors picture when they hear 'dress watch'.",
+      "country": "France/Switzerland",
+      "made_in": "Le Locle",
+      "category": "primer",
+      "difficulty": 1
+    },
+    {
+      "id": "primer-rolex-op-36",
+      "brand": "Rolex",
+      "model": "Oyster Perpetual 36",
+      "size_mm": 36,
+      "strap": "leather",
+      "dial": "silver, baton indices, no date",
+      "url": "https://www.rolex.com/watches/oyster-perpetual",
+      "price_usd_low": 6100,
+      "price_usd_high": 7500,
+      "price_label": "$6,100 retail",
+      "status": "available",
+      "fit": 5,
+      "tags": [
+        "3-hand",
+        "no-date"
+      ],
+      "note": "The most recognized luxury watch silhouette in the world.",
+      "country": "Switzerland",
+      "made_in": "Geneva",
+      "category": "primer",
+      "difficulty": 1
+    },
+    {
+      "id": "primer-omega-de-ville-tresor",
+      "brand": "Omega",
+      "model": "De Ville Tr\u00e9sor 40mm",
+      "size_mm": 40,
+      "strap": "leather",
+      "dial": "silver opaline, applied indices, sub-seconds",
+      "url": "https://www.omegawatches.com/",
+      "price_usd_low": 6300,
+      "price_usd_high": 8500,
+      "price_label": "$6,300 retail",
+      "status": "available",
+      "fit": 5,
+      "tags": [
+        "dress",
+        "manual-wind"
+      ],
+      "note": "Omega's restrained dress watch \u2014 closest the brand gets to gentleman territory.",
+      "country": "Switzerland",
+      "made_in": "Bienne",
+      "category": "primer",
+      "difficulty": 1
+    },
+    {
+      "id": "primer-patek-calatrava-5196",
+      "brand": "Patek Philippe",
+      "model": "Calatrava 5196",
+      "size_mm": 37,
+      "strap": "leather",
+      "dial": "silver, applied baton indices, sub-seconds at 6",
+      "url": "https://www.patek.com/en/collection/calatrava",
+      "price_usd_low": 24000,
+      "price_usd_high": 28000,
+      "price_label": "$24K retail (waitlisted)",
+      "status": "lottery",
+      "fit": 7,
+      "tags": [
+        "dress",
+        "Calatrava"
+      ],
+      "note": "Patek's most restrained reference. The default 'serious dress watch' answer.",
+      "country": "Switzerland",
+      "made_in": "Geneva",
+      "category": "primer",
+      "difficulty": 1
+    },
+    {
+      "id": "primer-jlc-reverso-classic",
+      "brand": "Jaeger-LeCoultre",
+      "model": "Reverso Classic Small Seconds",
+      "size_mm": 27,
+      "strap": "leather",
+      "dial": "silver-grained, applied indices, art-deco rectangular",
+      "url": "https://www.jaeger-lecoultre.com/",
+      "price_usd_low": 9300,
+      "price_usd_high": 11000,
+      "price_label": "$9,300 retail",
+      "status": "available",
+      "fit": 6,
+      "tags": [
+        "rectangular",
+        "art-deco"
+      ],
+      "note": "Iconic 1931 reversible polo watch \u2014 the rectangular dress reference.",
+      "country": "Switzerland",
+      "made_in": "Le Sentier",
+      "category": "primer",
+      "difficulty": 1
+    },
+    {
+      "id": "primer-nomos-tangente-33",
+      "brand": "NOMOS Glash\u00fctte",
+      "model": "Tangente 33",
+      "size_mm": 32.8,
+      "strap": "leather",
+      "dial": "white silver-plated, painted Arabic numerals, blued steel hands, Bauhaus",
+      "url": "https://nomos-glashuette.com/en/tangente/tangente-33",
+      "price_usd_low": 1900,
+      "price_usd_high": 2060,
+      "price_label": "$1,900 retail",
+      "status": "available",
+      "fit": 8,
+      "tags": [
+        "Bauhaus",
+        "33mm",
+        "in-house Alpha"
+      ],
+      "note": "Quintessential small Bauhaus dress piece; hand-wound in-house Alpha caliber.",
+      "country": "Germany",
+      "made_in": "Glash\u00fctte",
+      "category": "primer",
+      "difficulty": 1
+    },
+    {
+      "id": "primer-lange-saxonia-thin",
+      "brand": "A. Lange & S\u00f6hne",
+      "model": "Saxonia Thin 37mm",
+      "size_mm": 37,
+      "strap": "leather",
+      "dial": "solid silver, applied baton indices, two-hander",
+      "url": "https://www.alange-soehne.com/en/timepieces/saxonia/saxonia-thin",
+      "price_usd_low": 21500,
+      "price_usd_high": 23500,
+      "price_label": "$21,500 retail (white gold)",
+      "status": "available",
+      "fit": 8,
+      "tags": [
+        "two-hander",
+        "thin",
+        "Glash\u00fctte"
+      ],
+      "note": "The most restrained Lange \u2014 5.9mm-thin two-handed dress watch.",
+      "country": "Germany",
+      "made_in": "Glash\u00fctte",
+      "category": "primer",
+      "difficulty": 1
+    },
+    {
+      "id": "primer-tudor-1926-36",
+      "brand": "Tudor",
+      "model": "1926 36mm",
+      "size_mm": 36,
+      "strap": "leather",
+      "dial": "embossed silver, Roman numerals",
+      "url": "https://www.tudorwatch.com/en/watches/1926",
+      "price_usd_low": 1850,
+      "price_usd_high": 2200,
+      "price_label": "$1,850 retail",
+      "status": "available",
+      "fit": 6,
+      "tags": [
+        "dress",
+        "accessible"
+      ],
+      "note": "Tudor's classical dress watch \u2014 most accessible Rolex-family dress reference.",
+      "country": "Switzerland",
+      "made_in": "Geneva",
+      "category": "primer",
+      "difficulty": 1
+    },
+    {
+      "id": "primer-hamilton-khaki-field-mechanical-38",
+      "brand": "Hamilton",
+      "model": "Khaki Field Mechanical 38mm",
+      "size_mm": 38,
+      "strap": "leather",
+      "dial": "matte black or sand, military Arabic numerals",
+      "url": "https://www.hamiltonwatch.com/en-us/h69439931-khaki-field-mechanical.html",
+      "price_usd_low": 595,
+      "price_usd_high": 750,
+      "price_label": "$595 retail",
+      "status": "available",
+      "fit": 5,
+      "tags": [
+        "field",
+        "manual-wind",
+        "entry"
+      ],
+      "note": "Sub-$1K Swiss mechanical with WWII military DNA \u2014 the gateway watch.",
+      "country": "Switzerland",
+      "made_in": "Bienne",
+      "category": "primer",
+      "difficulty": 1
+    },
+    {
+      "id": "primer-junghans-max-bill-34",
+      "brand": "Junghans",
+      "model": "Max Bill Hand-Winding 34mm",
+      "size_mm": 34,
+      "strap": "leather",
+      "dial": "matte silver, painted numerals, domed plexi crystal",
+      "url": "https://www.junghans.de/en/max-bill-hand-winding",
+      "price_usd_low": 1290,
+      "price_usd_high": 1450,
+      "price_label": "$1,290 retail",
+      "status": "available",
+      "fit": 7,
+      "tags": [
+        "Bauhaus",
+        "Max Bill design",
+        "domed plexi"
+      ],
+      "note": "Pure 1961 Max Bill design language; hand-wound 34mm Bauhaus orthodoxy.",
+      "country": "Germany",
+      "made_in": "Schramberg",
+      "category": "primer",
+      "difficulty": 1
     }
   ],
   "brands": [
