@@ -137,3 +137,27 @@ The dashboard's UI must match the same restraint Arman demands in his watches. W
 - **Sticky header tabs** only; no second sticky bar. Search lives in the tab bar.
 
 If the user pushes back with "too many filters / words / variables", the answer is to remove, not rearrange.
+
+## Private locations (Arman-only "where to find")
+
+Each watch in `dashboard/data.json` carries a `private_cipher` field. This holds AES-GCM-encrypted text describing private sourcing notes (specific dealer contacts, off-market reservations, negotiated prices) that should NOT be visible to friends voting on the dashboard.
+
+**To populate or update private notes** (Arman runs this on his own machine):
+
+1. Create `private-locations.local.json` at the repo root (gitignored):
+   ```json
+   {
+     "kurono-shiraai": "Reserved with Andy at Watch CTI Ginza, hold until June 14",
+     "kurono-inseki":  "DM @kurono_collector_x on IG, preorder $2,400"
+   }
+   ```
+2. Run:
+   ```sh
+   WATCH_PASS="<his passphrase>" node .claude/skills/find-watch/encrypt-locations.mjs
+   ```
+   The script encrypts each entry with PBKDF2-derived AES-GCM and writes ciphertext into `data.json` under the matching watch's `private_cipher`.
+3. Commit and push `data.json`. The plaintext file stays local (gitignored).
+
+**Browser side:** Click the 🔒 in the header → enter passphrase. Web Crypto decrypts client-side; the passphrase only lives in `sessionStorage` until tab close. Friends never see plaintext.
+
+When adding new watches via the find-watch skill, leave `private_cipher: ""` empty — Arman fills it later via the encrypt step.

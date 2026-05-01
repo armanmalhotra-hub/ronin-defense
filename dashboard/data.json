@@ -1,5 +1,11 @@
 {
   "updated": "2026-05-01",
+  "private_locations_meta": {
+    "algo": "AES-GCM",
+    "kdf": "PBKDF2-SHA256",
+    "iterations": 250000,
+    "note": "Per-watch ciphertext sits in `private_cipher`. Decrypted client-side with a passphrase only Arman knows. Friends viewing the dashboard see a lock icon until/unless he unlocks on his own device."
+  },
   "favorites": [
     {
       "id": "kurono-shiraai",
@@ -15,10 +21,9 @@
       "price_label": "$2,230 retail · $3,500–4,700 secondary",
       "status": "own-target",
       "fit": 10,
-      "tags": ["Hajime Asaoka", "guilloche", "power reserve", "60th Jubilee", "EOL movement"],
+      "tags": ["guilloche", "power reserve", "Hajime Asaoka"],
       "note": "#1 want. Recent LoupeThis sold $3,520 (Mar) / $3,960 (Apr). Target sub-$2,500.",
-      "source": "Kurono Tokyo",
-      "cta_label": "Brand page"
+      "private_cipher": ""
     },
     {
       "id": "naoya-hida-type-3a",
@@ -34,10 +39,94 @@
       "price_label": "~$19,000–22,000",
       "status": "lottery",
       "fit": 10,
-      "tags": ["dream tier", "moonphase", "blued hands", "904L steel", "neo-classical"],
-      "note": "Apply May 18-21 ORDER tab. Type 3A discontinued at 15pcs; check 2026 successor refs.",
-      "source": "Naoya Hida & Co.",
-      "cta_label": "Lottery"
+      "tags": ["dream", "moonphase", "blued hands"],
+      "note": "Discontinued at 15pcs — successor is Type 3B-3 with lapis lazuli moon (5pc 2025-26).",
+      "private_cipher": ""
+    },
+    {
+      "id": "naoya-hida-type-3b3",
+      "brand": "Naoya Hida & Co.",
+      "model": "NH Type 3B-3 Moonphase",
+      "size_mm": 37,
+      "strap": "leather",
+      "dial": "German silver dial, lapis lazuli night sky, 18k gold engraved moon",
+      "url": "https://naoyahidawatch.com/?lang=en",
+      "price_usd_low": 22000,
+      "price_usd_high": 28000,
+      "price_label": "~$22,000–28,000",
+      "status": "lottery",
+      "fit": 10,
+      "tags": ["dream", "moonphase", "lapis", "5 pcs only"],
+      "note": "Type 3A successor. Just 5 pieces total 2025-2026. Apply via 2026 lottery.",
+      "private_cipher": ""
+    },
+    {
+      "id": "naoya-hida-type-6a",
+      "brand": "Naoya Hida & Co.",
+      "model": "NH Type 6A Perpetual Calendar",
+      "size_mm": 37,
+      "strap": "leather",
+      "dial": "Argentium silver, hand-engraved sub-dials by Keisuke Kano",
+      "url": "https://naoyahidawatch.com/?lang=en",
+      "price_jpy": 7500000,
+      "price_usd_low": 50000,
+      "price_label": "¥7,500,000 (~$50,000+)",
+      "status": "lottery",
+      "fit": 9,
+      "tags": ["dream", "perpetual calendar", "10 pcs only", "in-house Cal.3025PC"],
+      "note": "First NH perpetual calendar. 10 pieces total 2025-2026. Aspirational only.",
+      "private_cipher": ""
+    },
+    {
+      "id": "naoya-hida-type-1d",
+      "brand": "Naoya Hida & Co.",
+      "model": "NH Type 1D",
+      "size_mm": 36,
+      "strap": "leather",
+      "dial": "German silver, applied Roman numerals",
+      "url": "https://naoyahidawatch.com/?lang=en",
+      "price_usd_low": 16000,
+      "price_usd_high": 19000,
+      "price_label": "~$16,000–19,000",
+      "status": "watching",
+      "fit": 10,
+      "tags": ["dress", "Type 1 lineage", "36mm"],
+      "note": "Dress-watch flagship. 36mm hits the sweet spot. Secondary appears occasionally at Mr Watchley.",
+      "private_cipher": ""
+    },
+    {
+      "id": "naoya-hida-type-2c",
+      "brand": "Naoya Hida & Co.",
+      "model": "NH Type 2C-1 (Armoury)",
+      "size_mm": 37,
+      "strap": "leather",
+      "dial": "German silver, alternative numeral configuration",
+      "url": "https://www.thearmoury.com/artisans/naoya-hida",
+      "price_usd_low": 18000,
+      "price_usd_high": 24000,
+      "price_label": "~$18,000–24,000",
+      "status": "watching",
+      "fit": 10,
+      "tags": ["Armoury collab", "limited"],
+      "note": "Originally Armoury HK collaboration. Occasionally surfaces on secondary.",
+      "private_cipher": ""
+    },
+    {
+      "id": "naoya-hida-type-5a1",
+      "brand": "Naoya Hida & Co.",
+      "model": "NH Type 5A-1",
+      "size_mm": 28,
+      "strap": "leather",
+      "dial": "rectangular dress, custom acrylic glass",
+      "url": "https://naoyahidawatch.com/?lang=en",
+      "price_usd_low": 16000,
+      "price_usd_high": 20000,
+      "price_label": "~$16,000–20,000",
+      "status": "watching",
+      "fit": 7,
+      "tags": ["rectangular", "dress", "acrylic"],
+      "note": "Small rectangular tank. Below your round-case sweet spot but a deep-cut indie play.",
+      "private_cipher": ""
     },
     {
       "id": "kurono-grand-urushi-brown",
@@ -54,10 +143,45 @@
       "price_label": "¥358,500 retail · $1,899–9,500 secondary",
       "status": "salon-only",
       "fit": 10,
-      "tags": ["urushi", "lacquer", "188 pieces", "Aoyama-only", "salon edition"],
-      "note": "Salon-only pickup at Kurono Aoyama. Email info@kuronotokyo.com to inquire before trip.",
-      "source": "Kurono Tokyo",
-      "cta_label": "Brand page"
+      "tags": ["urushi", "188 pieces", "Aoyama-only"],
+      "note": "Email info@kuronotokyo.com before trip to ask about allocation.",
+      "private_cipher": ""
+    },
+    {
+      "id": "kurono-grand-urushi-green",
+      "brand": "Kurono Tokyo",
+      "model": "Grand Urushi Aoyama — Green",
+      "size_mm": 37,
+      "strap": "leather",
+      "dial": "deep green urushi lacquer",
+      "url": "https://kuronotokyo.com/pages/grand-urushi-aoyama",
+      "price_jpy": 358500,
+      "price_usd_low": 2200,
+      "price_usd_high": 8500,
+      "price_label": "¥358,500 retail · $2,200–8,500 secondary",
+      "status": "salon-only",
+      "fit": 9,
+      "tags": ["urushi", "188 pieces", "muted green"],
+      "note": "Same trio as Brown Cinnamon, green variant.",
+      "private_cipher": ""
+    },
+    {
+      "id": "kurono-grand-urushi-red",
+      "brand": "Kurono Tokyo",
+      "model": "Grand Urushi Aoyama — Red",
+      "size_mm": 37,
+      "strap": "leather",
+      "dial": "vermilion urushi lacquer",
+      "url": "https://kuronotokyo.com/pages/grand-urushi-aoyama",
+      "price_jpy": 358500,
+      "price_usd_low": 2500,
+      "price_usd_high": 9000,
+      "price_label": "¥358,500 retail · $2,500–9,000 secondary",
+      "status": "salon-only",
+      "fit": 8,
+      "tags": ["urushi", "188 pieces", "warm red"],
+      "note": "Boldest of the trio. Red is brighter than your usual range.",
+      "private_cipher": ""
     },
     {
       "id": "kurono-grand-akane",
@@ -72,10 +196,26 @@
       "price_label": "$2,400–6,000 secondary",
       "status": "watching",
       "fit": 9,
-      "tags": ["urushi", "Hamon", "200 pieces", "warm tone"],
+      "tags": ["urushi", "Hamon", "200 pieces"],
       "note": "Very rare on secondary. Set search alerts.",
-      "source": "Kurono Tokyo",
-      "cta_label": "Brand page"
+      "private_cipher": ""
+    },
+    {
+      "id": "kurono-grand-hagane",
+      "brand": "Kurono Tokyo",
+      "model": "Grand Hagane",
+      "size_mm": 37,
+      "strap": "leather",
+      "dial": "Hamon blade pattern dial",
+      "url": "https://kuronotokyo.com/pages/kurono-grand-series",
+      "price_usd_low": 2200,
+      "price_usd_high": 5500,
+      "price_label": "$2,200–5,500 secondary",
+      "status": "watching",
+      "fit": 9,
+      "tags": ["Hamon", "swordsmith motif", "Grand"],
+      "note": "Hamon blade-pattern dial. Same case family as Urushi Aoyama.",
+      "private_cipher": ""
     },
     {
       "id": "kurono-mori-2020",
@@ -91,8 +231,59 @@
       "status": "watching",
       "fit": 9,
       "tags": ["sunburst", "288 pieces", "muted green"],
-      "note": "Hits the muted green/warm-tone sweet spot.",
-      "source": "Kurono Tokyo"
+      "note": "Hits the muted-green sweet spot.",
+      "private_cipher": ""
+    },
+    {
+      "id": "kurono-toki",
+      "brand": "Kurono Tokyo",
+      "model": "Toki",
+      "size_mm": 37,
+      "strap": "leather",
+      "dial": "Classic 37mm sector dial, brown",
+      "url": "https://kuronotokyo.com/",
+      "price_usd_low": 1800,
+      "price_usd_high": 2800,
+      "price_label": "$1,800–2,800 secondary",
+      "status": "watching",
+      "fit": 9,
+      "tags": ["sector dial", "Classic 37mm", "warm tone"],
+      "note": "Classic-line sector dial in warm brown. Often the first piece for new collectors.",
+      "private_cipher": ""
+    },
+    {
+      "id": "kurono-bunkyo",
+      "brand": "Kurono Tokyo",
+      "model": "Bunkyo Tokyo (Eggshell)",
+      "size_mm": 37,
+      "strap": "leather",
+      "dial": "eggshell white, time-only minimal",
+      "url": "https://kuronotokyo.com/",
+      "price_usd_low": 1800,
+      "price_usd_high": 3200,
+      "price_label": "$1,800–3,200 secondary",
+      "status": "watching",
+      "fit": 9,
+      "tags": ["50 pieces", "minimal", "time-only"],
+      "note": "50 pieces in eggshell. Two other colorways (Midnight Blue, Mystic Grey) also exist.",
+      "private_cipher": ""
+    },
+    {
+      "id": "kurono-anniversary-azuki",
+      "brand": "Kurono Tokyo",
+      "model": "Anniversary Calendrier 'Azuki' アズキ",
+      "size_mm": 38,
+      "strap": "leather",
+      "dial": "burgundy 'azuki' bean tone, full calendar",
+      "url": "https://kuronotokyo.com/pages/anniversary-calendrier-type-i-azuki",
+      "price_usd_low": 2200,
+      "price_usd_high": 3800,
+      "price_label": "$2,200–3,800 secondary",
+      "status": "watching",
+      "fit": 8,
+      "tags": ["complete calendar", "anniversary", "warm tone"],
+      "note": "38mm pushes the upper bound but rich red-bean dial fits palette.",
+      "private_cipher": ""
     },
     {
       "id": "kurono-persimmon-34",
@@ -100,16 +291,16 @@
       "model": "Persimmon 34mm",
       "size_mm": 34,
       "strap": "leather",
-      "dial": "warm orange sector dial",
+      "dial": "warm orange sector",
       "url": "https://kuronotokyo.com/",
       "price_usd_low": 2500,
       "price_usd_high": 3500,
       "price_label": "$2,500–3,500 secondary",
       "status": "watching",
       "fit": 10,
-      "tags": ["sector dial", "150 pieces", "persimmon", "34mm"],
-      "note": "Smallest case in the Kurono family — perfect.",
-      "source": "Kurono Tokyo"
+      "tags": ["sector dial", "150 pieces", "34mm"],
+      "note": "Smallest case in the Kurono family — perfect proportions for you.",
+      "private_cipher": ""
     },
     {
       "id": "kurono-darkmist-34",
@@ -126,7 +317,24 @@
       "fit": 9,
       "tags": ["sector dial", "34mm", "muted"],
       "note": "Most affordable of the small-case favorites.",
-      "source": "Kurono Tokyo"
+      "private_cipher": ""
+    },
+    {
+      "id": "kurono-akane-34",
+      "brand": "Kurono Tokyo",
+      "model": "34mm Akane (Red)",
+      "size_mm": 34,
+      "strap": "leather",
+      "dial": "akane red sector",
+      "url": "https://kuronotokyo.com/",
+      "price_usd_low": 1700,
+      "price_usd_high": 2400,
+      "price_label": "$1,700–2,400 secondary",
+      "status": "watching",
+      "fit": 8,
+      "tags": ["sector", "34mm", "red"],
+      "note": "From the 2023 34mm collection. Brighter red than your usual.",
+      "private_cipher": ""
     },
     {
       "id": "kurono-inseki",
@@ -141,9 +349,138 @@
       "price_label": "$1,850 retail · secondary forming",
       "status": "watching",
       "fit": 9,
-      "tags": ["meteorite", "Hajime seal", "Calligra typeface", "2026", "limited"],
-      "note": "Sold out Jan 15. Deliveries from late Feb 2026 → secondary listings appearing now. Best June-buy candidate online.",
-      "source": "Kurono Tokyo"
+      "tags": ["meteorite", "Hajime seal", "limited"],
+      "note": "Sold out Jan 15. Secondary listings appearing now. Best June-buy candidate.",
+      "private_cipher": ""
+    },
+    {
+      "id": "kikuchi-ichimonji",
+      "brand": "Kikuchi Nakagawa",
+      "model": "Ichimonji 一文字",
+      "size_mm": 37,
+      "strap": "leather",
+      "dial": "Comblémine, white or black, single-line minimal",
+      "url": "https://kikuchi-nakagawa.com/en/watches/ichimonji-2/",
+      "price_usd": 22000,
+      "price_label": "$22,000 retail",
+      "status": "watching",
+      "fit": 10,
+      "tags": ["1940s-inspired", "8 pcs/yr", "Vaucher KN001"],
+      "note": "36.8mm, Comblémine dial, ~8 pcs/year total. Closed waitlist; secondary occasionally at A Collected Man.",
+      "private_cipher": ""
+    },
+    {
+      "id": "kikuchi-murakumo",
+      "brand": "Kikuchi Nakagawa",
+      "model": "Murakumo 叢雲",
+      "size_mm": 37,
+      "strap": "leather",
+      "dial": "minimalist, sword-finish case",
+      "url": "https://kikuchi-nakagawa.com/en/watches/murakumo/",
+      "price_usd": 23000,
+      "price_label": "$23,000 retail",
+      "status": "watching",
+      "fit": 10,
+      "tags": ["GPHG", "swordsmith", "closed waitlist"],
+      "note": "7+ year waitlist, currently closed. Trunk-show or A Collected Man secondary only.",
+      "private_cipher": ""
+    },
+    {
+      "id": "kikuchi-genmon",
+      "brand": "Kikuchi Nakagawa",
+      "model": "Genmon",
+      "size_mm": 37,
+      "strap": "leather",
+      "dial": "Calatrava-inspired, ultra-minimal",
+      "url": "https://kikuchi-nakagawa.com/en/",
+      "price_usd_low": 24000,
+      "price_usd_high": 28000,
+      "price_label": "~$24,000–28,000",
+      "status": "watching",
+      "fit": 10,
+      "tags": ["Calatrava", "minimal"],
+      "note": "Newest of the three. Even more restrained than the Ichimonji.",
+      "private_cipher": ""
+    },
+    {
+      "id": "masa-nayuta",
+      "brand": "Masa & Co",
+      "model": "Nayuta Shinohara — Model A",
+      "size_mm": 38.6,
+      "strap": "leather",
+      "dial": "small seconds, Breguet numerals, hand-engraved 10^60 motif",
+      "url": "https://masaspastime.com/en/nayuta.html",
+      "price_jpy": null,
+      "price_label": "POA · auction comp HK$558,800 (1/1)",
+      "status": "watching",
+      "fit": 8,
+      "tags": ["Breguet numerals", "hand engraving", "lottery"],
+      "note": "38.6mm pushes the upper bound. Atelier-direct via lottery. Watchmaker is Walter Lange Award winner.",
+      "private_cipher": ""
+    },
+    {
+      "id": "masa-sohkoku",
+      "brand": "Masa & Co",
+      "model": "Sohkoku — MP Series",
+      "size_mm": 37,
+      "strap": "leather",
+      "dial": "4-piece sterling Bombay, charcoal rubbing",
+      "url": "https://masaspastime.com/en/",
+      "price_jpy": 8500000,
+      "price_label": "¥8,500,000 SS / ¥10,500,000 WG (~$57k–70k)",
+      "status": "lottery",
+      "fit": 9,
+      "tags": ["sterling silver", "Bombay dial", "10 pcs/yr", "no logo"],
+      "note": "MP1 in-house movement. May 2025-26 lottery — 10 pieces.",
+      "private_cipher": ""
+    },
+    {
+      "id": "masa-nagi",
+      "brand": "Masa & Co",
+      "model": "Nagi — MP Series",
+      "size_mm": 37,
+      "strap": "leather",
+      "dial": "sterling silver curved, green gold finish",
+      "url": "https://masaspastime.com/en/MP1.html",
+      "price_jpy": 8500000,
+      "price_label": "¥8,500,000 SS / ¥10,500,000 WG (~$57k–70k)",
+      "status": "lottery",
+      "fit": 9,
+      "tags": ["sterling silver", "green gold", "10 pcs/yr"],
+      "note": "Anonymous case (no logo). Companion to Sohkoku.",
+      "private_cipher": ""
+    },
+    {
+      "id": "asaoka-tsunami",
+      "brand": "Hajime Asaoka",
+      "model": "Tsunami (Steel)",
+      "size_mm": 38,
+      "strap": "leather",
+      "dial": "Tsunami signature wave dial",
+      "url": "https://www.acollectedman.com/products/hajime-asaoka-tsunami-stainless-steel",
+      "price_usd": 30000,
+      "price_label": "$30,000 retail (Édition Blanche)",
+      "status": "watching",
+      "fit": 9,
+      "tags": ["dream", "atelier", "Asaoka in-house"],
+      "note": "Father atelier of Kurono. Tsunami is the accessible Asaoka piece (relatively).",
+      "private_cipher": ""
+    },
+    {
+      "id": "minase-divido-urushi",
+      "brand": "Minase",
+      "model": "Divido Shibo Urushi",
+      "size_mm": 40.6,
+      "strap": "leather/rubber",
+      "dial": "shibo urushi handcrafted",
+      "url": "https://minasewatches.com/webshop/divido-shibo-urushi-rubber/",
+      "price_usd": 7800,
+      "price_label": "CHF 7,200 / ~$7,800",
+      "status": "watching",
+      "fit": 6,
+      "tags": ["urushi", "case finishing", "Akita"],
+      "note": "40.6mm — over your sweet spot — but case finishing is exceptional.",
+      "private_cipher": ""
     }
   ],
 
@@ -155,10 +492,10 @@
       "handle": "@kuronotokyo",
       "founded": 2019,
       "cities": ["Tokyo", "Shanghai"],
-      "style": "Vintage-inspired dress watches, art-deco / 1930s-50s, urushi & guilloche dials",
+      "style": "Vintage-inspired dress, urushi & guilloche dials",
       "price_range": "$1,200–9,500",
-      "tags": ["Hajime Asaoka", "limited drops", "lottery", "salon editions"],
-      "note": "Sub-brand of Hajime Asaoka. Sweet spot for the profile. Aoyama salon is must-visit.",
+      "tags": ["Hajime Asaoka", "limited drops", "salon editions"],
+      "note": "Sub-brand of Hajime Asaoka. Aoyama salon must-visit.",
       "stockists": [
         {"name": "Aoyama Salon", "url": "https://kuronotokyo.com/pages/kurono-tokyo-aoyama-salon"},
         {"name": "Shanghai Salon", "url": "https://kuronotokyo.com/pages/kurono-tokyo-shanghai-salon"}
@@ -171,14 +508,14 @@
       "handle": "@naoya_hida_co.official",
       "founded": 2018,
       "cities": ["Tokyo", "Hong Kong", "New York", "Kobe"],
-      "style": "Neo-classical, German silver dials, hand-engraved Romans, tourist-blue hands",
-      "price_range": "$15,000–35,000",
-      "tags": ["lottery", "appointment", "AHCI", "trunk shows"],
-      "note": "75 watches/year. 25 to Armoury, 40 direct, 5 to Kamine Kobe. Apply May 18-21 lottery.",
+      "style": "Neo-classical, German silver dials, hand-engraved Romans, blued hands",
+      "price_range": "$15,000–50,000+",
+      "tags": ["lottery", "appointment", "AHCI"],
+      "note": "75 watches/year. 25 to Armoury, 40 direct, 5 to Kamine Kobe.",
       "stockists": [
-        {"name": "The Armoury HK/NY", "url": "https://www.thearmoury.com/artisans/naoya-hida"},
+        {"name": "The Armoury", "url": "https://www.thearmoury.com/artisans/naoya-hida"},
         {"name": "Kamine (Kobe)", "url": "https://kamine.shop/"},
-        {"name": "Direct (Tokyo atelier)", "url": "https://naoyahidawatch.com/order/?lang=en"}
+        {"name": "Direct (atelier)", "url": "https://naoyahidawatch.com/order/?lang=en"}
       ]
     },
     {
@@ -188,13 +525,13 @@
       "handle": "@asaoka_hajime",
       "founded": 2009,
       "cities": ["Tokyo"],
-      "style": "Tsunami, Project T tourbillon — atelier flagship pieces",
+      "style": "Tsunami, Project T tourbillon — atelier flagship",
       "price_range": "$28,000–250,000+",
-      "tags": ["AHCI", "tourbillon", "atelier", "GPHG"],
-      "note": "Parent atelier of Kurono. Tsunami in steel ~$30k. Tourbillons six figures.",
+      "tags": ["AHCI", "tourbillon", "GPHG"],
+      "note": "Parent atelier of Kurono. Tsunami in steel ~$30k.",
       "stockists": [
         {"name": "A Collected Man", "url": "https://www.acollectedman.com/collections/hajime-asaoka"},
-        {"name": "Phillips auctions", "url": "https://www.phillips.com/artist/15133/hajime-asaoka"}
+        {"name": "Phillips", "url": "https://www.phillips.com/artist/15133/hajime-asaoka"}
       ]
     },
     {
@@ -204,10 +541,10 @@
       "handle": "@kikuchi_nakagawa",
       "founded": 2017,
       "cities": ["Tokyo"],
-      "style": "Murakumo & Ichimonji — black-polished, ultra-minimal, swordsmith-trained finishing",
-      "price_range": "$23,000+",
-      "tags": ["waitlist", "GPHG", "1930s-inspired", "sword finishing"],
-      "note": "Murakumo waitlist 7+ years and currently closed. Ichimonji similar. View at trunk shows / A Collected Man.",
+      "style": "Murakumo, Ichimonji, Genmon — black-polished, ultra-minimal",
+      "price_range": "$22,000–28,000",
+      "tags": ["waitlist", "GPHG", "swordsmith"],
+      "note": "~8 pieces/year total. Waitlists currently closed.",
       "stockists": [
         {"name": "A Collected Man", "url": "https://www.acollectedman.com/collections/kikuchi-nakagawa"}
       ]
@@ -219,11 +556,10 @@
       "handle": "@masas_pastime",
       "founded": 2020,
       "cities": ["Tokyo"],
-      "style": "Sterling silver Bombay dials, MP1 in-house movement, anonymous case",
-      "price_range": "¥8.5M–10.5M (~$57k–70k)",
-      "tags": ["lottery", "in-house", "no logo", "10 pieces/yr per ref"],
-      "note": "Nagi & Sohkoku. Lottery system. Way over budget but worth seeing in person if possible.",
-      "stockists": []
+      "style": "Sterling silver Bombay dials, MP1 in-house",
+      "price_range": "¥8.5M–10.5M",
+      "tags": ["lottery", "no logo", "10 pieces/yr per ref"],
+      "note": "Nagi & Sohkoku via lottery; Nayuta is Shinohara's apprentice line."
     },
     {
       "name": "Minase",
@@ -232,11 +568,10 @@
       "handle": "@minase_japan",
       "founded": 2005,
       "cities": ["Akita"],
-      "style": "Divido & 7 Windows — obsessive case finishing, urushi & yusai handcrafted dials",
+      "style": "Divido & 7 Windows — case finishing obsessive",
       "price_range": "$3,800–9,100",
-      "tags": ["case finishing", "urushi", "yusai", "Akita"],
-      "note": "Divido is 40.6mm — too big per profile. 7 Windows at 38mm is the closer fit.",
-      "stockists": []
+      "tags": ["case finishing", "urushi", "Akita"],
+      "note": "Divido is 40.6mm. 7 Windows at 38mm closer to fit."
     },
     {
       "name": "Daizoh Makihara",
@@ -245,11 +580,9 @@
       "handle": "@daizoh_makihara",
       "founded": 2010,
       "cities": ["Tokyo"],
-      "style": "Hand-engraved nature dials (cherry blossom, waves)",
+      "style": "Hand-engraved nature dials",
       "price_range": "$25,000+",
-      "tags": ["hand engraving", "AHCI", "nature motifs"],
-      "note": "Independent atelier. Pieces by commission / occasional retail.",
-      "stockists": []
+      "tags": ["AHCI", "hand engraving"]
     },
     {
       "name": "Quiet Club (Norifumi Seki)",
@@ -258,10 +591,9 @@
       "handle": "@quietclub_official",
       "founded": 2020,
       "cities": ["Tokyo"],
-      "style": "Mechanical alarm, underground / cult following",
+      "style": "Mechanical alarm, underground",
       "price_range": "tbd",
-      "tags": ["mechanical alarm", "underground", "deep cut"],
-      "note": "Very small output. Worth tracking via Instagram for occasional drops."
+      "tags": ["mechanical alarm", "deep cut"]
     },
     {
       "name": "Kazuo Maeda",
@@ -270,10 +602,9 @@
       "handle": "@kazuomaeda",
       "founded": 2024,
       "cities": ["Kyoto"],
-      "style": "GPHG-nominated debut. Highly traditional Japanese craft.",
+      "style": "GPHG-nominated debut, traditional Japanese craft",
       "price_range": "tbd",
-      "tags": ["GPHG", "Kyoto", "new", "AHCI candidate"],
-      "note": "Just-emerged maker. Verify availability before trip."
+      "tags": ["GPHG", "Kyoto", "new"]
     },
     {
       "name": "Vague Watch Co.",
@@ -282,10 +613,9 @@
       "handle": "@vaguewatchco",
       "founded": 2010,
       "cities": ["Tokyo"],
-      "style": "Faux-patina, vintage-feel field watches",
+      "style": "Faux-patina vintage-feel field",
       "price_range": "$300–800",
-      "tags": ["affordable", "patina", "vintage feel"],
-      "note": "Entry-level vibe / fun stocking-stuffer pick. Not a primary target."
+      "tags": ["affordable", "patina"]
     }
   ],
 
@@ -295,152 +625,80 @@
       "type": "marketplace",
       "url": "https://www.chrono24.com/kuronotokyo/index.htm",
       "based_in": "Germany / global",
-      "best_for": "Largest dealer marketplace. Best for Kurono Shiraai, Inseki, Mori",
-      "fees": "Buyer protection ~$300+; dealer-set prices",
-      "tags": ["Kurono saved search", "global", "alerts"],
-      "note": "Set saved searches with brand + max price. Dealers vary widely on condition transparency."
+      "best_for": "Largest Kurono Shiraai / Inseki / Mori inventory",
+      "tags": ["alerts", "global"]
     },
     {
       "name": "WatchCharts",
       "type": "data",
       "url": "https://watchcharts.com/watches/brand/kurono+tokyo",
       "based_in": "global",
-      "best_for": "Price history, market index, sold comps",
-      "fees": "Free + paid tier",
-      "tags": ["price history", "comps", "marketplace"],
-      "note": "Use to validate ask prices. WatchCharts Marketplace has lower seller fees than Chrono24."
+      "best_for": "Price history, sold comps, marketplace with low fees",
+      "tags": ["price history"]
     },
     {
       "name": "EveryWatch",
       "type": "data",
       "url": "https://everywatch.com/kurono",
       "based_in": "global",
-      "best_for": "Aggregates dealer + auction listings into one search",
-      "fees": "Free",
-      "tags": ["aggregator", "auction comps"],
-      "note": "Cross-checks Chrono24, LoupeThis, Phillips, dealer websites in one view."
+      "best_for": "Aggregates dealer + auction listings",
+      "tags": ["aggregator"]
     },
     {
       "name": "LoupeThis",
       "type": "auction",
       "url": "https://loupethis.com/",
       "based_in": "USA",
-      "best_for": "Weekly online auctions, often Kurono / indie pieces",
-      "fees": "Buyer's premium ~10–15%",
-      "tags": ["weekly", "auction", "Kurono"],
-      "note": "Recent Shiraai sold $3,520 (Mar 2026) / $3,960 (Apr 2026). Set max bids."
+      "best_for": "Weekly auctions, Kurono comps land here regularly",
+      "tags": ["weekly", "Kurono"]
     },
     {
       "name": "Bezel",
       "type": "marketplace",
       "url": "https://shop.getbezel.com/",
       "based_in": "USA",
-      "best_for": "Curated dealer-vetted listings, authentication included",
-      "fees": "Buyer side included; price premium vs Chrono24",
-      "tags": ["authenticated", "concierge"],
-      "note": "Cleaner experience but pricier. Good for first-time independent buys."
+      "best_for": "Authenticated curated listings, premium",
+      "tags": ["concierge"]
     },
     {
       "name": "Wristcheck",
       "type": "marketplace",
       "url": "https://wristcheck.com/",
       "based_in": "Hong Kong",
-      "best_for": "Independents incl. Kurono, Naoya Hida secondary",
-      "fees": "Marketplace + flagship store fees",
-      "tags": ["HK", "boutique marketplace", "independents"],
-      "note": "Strong on Asian independents. Has physical Hong Kong showroom (see Stores)."
+      "best_for": "Asian indie inventory, Kurono / NH secondary",
+      "tags": ["HK", "indie"]
     },
     {
       "name": "Phillips",
       "type": "auction",
       "url": "https://www.phillips.com/auctions/department/watches",
       "based_in": "global",
-      "best_for": "Naoya Hida, Hajime Asaoka, Kikuchi Nakagawa lots",
-      "fees": "Buyer's premium ~26%",
-      "tags": ["high-end", "auction house", "HK & Geneva sessions"],
-      "note": "Hong Kong & Geneva sessions regularly include Japanese independents."
+      "best_for": "Asaoka, NH, Kikuchi Nakagawa lots",
+      "tags": ["high-end"]
     },
     {
       "name": "A Collected Man",
       "type": "dealer",
       "url": "https://www.acollectedman.com/collections/japan",
       "based_in": "London",
-      "best_for": "Hajime Asaoka, Kikuchi Nakagawa, NH curated single-owner sales",
-      "fees": "Dealer-set",
-      "tags": ["independents", "London", "high-end"],
-      "note": "Best curated independent dealer in Europe. Pricey but vetted."
+      "best_for": "Asaoka, Kikuchi Nakagawa, NH single-owner",
+      "tags": ["London"]
     },
     {
       "name": "Hairspring",
       "type": "dealer",
       "url": "https://hairspring.com/",
       "based_in": "USA",
-      "best_for": "Kikuchi Nakagawa, indie Japanese consignments",
-      "fees": "Dealer-set",
-      "tags": ["independents", "consignment"],
-      "note": "Smaller boutique dealer, occasional rare Japanese pieces."
+      "best_for": "Indie consignments",
+      "tags": ["consignment"]
     },
     {
       "name": "Mr Watchley",
       "type": "dealer",
       "url": "https://mrwatchley.com/",
       "based_in": "USA",
-      "best_for": "Naoya Hida secondary, Hajime Asaoka",
-      "fees": "Dealer-set",
-      "tags": ["independents"],
-      "note": "Specializes in indie listings. Worth saving for NH alerts."
-    }
-  ],
-
-  "cities": [
-    {
-      "name": "Tokyo",
-      "country": "Japan",
-      "neighborhoods": ["Aoyama", "Ginza", "Nihonbashi/Ningyocho", "Nakano", "Shinjuku"],
-      "tags": ["primary hub", "Kurono", "Naoya Hida", "vintage"],
-      "note": "Heart of the Japanese independent scene. 3-4 days here gets every must-visit."
-    },
-    {
-      "name": "Kobe",
-      "country": "Japan",
-      "neighborhoods": ["Kitano"],
-      "tags": ["Kamine", "Naoya Hida allocation"],
-      "note": "Worth a Kobe day-trip from Kyoto/Osaka if you're chasing a Naoya Hida — Kamine is one of only three NH retail channels (5 pieces/yr)."
-    },
-    {
-      "name": "Kyoto",
-      "country": "Japan",
-      "neighborhoods": ["Higashiyama", "central"],
-      "tags": ["Kuoe", "Kazuo Maeda", "craft"],
-      "note": "Less density of indie watch retail than Tokyo, but Kuoe workshop and Kazuo Maeda's emerging atelier are based here. Good craft-tourism context."
-    },
-    {
-      "name": "Osaka",
-      "country": "Japan",
-      "neighborhoods": ["Shinsaibashi", "Umeda"],
-      "tags": ["secondary"],
-      "note": "Komehyo + a handful of vintage shops. Lower priority unless already in town."
-    },
-    {
-      "name": "Hong Kong",
-      "country": "Hong Kong",
-      "neighborhoods": ["Central", "Sheung Wan"],
-      "tags": ["The Armoury", "Wristcheck", "Phillips auctions"],
-      "note": "Largest Asian retail hub for Japanese independents outside Japan. The Armoury HK is THE Naoya Hida destination."
-    },
-    {
-      "name": "New York",
-      "country": "USA",
-      "neighborhoods": ["Tribeca"],
-      "tags": ["The Armoury NY"],
-      "note": "Armoury Tribeca is the US Naoya Hida channel. Trunk shows announced via newsletter."
-    },
-    {
-      "name": "London",
-      "country": "UK",
-      "neighborhoods": ["Mayfair"],
-      "tags": ["A Collected Man", "Phillips"],
-      "note": "Best Western entry point for Hajime Asaoka and Kikuchi Nakagawa pieces."
+      "best_for": "NH and Asaoka secondary specialist",
+      "tags": ["indie specialist"]
     }
   ],
 
@@ -452,78 +710,78 @@
       "type": "lottery",
       "starts_iso": "2026-05-18T01:00:00Z",
       "ends_iso": "2026-05-21T01:00:00Z",
-      "tz_label": "10:00 JST → 10:00 JST",
+      "tz_label": "May 18-21, 10:00 JST",
       "url": "https://naoyahidawatch.com/order/?lang=en",
-      "refs": ["Type 7A (chrono — REJECT)", "Type 8A 31mm (too small)", "verify other 2026 refs at open"],
-      "note": "Apply during the 3-day window. Allocation announced after; pickup at Tokyo atelier in June for trip."
+      "note": "Apply during the 3-day window. Skip Type 7A (chrono) and Type 8A (31mm). Allocation announced after; pickup at Tokyo atelier in June."
     },
     {
       "id": "kurono-special-drops",
-      "title": "Kurono Special Projects — monitor for next drop",
+      "title": "Kurono Special Projects — next drop",
       "brand": "Kurono Tokyo",
       "type": "release",
       "starts_iso": null,
       "ends_iso": null,
       "tz_label": "subscribe to newsletter",
       "url": "https://kuronotokyo.com/",
-      "note": "Inseki sold out Jan 15. Next Special Projects drop typically lands Q3/Q4 — sign up for email + IG @kuronotokyo."
+      "note": "Inseki sold Jan 15. Next typically lands Q3/Q4 — sign up for email + IG."
     },
     {
       "id": "phillips-hk-spring-2026",
-      "title": "Phillips Hong Kong Spring 2026 watch sessions",
+      "title": "Phillips Hong Kong Spring 2026",
       "brand": "Phillips",
       "type": "auction",
       "starts_iso": "2026-05-23T00:00:00Z",
       "ends_iso": "2026-05-25T00:00:00Z",
       "tz_label": "May 23-25 HK",
       "url": "https://www.phillips.com/auctions/department/watches",
-      "note": "Spring sessions historically include Naoya Hida + Hajime Asaoka lots. Watch the catalog drop ~3 weeks prior."
+      "note": "Spring sessions usually include NH + Asaoka lots."
     },
     {
       "id": "loupethis-weekly",
-      "title": "LoupeThis weekly auction — Kurono Shiraai watch",
+      "title": "LoupeThis weekly — Shiraai watch",
       "brand": "LoupeThis",
       "type": "auction",
       "starts_iso": null,
       "ends_iso": null,
       "tz_label": "weekly",
       "url": "https://loupethis.com/",
-      "note": "Set max-bid at $2,800 for any Shiraai listing. Recent comps: $3,520 (Mar), $3,960 (Apr) — trend softening."
+      "note": "Set max-bid at $2,800 for any Shiraai listing. Recent comps softening."
     },
     {
       "id": "armoury-trunk-show",
-      "title": "Armoury Naoya Hida trunk show (HK / NY)",
+      "title": "Armoury NH trunk show (HK / NY)",
       "brand": "The Armoury",
       "type": "trunk-show",
       "starts_iso": null,
       "ends_iso": null,
-      "tz_label": "irregular — 2-3x/yr per location",
+      "tz_label": "irregular, 2-3x/yr per location",
       "url": "https://www.thearmoury.com/artisans/naoya-hida",
-      "note": "Subscribe to Armoury newsletter; trunk shows are often the only way to handle pieces in person outside Tokyo."
+      "note": "Often the only way to handle pieces in person outside Tokyo."
     },
     {
       "id": "kurono-aoyama-walkin",
-      "title": "Kurono Aoyama Salon — walk-in / appointment",
+      "title": "Kurono Aoyama Salon — walk-in",
       "brand": "Kurono Tokyo",
       "type": "showroom",
       "starts_iso": null,
       "ends_iso": null,
       "tz_label": "Mon-Sat 11:00-19:00 JST",
       "url": "https://kuronotokyo.com/pages/kurono-tokyo-aoyama-salon",
-      "note": "Tokyo trip June 2026 → email info@kuronotokyo.com a week ahead to ask about Salon Edition allocation."
+      "note": "Email info@kuronotokyo.com a week ahead about Salon Edition allocation."
     },
     {
       "id": "naoya-hida-atelier-friday",
-      "title": "Naoya Hida atelier visit (Tokyo, Fridays only)",
+      "title": "Naoya Hida atelier — Fridays",
       "brand": "Naoya Hida & Co.",
       "type": "showroom",
       "starts_iso": null,
       "ends_iso": null,
-      "tz_label": "Fridays JST, by appointment",
+      "tz_label": "Fridays JST, by appt",
       "url": "https://naoyahidawatch.com/?lang=en",
-      "note": "Required if you win the lottery to pick up. Book early — limited Friday slots."
+      "note": "Required for lottery pickup. Book early."
     }
   ],
+
   "stores": [
     {
       "name": "Kurono Tokyo Aoyama Salon",
@@ -531,25 +789,25 @@
       "neighborhood": "Aoyama",
       "type": "brand-salon",
       "address": "2-10-22 Kita-Aoyama, Minato, Tokyo 107-0061",
-      "hours": "Mon-Sat 11:00–19:00, closed Sun & holidays",
-      "appointment": "Walk-ins welcome; appointment recommended for try-ons",
+      "hours": "Mon-Sat 11:00–19:00",
+      "appointment": "Walk-in OK; appt for try-ons",
       "url": "https://kuronotokyo.com/pages/kurono-tokyo-aoyama-salon",
       "brands": ["Kurono Tokyo"],
-      "tags": ["salon edition pickup", "must-visit", "Hajime Asaoka"],
-      "note": "Phone: 03-6823-8358. Gathering place > sales boutique. Email info@kuronotokyo.com to ask about Salon Edition allocation in advance."
+      "tags": ["salon edition pickup", "must-visit"],
+      "note": "+81 3-6823-8358. Gathering place > sales boutique."
     },
     {
       "name": "Naoya Hida & Co. Atelier",
       "city": "Tokyo",
       "neighborhood": "Ningyocho / Chuo-ku",
       "type": "atelier",
-      "address": "Tokyo, Ningyocho, Chuo-ku (exact address by appointment confirmation)",
-      "hours": "Fridays for prospective clients",
-      "appointment": "Required — request via naoyahidawatch.com or Instagram",
+      "address": "Tokyo, Ningyocho, Chuo-ku",
+      "hours": "Fridays only",
+      "appointment": "Required via website",
       "url": "https://naoyahidawatch.com/?lang=en",
       "brands": ["Naoya Hida & Co."],
-      "tags": ["appointment-only", "wrist measurement", "lottery pickup"],
-      "note": "Pickup of allocated lottery watches happens here. Book early — slots fill."
+      "tags": ["lottery pickup", "wrist measure"],
+      "note": "Pickup of allocated lottery watches."
     },
     {
       "name": "Shellman",
@@ -557,11 +815,10 @@
       "neighborhood": "Ginza",
       "type": "vintage",
       "address": "Ginza, Chuo-ku, Tokyo",
-      "hours": "Daily 11:00–20:00 (verify)",
+      "hours": "Daily 11:00–20:00",
       "url": "https://www.shellman.co.jp/",
-      "brands": ["vintage Patek", "Breguet", "Longines", "Universal Genève"],
-      "tags": ["est. 1971", "on-site watchmaker", "ultra low-key"],
-      "note": "Oldest/most respected antique specialist in Ginza. On-site watchmaker for restoration."
+      "brands": ["vintage Patek", "Breguet", "Universal Genève"],
+      "tags": ["est. 1971", "on-site watchmaker"]
     },
     {
       "name": "Antiqurious",
@@ -569,11 +826,9 @@
       "neighborhood": "Ginza",
       "type": "vintage",
       "address": "Ginza, Chuo-ku, Tokyo",
-      "hours": "Tue-Sun, verify before visit",
       "url": "https://antiqurious.com/en",
       "brands": ["vintage Rolex dress", "1920s–1970s European"],
-      "tags": ["dress watches", "Oyster Perpetual", "low-key"],
-      "note": "Specialty: classic dress + early Oyster Rolex. Mostly European but excellent eye for proportion."
+      "tags": ["dress watches", "low-key"]
     },
     {
       "name": "Watch CTI",
@@ -582,12 +837,11 @@
       "type": "vintage",
       "address": "Ginza, Tokyo",
       "url": "https://watch-cti.com/",
-      "brands": ["vintage Grand Seiko", "King Seiko", "Rolex", "Omega", "IWC"],
-      "tags": ["Japanese vintage focus", "balanced inventory"],
-      "note": "Equal weight on Swiss + Japanese. Good for vintage GS / KS even though those subbrands aren't your target."
+      "brands": ["vintage Grand Seiko", "Rolex", "Omega"],
+      "tags": ["Japanese vintage focus"]
     },
     {
-      "name": "Nakano Broadway (3F watch dealers)",
+      "name": "Nakano Broadway (3F)",
       "city": "Tokyo",
       "neighborhood": "Nakano",
       "type": "vintage",
@@ -595,8 +849,7 @@
       "hours": "Most shops 12:00–20:00",
       "url": "https://nbw.jp/",
       "brands": ["vintage everything"],
-      "tags": ["bazaar", "many dealers", "rabbit hole"],
-      "note": "Indoor mall — third floor is dense with tiny vintage watch shops. Spend an afternoon walking it."
+      "tags": ["bazaar", "rabbit hole"]
     },
     {
       "name": "Dazzling",
@@ -605,20 +858,8 @@
       "type": "vintage",
       "address": "Aoyama, Tokyo",
       "url": "https://www.dazzling-watches.com/",
-      "brands": ["European antique", "rare 1900s–1950s"],
-      "tags": ["est. 2004", "London-trained"],
-      "note": "Founded by the late Shigeharu 'Shiggy' Aritake. Highly curated rare European antiques."
-    },
-    {
-      "name": "From Time To Times",
-      "city": "Tokyo",
-      "neighborhood": "Shibuya",
-      "type": "vintage",
-      "address": "Shibuya, Tokyo",
-      "url": "https://fromtimetotimes.com/",
-      "brands": ["vintage curated"],
-      "tags": ["small", "curated"],
-      "note": "Small curated vintage space — worth a walk-in if nearby."
+      "brands": ["European antique"],
+      "tags": ["est. 2004", "London-trained"]
     },
     {
       "name": "Sekine Vintage",
@@ -628,20 +869,18 @@
       "address": "Aoyama, Tokyo",
       "url": "https://sekinevintage.com/watches/",
       "brands": ["vintage curated"],
-      "tags": ["clothing + watches", "low-key"],
-      "note": "Clothing-and-watches curator. Aesthetically aligned — quiet, minimal, considered."
+      "tags": ["clothing + watches", "low-key"]
     },
     {
       "name": "Jack Road (Nakano)",
       "city": "Tokyo",
       "neighborhood": "Nakano",
       "type": "grey-market",
-      "address": "5-67-7 Nakano, Nakano-ku, Tokyo (Nakano station)",
+      "address": "5-67-7 Nakano, Nakano-ku, Tokyo",
       "hours": "Daily 11:00–20:00",
       "url": "https://www.jackroad.co.jp/shop/pages/shopinfo_new_en.aspx",
-      "brands": ["Kurono", "Grand Seiko", "Rolex", "many JDM"],
-      "tags": ["Japan's biggest pre-owned", "tax-free for tourists"],
-      "note": "Most likely place to find Kurono Shiraai or Inseki on JPY pricing. Bring passport for tax-free."
+      "brands": ["Kurono", "Grand Seiko", "Rolex"],
+      "tags": ["biggest pre-owned", "tax-free"]
     },
     {
       "name": "Komehyo Shinjuku",
@@ -651,9 +890,8 @@
       "address": "3-26-13 Shinjuku, Shinjuku-ku, Tokyo",
       "hours": "Daily 10:30–20:00",
       "url": "https://www.komehyo.jp/",
-      "brands": ["pre-owned everything"],
-      "tags": ["chain", "wide inventory"],
-      "note": "Big chain — quantity over curation. Occasionally has Kurono."
+      "brands": ["pre-owned wide"],
+      "tags": ["chain"]
     },
     {
       "name": "GMT Watches Aoyama",
@@ -663,8 +901,7 @@
       "address": "Aoyama, Tokyo",
       "url": "https://gmt-watch.com/",
       "brands": ["vintage curated"],
-      "tags": ["small", "Aoyama"],
-      "note": "Boutique vintage shop. Aesthetically aligned."
+      "tags": ["small", "Aoyama"]
     },
     {
       "name": "Kamine",
@@ -674,8 +911,7 @@
       "address": "Kitano-cho, Chuo-ku, Kobe",
       "url": "https://kamine.shop/",
       "brands": ["Naoya Hida & Co.", "vintage high-end"],
-      "tags": ["Naoya Hida allocation (5pcs/yr)", "high-end", "destination"],
-      "note": "One of three Naoya Hida sales channels in the world. Worth a Kobe day-trip."
+      "tags": ["NH allocation 5pc/yr", "destination"]
     },
     {
       "name": "Kuoe Kyoto Workshop",
@@ -685,8 +921,7 @@
       "address": "Kyoto",
       "url": "https://www.kuoe-en.com/",
       "brands": ["Kuoe Kyoto"],
-      "tags": ["microbrand", "field-watch revival"],
-      "note": "Hand-assembled in Kyoto. Style is field/military — outside the dress profile, but the workshop is worth seeing."
+      "tags": ["microbrand", "field-watch"]
     },
     {
       "name": "Komehyo Osaka",
@@ -695,9 +930,8 @@
       "type": "grey-market",
       "address": "Shinsaibashi, Osaka",
       "url": "https://www.komehyo.jp/",
-      "brands": ["pre-owned everything"],
-      "tags": ["chain"],
-      "note": "Same model as Tokyo Komehyo. Skip unless already in Osaka."
+      "brands": ["pre-owned"],
+      "tags": ["chain"]
     },
     {
       "name": "The Armoury Hong Kong",
@@ -707,8 +941,7 @@
       "address": "Pedder Building, Central, Hong Kong",
       "url": "https://www.thearmoury.com/artisans/naoya-hida",
       "brands": ["Naoya Hida & Co."],
-      "tags": ["NH allocation (25pcs/yr)", "trunk shows"],
-      "note": "Largest Naoya Hida channel globally. Trunk shows + standing allocation."
+      "tags": ["NH allocation 25pc/yr"]
     },
     {
       "name": "Wristcheck Hong Kong",
@@ -717,20 +950,18 @@
       "type": "grey-market",
       "address": "Central, Hong Kong",
       "url": "https://wristcheck.com/",
-      "brands": ["Kurono secondary", "Naoya Hida secondary", "indie"],
-      "tags": ["showroom", "marketplace flagship"],
-      "note": "Physical showroom in Central. Best in HK for secondary indie inventory."
+      "brands": ["Kurono", "NH secondary"],
+      "tags": ["showroom", "marketplace"]
     },
     {
       "name": "Phillips Hong Kong",
       "city": "Hong Kong",
-      "neighborhood": "Central / WKCD",
+      "neighborhood": "WKCD",
       "type": "auction-house",
       "address": "West Kowloon Cultural District, HK",
       "url": "https://www.phillips.com/locations/hongkong",
-      "brands": ["Hajime Asaoka", "Naoya Hida", "Kikuchi Nakagawa"],
-      "tags": ["spring/autumn sessions"],
-      "note": "Spring & autumn watch sessions regularly include Japanese independents."
+      "brands": ["Asaoka", "NH", "Kikuchi Nakagawa"],
+      "tags": ["spring/autumn"]
     },
     {
       "name": "The Armoury New York",
@@ -740,8 +971,7 @@
       "address": "168 Duane St, Tribeca, NY 10013",
       "url": "https://www.thearmoury.com/",
       "brands": ["Naoya Hida & Co."],
-      "tags": ["trunk shows"],
-      "note": "US channel for Naoya Hida. Subscribe to Armoury newsletter for trunk show dates."
+      "tags": ["trunk shows"]
     },
     {
       "name": "A Collected Man",
@@ -750,9 +980,8 @@
       "type": "dealer",
       "address": "London (by appointment)",
       "url": "https://www.acollectedman.com/collections/japan",
-      "brands": ["Hajime Asaoka", "Kikuchi Nakagawa", "Naoya Hida (occasional)"],
-      "tags": ["high-end indie", "by appointment"],
-      "note": "Premier Western dealer for Japanese independents. Curation is exceptional."
+      "brands": ["Asaoka", "Kikuchi Nakagawa", "NH (occasional)"],
+      "tags": ["high-end indie"]
     },
     {
       "name": "Phillips London",
@@ -761,9 +990,60 @@
       "type": "auction-house",
       "address": "Berkeley Square, Mayfair, London",
       "url": "https://www.phillips.com/locations/london",
-      "brands": ["Hajime Asaoka", "Naoya Hida"],
-      "tags": ["preview", "auction"],
-      "note": "Use for preview viewings; major sessions are Geneva & HK."
+      "brands": ["Asaoka", "NH"],
+      "tags": ["preview"]
+    }
+  ],
+
+  "cities": [
+    {
+      "name": "Tokyo",
+      "country": "Japan",
+      "neighborhoods": ["Aoyama", "Ginza", "Nihonbashi/Ningyocho", "Nakano", "Shinjuku"],
+      "tags": ["primary hub", "Kurono", "Naoya Hida"],
+      "note": "Heart of the indie scene. 3-4 days here covers everything."
+    },
+    {
+      "name": "Kobe",
+      "country": "Japan",
+      "neighborhoods": ["Kitano"],
+      "tags": ["Kamine", "NH allocation"],
+      "note": "Day-trip from Kyoto/Osaka if chasing NH at Kamine."
+    },
+    {
+      "name": "Kyoto",
+      "country": "Japan",
+      "neighborhoods": ["Higashiyama", "central"],
+      "tags": ["Kuoe", "Kazuo Maeda"],
+      "note": "Less indie watch retail than Tokyo but worth craft-tourism context."
+    },
+    {
+      "name": "Osaka",
+      "country": "Japan",
+      "neighborhoods": ["Shinsaibashi", "Umeda"],
+      "tags": ["secondary"],
+      "note": "Komehyo + a few vintage. Lower priority."
+    },
+    {
+      "name": "Hong Kong",
+      "country": "Hong Kong",
+      "neighborhoods": ["Central", "Sheung Wan"],
+      "tags": ["The Armoury", "Wristcheck", "Phillips"],
+      "note": "Largest NH retail outside Japan."
+    },
+    {
+      "name": "New York",
+      "country": "USA",
+      "neighborhoods": ["Tribeca"],
+      "tags": ["The Armoury NY"],
+      "note": "US channel for NH. Trunk shows via newsletter."
+    },
+    {
+      "name": "London",
+      "country": "UK",
+      "neighborhoods": ["Mayfair"],
+      "tags": ["A Collected Man", "Phillips"],
+      "note": "Best Western entry point for Asaoka & Kikuchi Nakagawa."
     }
   ]
 }

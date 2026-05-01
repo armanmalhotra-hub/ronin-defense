@@ -36,6 +36,106 @@ const Storage = (() => {
   return { load, save, usingPantry };
 })();
 
+// ---------- private locations (AES-GCM via Web Crypto) ----------
+const PASS_KEY = "watch-watch:pass";
+const PRIVATE = {
+  pass: sessionStorage.getItem(PASS_KEY) || "",
+  cache: new Map(), // id -> plaintext
+  unlocked: false,
+};
+
+function b64decode(s) {
+  const bin = atob(s);
+  const out = new Uint8Array(bin.length);
+  for (let i = 0; i < bin.length; i++) out[i] = bin.charCodeAt(i);
+  return out;
+}
+
+async function deriveKey(passphrase, salt, iterations) {
+  const enc = new TextEncoder();
+  const km = await crypto.subtle.importKey("raw", enc.encode(passphrase), "PBKDF2", false, ["deriveKey"]);
+  return crypto.subtle.deriveKey(
+    { name: "PBKDF2", salt, iterations, hash: "SHA-256" },
+    km,
+    { name: "AES-GCM", length: 256 },
+    false,
+    ["decrypt"]
+  );
+}
+
+async function decryptCipher(cipher, passphrase) {
+  if (!cipher || !passphrase) return null;
+  try {
+    const [saltB64, ivB64, ctB64] = cipher.split(".");
+    const salt = b64decode(saltB64);
+    const iv = b64decode(ivB64);
+    const ct = b64decode(ctB64);
+    const key = await deriveKey(passphrase, salt, data.private_locations_meta?.iterations || 250000);
+    const pt = await crypto.subtle.decrypt({ name: "AES-GCM", iv }, key, ct);
+    return new TextDecoder().decode(pt);
+  } catch {
+    return null;
+  }
+}
+
+const lockBtn = document.getElementById("lock-toggle");
+
+async function tryUnlock(passphrase) {
+  // try decrypting any one cipher to verify the passphrase
+  const sample = (data.favorites || []).find(w => w.private_cipher);
+  if (!sample) {
+    PRIVATE.pass = passphrase;
+    PRIVATE.unlocked = true;
+    sessionStorage.setItem(PASS_KEY, passphrase);
+    return true;
+  }
+  const result = await decryptCipher(sample.private_cipher, passphrase);
+  if (result == null) return false;
+  PRIVATE.pass = passphrase;
+  PRIVATE.unlocked = true;
+  sessionStorage.setItem(PASS_KEY, passphrase);
+  PRIVATE.cache.set(sample.id, result);
+  return true;
+}
+
+async function unlockFlow() {
+  if (PRIVATE.unlocked) {
+    PRIVATE.pass = "";
+    PRIVATE.unlocked = false;
+    PRIVATE.cache.clear();
+    sessionStorage.removeItem(PASS_KEY);
+    lockBtn.textContent = "🔒";
+    lockBtn.classList.remove("unlocked");
+    renderAll();
+    return;
+  }
+  const pass = window.prompt("Passphrase to unlock private locations:");
+  if (!pass) return;
+  const ok = await tryUnlock(pass);
+  if (ok) {
+    lockBtn.textContent = "🔓";
+    lockBtn.classList.add("unlocked");
+    renderAll();
+  } else {
+    alert("Wrong passphrase, or no private notes yet.");
+  }
+}
+lockBtn.addEventListener("click", unlockFlow);
+
+async function privateBlock(id, cipher) {
+  if (!cipher) return "";
+  if (!PRIVATE.unlocked) {
+    return `<p class="private-block locked">🔒 private location — unlock to view</p>`;
+  }
+  if (!PRIVATE.cache.has(id)) {
+    const pt = await decryptCipher(cipher, PRIVATE.pass);
+    if (pt == null) return `<p class="private-block locked">🔒 unable to decrypt</p>`;
+    PRIVATE.cache.set(id, pt);
+  }
+  const text = PRIVATE.cache.get(id).replace(/[<>&]/g, c => ({ "<": "&lt;", ">": "&gt;", "&": "&amp;" }[c]));
+  return `<p class="private-block">${text}</p>`;
+}
+
 // ---------- nickname ----------
 const NICK_KEY = "watch-watch:nick";
 let me = localStorage.getItem(NICK_KEY) || "";
@@ -82,6 +182,19 @@ let data, state;
 
   buildStoreCityFilter();
   document.getElementById("search").addEventListener("input", renderAll);
+
+  // restore unlock state from session if a passphrase is cached
+  if (PRIVATE.pass) {
+    const ok = await tryUnlock(PRIVATE.pass);
+    if (ok) {
+      lockBtn.textContent = "🔓";
+      lockBtn.classList.add("unlocked");
+    } else {
+      sessionStorage.removeItem(PASS_KEY);
+      PRIVATE.pass = "";
+    }
+  }
+
   renderAll();
 })();
 
@@ -212,12 +325,24 @@ function renderFavorites() {
             ${w.fit != null ? `<span class="pill dim">fit ${w.fit}</span>` : ""}
           </div>
           ${w.note ? `<p class="note">${w.note}</p>` : ""}
+          ${w.private_cipher ? `<div class="private-slot" data-id="${w.id}" data-cipher="${w.private_cipher}">${PRIVATE.unlocked ? '' : '<p class="private-block locked">🔒 private location — unlock to view</p>'}</div>` : ""}
           ${actionFoot(w.id, w.url, "view")}
         </div>
       </article>`);
   }
   if (!grid.children.length) grid.innerHTML = `<p class="kv">Nothing matches.</p>`;
   bindCardActions(grid);
+  hydratePrivateSlots(grid);
+}
+
+async function hydratePrivateSlots(root) {
+  if (!PRIVATE.unlocked) return;
+  const slots = root.querySelectorAll(".private-slot");
+  for (const slot of slots) {
+    const id = slot.dataset.id;
+    const cipher = slot.dataset.cipher;
+    slot.innerHTML = await privateBlock(id, cipher);
+  }
 }
 
 // Drops: title, brand, window, refs, action foot
