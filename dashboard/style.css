@@ -419,12 +419,50 @@ nav.tabs #search:focus { outline: none; border-bottom-color: var(--ink); }
 
 .big-pct {
   font-family: var(--serif); font-weight: 600;
-  font-size: 64px; line-height: 1; text-align: center;
+  font-size: 72px; line-height: 1; text-align: center;
   color: var(--ink); margin: 4px 0; letter-spacing: -0.02em;
+  position: relative;
 }
 .big-pct span {
   font-size: 32px; color: var(--muted); margin-left: 2px;
 }
+.big-pct.high { color: var(--accent); }
+.celebrate {
+  display: inline-block; margin-left: 10px; padding: 4px 10px;
+  font-family: var(--sans); font-size: 11px; font-weight: 600;
+  text-transform: uppercase; letter-spacing: 0.12em;
+  background: var(--accent); color: var(--paper);
+  border-radius: 999px; vertical-align: middle;
+  animation: pop-in 0.4s ease-out 1.0s both;
+}
+@keyframes pop-in {
+  0% { transform: scale(0.5); opacity: 0; }
+  60% { transform: scale(1.15); opacity: 1; }
+  100% { transform: scale(1); opacity: 1; }
+}
+
+@keyframes fade-up {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+@keyframes fade-in { from { opacity: 0; } to { opacity: 1; } }
+@keyframes sharpen-in {
+  from { filter: blur(28px); transform: scale(1.04); }
+  to { filter: blur(0); transform: scale(1); }
+}
+
+/* Reveal stage choreography */
+.play-stage.is-reveal .silhouette {
+  animation: sharpen-in 1.4s cubic-bezier(.2,.6,.2,1) both;
+}
+.play-stage.is-reveal .big-pct          { animation: fade-in 0.4s ease-out both; }
+.play-stage.is-reveal .reveal-watch     { animation: fade-up 0.5s ease-out 0.3s both; }
+.play-stage.is-reveal .reveal-meta      { animation: fade-up 0.5s ease-out 0.45s both; }
+.play-stage.is-reveal .reveal-map       { animation: fade-up 0.6s ease-out 0.6s both; }
+.play-stage.is-reveal .reveal-grid      { animation: fade-up 0.5s ease-out 0.95s both; }
+.play-stage.is-reveal .quip             { animation: fade-up 0.5s ease-out 1.25s both; }
+.play-stage.is-reveal .reveal-bio       { animation: fade-up 0.5s ease-out 1.55s both; }
+.play-stage.is-reveal .play-buttons     { animation: fade-up 0.4s ease-out 1.85s both; }
 .day-sub {
   text-align: center; color: var(--muted); font-size: 13px;
   margin: 0 0 8px;

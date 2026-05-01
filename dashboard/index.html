@@ -26,56 +26,41 @@
   </header>
 
   <nav class="tabs" role="tablist">
-    <button class="tab active" data-tab="favorites">Favorites</button>
-    <button class="tab" data-tab="drops">Drops</button>
+    <button class="tab active" data-tab="play">Offhand</button>
+    <button class="tab" data-tab="favorites">Catalog</button>
     <button class="tab" data-tab="brands">Brands</button>
-    <button class="tab" data-tab="stores">Stores</button>
-    <button class="tab" data-tab="cities">Cities</button>
-    <button class="tab" data-tab="sellers">Sellers</button>
     <button class="tab" data-tab="survey">Survey</button>
-    <button class="tab" data-tab="play">Offhand</button>
     <button class="tab" data-tab="friends">Friends</button>
     <input id="search" type="search" placeholder="search…"/>
   </nav>
 
-  <section class="panel" id="panel-favorites">
-    <div class="grid" id="grid-favorites"></div>
+  <section class="panel" id="panel-play">
+    <div class="play-stage" id="play-stage"></div>
+    <h3 class="play-title">Offhand leaderboard</h3>
+    <div class="grid" id="grid-leaderboard"></div>
   </section>
 
-  <section class="panel hidden" id="panel-drops">
-    <div class="grid" id="grid-drops"></div>
+  <section class="panel hidden" id="panel-favorites">
+    <div class="grid" id="grid-favorites"></div>
   </section>
 
   <section class="panel hidden" id="panel-brands">
     <div class="grid" id="grid-brands"></div>
   </section>
 
-  <section class="panel hidden" id="panel-stores">
-    <div class="chip-row" id="store-cities"></div>
-    <div class="grid" id="grid-stores"></div>
-  </section>
-
-  <section class="panel hidden" id="panel-cities">
-    <div class="grid" id="grid-cities"></div>
-  </section>
-
-  <section class="panel hidden" id="panel-sellers">
-    <div class="grid" id="grid-sellers"></div>
-  </section>
-
   <section class="panel hidden" id="panel-survey">
     <div class="grid" id="grid-surveys"></div>
-  </section>
-
-  <section class="panel hidden" id="panel-play">
-    <div class="play-stage" id="play-stage"></div>
-    <h3 class="play-title">Offhand leaderboard</h3>
-    <div class="grid" id="grid-leaderboard"></div>
   </section>
 
   <section class="panel hidden" id="panel-friends">
     <div class="grid" id="grid-friends"></div>
   </section>
+
+  <!-- Hidden panels — kept for owner reference, no nav links -->
+  <section class="panel hidden" id="panel-drops"><div class="grid" id="grid-drops"></div></section>
+  <section class="panel hidden" id="panel-stores"><div class="chip-row" id="store-cities"></div><div class="grid" id="grid-stores"></div></section>
+  <section class="panel hidden" id="panel-cities"><div class="grid" id="grid-cities"></div></section>
+  <section class="panel hidden" id="panel-sellers"><div class="grid" id="grid-sellers"></div></section>
 
   <footer>
     <a href="https://github.com/armanmalhotra-hub/ronin-defense">repo</a>

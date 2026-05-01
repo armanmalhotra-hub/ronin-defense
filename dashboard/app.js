@@ -972,13 +972,15 @@ function renderPlay() {
     const priceOffStr = (truthPrice && guessPrice != null)
       ? `$${Math.abs(truthPrice - guessPrice).toLocaleString()} off`
       : "—";
-    stage.className = "play-stage" + (hasImg ? " with-image" : "");
+    const celebrate = pct >= 80 ? `<span class="celebrate">${pct >= 95 ? "Insane" : "Excellent"}</span>` : "";
+    const pctClass = pct >= 80 ? "high" : "";
+    stage.className = "play-stage is-reveal" + (hasImg ? " with-image" : "");
     stage.innerHTML = `
       <img class="silhouette" src="${imgSrc}" alt="${w.brand} ${w.model}" onerror="this.style.display='none'"/>
       <div class="clue">
         <p class="day-label">Round ${playState.idx + 1} of ${playState.watches.length}</p>
         <div class="progress">${segs}</div>
-        <div class="big-pct">${pct}<span>%</span></div>
+        <div class="big-pct ${pctClass}" data-target="${pct}"><span class="pct-num">0</span><span>%</span>${celebrate}</div>
         <p class="day-sub">${r.total} / 100 pts</p>
         <h4 class="reveal-watch">${w.brand} — ${w.model}</h4>
         <p class="reveal-meta">${w.made_in || ""}${w.country ? ", " + w.country : ""} · ${w.price_label || formatPrice(w)}</p>
@@ -1003,6 +1005,7 @@ function renderPlay() {
         </div>
       </div>`;
     if (r.actualLatLng && r.guessLatLng) showRevealMap(r.guessLatLng, r.actualLatLng, r.locKm);
+    animateScoreCounter();
     stage.querySelector("#g-next").addEventListener("click", nextRound);
     renderLeaderboard();
     return;
@@ -1115,6 +1118,21 @@ function initMap() {
       }).addTo(_map);
     }
   }, 30);
+}
+
+function animateScoreCounter() {
+  const el = document.querySelector(".big-pct .pct-num");
+  if (!el) return;
+  const target = parseInt(el.parentElement.dataset.target, 10) || 0;
+  const start = performance.now();
+  const dur = 1200;
+  function step(now) {
+    const t = Math.min(1, (now - start) / dur);
+    const eased = 1 - Math.pow(1 - t, 3);
+    el.textContent = String(Math.round(eased * target));
+    if (t < 1) requestAnimationFrame(step);
+  }
+  requestAnimationFrame(step);
 }
 
 function showRevealMap(guess, truth, kmAway) {
