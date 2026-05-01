@@ -619,9 +619,13 @@ const PLAY_KEY = "watch-watch:play";
 let playState = JSON.parse(localStorage.getItem(PLAY_KEY) || "null") || { round: null };
 
 function newRound() {
-  const pool = data.favorites || [];
+  // Only include watches with a known price bucket so scoring is fair.
+  const pool = (data.favorites || []).filter(w => priceBucket(w) !== "unknown");
   if (!pool.length) return null;
-  const watch = pool[Math.floor(Math.random() * pool.length)];
+  const lastId = playState.round?.watchId;
+  // Prefer not to repeat the immediately previous watch.
+  const candidates = pool.length > 1 ? pool.filter(w => w.id !== lastId) : pool;
+  const watch = candidates[Math.floor(Math.random() * candidates.length)];
   return { watchId: watch.id, guessBrand: "", guessBucket: "", revealed: false };
 }
 
@@ -681,7 +685,7 @@ function renderPlay() {
   if (!w) { stage.innerHTML = `<p class="kv">No catalog yet.</p>`; return; }
 
   const brands = [...new Set(data.favorites.map(x => x.brand))].sort();
-  const buckets = ["<$2k", "$2-5k", "$5-10k", "$10-25k", "$25k+", "unknown"];
+  const buckets = ["<$2k", "$2-5k", "$5-10k", "$10-25k", "$25k+"];
   const hasImg = !!w.image;
 
   stage.className = "play-stage" + (hasImg ? " with-image" : "");
