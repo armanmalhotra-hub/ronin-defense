@@ -195,6 +195,7 @@
   .badge.right{background:var(--green-soft);color:var(--green);border:1px solid rgba(19,192,116,0.3)}
   .badge.close{background:var(--yellow-soft);color:var(--yellow);border:1px solid rgba(240,168,0,0.3)}
   .badge.wrong{background:var(--red-soft);color:var(--red);border:1px solid rgba(225,6,0,0.35)}
+  .badge.info{background:rgba(255,255,255,0.05);color:var(--gray-2);border:1px solid var(--line)}
 
   /* SEARCH */
   .search-wrap{position:relative}
@@ -312,6 +313,79 @@
   .split .label{margin-bottom:0.3rem}
   .split .v{font-family:'JetBrains Mono',monospace;font-size:1.7rem;font-weight:700;letter-spacing:-0.02em;color:#fff}
 
+  /* YOUTUBE EMBED inside moment card */
+  .moment-video{position:absolute;inset:0;background:#000}
+  .moment-video iframe{
+    position:absolute;top:50%;left:50%;
+    width:130%;height:130%;
+    transform:translate(-50%,-50%);
+    border:0;pointer-events:none;
+  }
+  .moment-video-overlay{
+    position:absolute;inset:0;
+    background:linear-gradient(180deg,rgba(0,0,0,0.25) 0%,transparent 30%,transparent 55%,rgba(0,0,0,0.85) 100%);
+    pointer-events:none;
+  }
+  .moment-placeholder-note{
+    position:absolute;top:50%;left:50%;
+    transform:translate(-50%,calc(-50% + 4rem));
+    font-family:'JetBrains Mono',monospace;
+    font-size:0.7rem;letter-spacing:0.2em;
+    color:rgba(255,255,255,0.35);
+    pointer-events:none;
+    text-transform:uppercase;
+  }
+
+  /* DOSSIER (unified reveal panel) */
+  .dossier{
+    background:var(--card);
+    border:1px solid var(--line);
+    border-radius:6px;
+    padding:1.1rem 1.1rem 0.9rem;
+    margin-bottom:0.9rem;
+    position:relative;overflow:hidden;
+  }
+  .dossier::before{
+    content:"";position:absolute;top:0;left:0;right:0;height:2px;
+    background:linear-gradient(90deg,var(--red) 0%,var(--green) 100%);
+  }
+  .dossier-head{
+    display:flex;justify-content:space-between;align-items:flex-start;
+    padding-bottom:0.85rem;border-bottom:1px solid var(--line);margin-bottom:0.85rem;
+  }
+  .dossier-year{
+    font-family:'JetBrains Mono',monospace;
+    font-size:1.6rem;font-weight:700;color:#fff;line-height:1;
+  }
+  .dossier-tags{display:flex;flex-wrap:wrap;gap:0.3rem;justify-content:flex-end;max-width:60%}
+  .dossier-row{
+    display:grid;grid-template-columns:64px 1fr auto;
+    align-items:center;gap:0.75rem;padding:0.6rem 0;
+    border-bottom:1px solid var(--line);
+  }
+  .dossier-row:last-of-type{border-bottom:none}
+  .dossier-label{
+    font-family:'JetBrains Mono',monospace;
+    font-size:0.65rem;letter-spacing:0.14em;text-transform:uppercase;
+    color:var(--gray-2);font-weight:600;
+  }
+  .dossier-val{display:flex;flex-direction:column;gap:0.1rem;min-width:0}
+  .dossier-name{
+    font-size:0.95rem;font-weight:700;color:#fff;
+    overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
+  }
+  .dossier-meta{
+    font-family:'JetBrains Mono',monospace;
+    font-size:0.68rem;color:var(--gray-2);
+    letter-spacing:0.04em;text-transform:uppercase;
+  }
+  .dossier-your{
+    font-family:'JetBrains Mono',monospace;
+    font-size:0.65rem;letter-spacing:0.06em;
+    color:var(--red);padding:0.15rem 0 0.3rem 76px;
+    text-transform:uppercase;
+  }
+
   /* CELEBRATION REVEAL */
   .celebration{
     position:relative;
@@ -336,6 +410,13 @@
     pointer-events:none;
   }
   .celebration.has-gif{background-size:cover;background-position:center}
+  .celebration.has-video{background:#000}
+  .celebration.has-video iframe{
+    position:absolute;top:50%;left:50%;
+    width:130%;height:130%;
+    transform:translate(-50%,-50%);
+    border:0;pointer-events:none;
+  }
   .celebration-trophy{
     position:absolute;top:50%;left:50%;
     transform:translate(-50%,-50%);
@@ -663,44 +744,52 @@ const ALL_MOMENTS = [
 ];
 
 /* =========================================================
-   MEDIA — anime GIFs + YouTube links per moment.
-   - `gif`: anime-style GIF of the action (shows on the moment card)
-   - `winnerGif`: anime-style GIF of the winner celebrating (shows on round-result reveal)
-   - `youtube`: YouTube link. Defaults to a deterministic search URL.
-     Replace with the canonical highlight video URL when you curate them.
-   AI prompts for generating each GIF live in ai-image-prompts.md.
+   MEDIA — real video clips + YouTube links per moment.
+   For each moment, populate the YouTube videoId (the 11-char
+   string in the URL after v=) + optional start/end seconds for
+   the puzzle clip and the winner-celebration clip.
+
+   videoId      — YouTube ID of the action clip (puzzle card)
+   start / end  — clip in/out points (seconds)
+   winnerVideoId — YouTube ID of the celebration clip (reveal card)
+   winnerStart / winnerEnd — clip in/out points (seconds)
+   youtube      — direct watch URL shown on the "Watch on YouTube" button.
+                  Defaults to a deterministic search URL.
+
+   `gif` / `winnerGif` are legacy fallbacks if you'd rather host
+   GIFs or anime stylizations than embed YouTube. Either path works.
    ========================================================= */
 const MEDIA = {
-  'brazil-2008':       {gif:null, winnerGif:null, youtube:'https://www.youtube.com/results?search_query=Brazil+2008+Hamilton+championship+last+corner'},
-  'donington-1993':    {gif:null, winnerGif:null, youtube:'https://www.youtube.com/results?search_query=Donington+1993+Senna+first+lap'},
-  'abu-dhabi-2021':    {gif:null, winnerGif:null, youtube:'https://www.youtube.com/results?search_query=Abu+Dhabi+2021+last+lap+Verstappen+Hamilton'},
-  'spa-2000':          {gif:null, winnerGif:null, youtube:'https://www.youtube.com/results?search_query=Spa+2000+Hakkinen+Schumacher+Zonta'},
-  'monaco-1988':       {gif:null, winnerGif:null, youtube:'https://www.youtube.com/results?search_query=Monaco+1988+Senna+pole+lap+qualifying'},
-  'hungary-2006':      {gif:null, winnerGif:null, youtube:'https://www.youtube.com/results?search_query=Hungary+2006+Button+first+win'},
-  'brazil-2012':       {gif:null, winnerGif:null, youtube:'https://www.youtube.com/results?search_query=Brazil+2012+Vettel+championship'},
-  'spa-1992':          {gif:null, winnerGif:null, youtube:'https://www.youtube.com/results?search_query=Spa+1992+Schumacher+first+win'},
-  'estoril-1985':      {gif:null, winnerGif:null, youtube:'https://www.youtube.com/results?search_query=Estoril+1985+Senna+first+win'},
-  'suzuka-2005':       {gif:null, winnerGif:null, youtube:'https://www.youtube.com/results?search_query=Suzuka+2005+Raikkonen+last+lap+pass+Fisichella'},
-  'brazil-2007':       {gif:null, winnerGif:null, youtube:'https://www.youtube.com/results?search_query=Brazil+2007+Raikkonen+championship'},
-  'hungary-1989':      {gif:null, winnerGif:null, youtube:'https://www.youtube.com/results?search_query=Hungary+1989+Mansell+from+12th'},
-  'spain-1996':        {gif:null, winnerGif:null, youtube:'https://www.youtube.com/results?search_query=Spain+1996+Schumacher+wet+masterclass'},
-  'spa-2008':          {gif:null, winnerGif:null, youtube:'https://www.youtube.com/results?search_query=Spa+2008+Hamilton+Raikkonen+final+laps'},
-  'monza-2008':        {gif:null, winnerGif:null, youtube:'https://www.youtube.com/results?search_query=Monza+2008+Vettel+youngest+winner'},
-  'brazil-2016':       {gif:null, winnerGif:null, youtube:'https://www.youtube.com/results?search_query=Brazil+2016+Verstappen+rain'},
-  'hungary-2014':      {gif:null, winnerGif:null, youtube:'https://www.youtube.com/results?search_query=Hungary+2014+Ricciardo+win'},
-  'monza-2020':        {gif:null, winnerGif:null, youtube:'https://www.youtube.com/results?search_query=Monza+2020+Gasly+first+win'},
-  'spain-2016':        {gif:null, winnerGif:null, youtube:'https://www.youtube.com/results?search_query=Spain+2016+Verstappen+first+win'},
-  'suzuka-1996':       {gif:null, winnerGif:null, youtube:'https://www.youtube.com/results?search_query=Suzuka+1996+Damon+Hill+championship'},
-  'adelaide-1986':     {gif:null, winnerGif:null, youtube:'https://www.youtube.com/results?search_query=Adelaide+1986+Mansell+tyre+Prost+championship'},
-  'jerez-1997':        {gif:null, winnerGif:null, youtube:'https://www.youtube.com/results?search_query=Jerez+1997+Schumacher+Villeneuve+championship'},
-  'silverstone-1987':  {gif:null, winnerGif:null, youtube:'https://www.youtube.com/results?search_query=Silverstone+1987+Mansell+Piquet'},
-  'monaco-1992':       {gif:null, winnerGif:null, youtube:'https://www.youtube.com/results?search_query=Monaco+1992+Senna+Mansell+defensive'},
-  'suzuka-1989':       {gif:null, winnerGif:null, youtube:'https://www.youtube.com/results?search_query=Suzuka+1989+Senna+Prost+collision'},
-  'australia-2018':    {gif:null, winnerGif:null, youtube:'https://www.youtube.com/results?search_query=Australia+2018+Vettel+VSC+win'},
-  'bahrain-2014':      {gif:null, winnerGif:null, youtube:'https://www.youtube.com/results?search_query=Bahrain+2014+Hamilton+Rosberg+battle'},
-  'mexico-2017':       {gif:null, winnerGif:null, youtube:'https://www.youtube.com/results?search_query=Mexico+2017+Hamilton+fourth+title'},
-  'silverstone-2008':  {gif:null, winnerGif:null, youtube:'https://www.youtube.com/results?search_query=Silverstone+2008+Hamilton+wet+masterclass'},
-  'belgium-1998':      {gif:null, winnerGif:null, youtube:'https://www.youtube.com/results?search_query=Belgium+1998+Hill+Jordan+win'}
+  'brazil-2008':       {videoId:null, start:0, end:null, winnerVideoId:null, winnerStart:0, winnerEnd:null, gif:null, winnerGif:null, youtube:'https://www.youtube.com/results?search_query=Brazil+2008+Hamilton+championship+last+corner'},
+  'donington-1993':    {videoId:null, start:0, end:null, winnerVideoId:null, winnerStart:0, winnerEnd:null, gif:null, winnerGif:null, youtube:'https://www.youtube.com/results?search_query=Donington+1993+Senna+first+lap'},
+  'abu-dhabi-2021':    {videoId:null, start:0, end:null, winnerVideoId:null, winnerStart:0, winnerEnd:null, gif:null, winnerGif:null, youtube:'https://www.youtube.com/results?search_query=Abu+Dhabi+2021+last+lap+Verstappen+Hamilton'},
+  'spa-2000':          {videoId:null, start:0, end:null, winnerVideoId:null, winnerStart:0, winnerEnd:null, gif:null, winnerGif:null, youtube:'https://www.youtube.com/results?search_query=Spa+2000+Hakkinen+Schumacher+Zonta'},
+  'monaco-1988':       {videoId:null, start:0, end:null, winnerVideoId:null, winnerStart:0, winnerEnd:null, gif:null, winnerGif:null, youtube:'https://www.youtube.com/results?search_query=Monaco+1988+Senna+pole+lap+qualifying'},
+  'hungary-2006':      {videoId:null, start:0, end:null, winnerVideoId:null, winnerStart:0, winnerEnd:null, gif:null, winnerGif:null, youtube:'https://www.youtube.com/results?search_query=Hungary+2006+Button+first+win'},
+  'brazil-2012':       {videoId:null, start:0, end:null, winnerVideoId:null, winnerStart:0, winnerEnd:null, gif:null, winnerGif:null, youtube:'https://www.youtube.com/results?search_query=Brazil+2012+Vettel+championship'},
+  'spa-1992':          {videoId:null, start:0, end:null, winnerVideoId:null, winnerStart:0, winnerEnd:null, gif:null, winnerGif:null, youtube:'https://www.youtube.com/results?search_query=Spa+1992+Schumacher+first+win'},
+  'estoril-1985':      {videoId:null, start:0, end:null, winnerVideoId:null, winnerStart:0, winnerEnd:null, gif:null, winnerGif:null, youtube:'https://www.youtube.com/results?search_query=Estoril+1985+Senna+first+win'},
+  'suzuka-2005':       {videoId:null, start:0, end:null, winnerVideoId:null, winnerStart:0, winnerEnd:null, gif:null, winnerGif:null, youtube:'https://www.youtube.com/results?search_query=Suzuka+2005+Raikkonen+last+lap+pass+Fisichella'},
+  'brazil-2007':       {videoId:null, start:0, end:null, winnerVideoId:null, winnerStart:0, winnerEnd:null, gif:null, winnerGif:null, youtube:'https://www.youtube.com/results?search_query=Brazil+2007+Raikkonen+championship'},
+  'hungary-1989':      {videoId:null, start:0, end:null, winnerVideoId:null, winnerStart:0, winnerEnd:null, gif:null, winnerGif:null, youtube:'https://www.youtube.com/results?search_query=Hungary+1989+Mansell+from+12th'},
+  'spain-1996':        {videoId:null, start:0, end:null, winnerVideoId:null, winnerStart:0, winnerEnd:null, gif:null, winnerGif:null, youtube:'https://www.youtube.com/results?search_query=Spain+1996+Schumacher+wet+masterclass'},
+  'spa-2008':          {videoId:null, start:0, end:null, winnerVideoId:null, winnerStart:0, winnerEnd:null, gif:null, winnerGif:null, youtube:'https://www.youtube.com/results?search_query=Spa+2008+Hamilton+Raikkonen+final+laps'},
+  'monza-2008':        {videoId:null, start:0, end:null, winnerVideoId:null, winnerStart:0, winnerEnd:null, gif:null, winnerGif:null, youtube:'https://www.youtube.com/results?search_query=Monza+2008+Vettel+youngest+winner'},
+  'brazil-2016':       {videoId:null, start:0, end:null, winnerVideoId:null, winnerStart:0, winnerEnd:null, gif:null, winnerGif:null, youtube:'https://www.youtube.com/results?search_query=Brazil+2016+Verstappen+rain'},
+  'hungary-2014':      {videoId:null, start:0, end:null, winnerVideoId:null, winnerStart:0, winnerEnd:null, gif:null, winnerGif:null, youtube:'https://www.youtube.com/results?search_query=Hungary+2014+Ricciardo+win'},
+  'monza-2020':        {videoId:null, start:0, end:null, winnerVideoId:null, winnerStart:0, winnerEnd:null, gif:null, winnerGif:null, youtube:'https://www.youtube.com/results?search_query=Monza+2020+Gasly+first+win'},
+  'spain-2016':        {videoId:null, start:0, end:null, winnerVideoId:null, winnerStart:0, winnerEnd:null, gif:null, winnerGif:null, youtube:'https://www.youtube.com/results?search_query=Spain+2016+Verstappen+first+win'},
+  'suzuka-1996':       {videoId:null, start:0, end:null, winnerVideoId:null, winnerStart:0, winnerEnd:null, gif:null, winnerGif:null, youtube:'https://www.youtube.com/results?search_query=Suzuka+1996+Damon+Hill+championship'},
+  'adelaide-1986':     {videoId:null, start:0, end:null, winnerVideoId:null, winnerStart:0, winnerEnd:null, gif:null, winnerGif:null, youtube:'https://www.youtube.com/results?search_query=Adelaide+1986+Mansell+tyre+Prost+championship'},
+  'jerez-1997':        {videoId:null, start:0, end:null, winnerVideoId:null, winnerStart:0, winnerEnd:null, gif:null, winnerGif:null, youtube:'https://www.youtube.com/results?search_query=Jerez+1997+Schumacher+Villeneuve+championship'},
+  'silverstone-1987':  {videoId:null, start:0, end:null, winnerVideoId:null, winnerStart:0, winnerEnd:null, gif:null, winnerGif:null, youtube:'https://www.youtube.com/results?search_query=Silverstone+1987+Mansell+Piquet'},
+  'monaco-1992':       {videoId:null, start:0, end:null, winnerVideoId:null, winnerStart:0, winnerEnd:null, gif:null, winnerGif:null, youtube:'https://www.youtube.com/results?search_query=Monaco+1992+Senna+Mansell+defensive'},
+  'suzuka-1989':       {videoId:null, start:0, end:null, winnerVideoId:null, winnerStart:0, winnerEnd:null, gif:null, winnerGif:null, youtube:'https://www.youtube.com/results?search_query=Suzuka+1989+Senna+Prost+collision'},
+  'australia-2018':    {videoId:null, start:0, end:null, winnerVideoId:null, winnerStart:0, winnerEnd:null, gif:null, winnerGif:null, youtube:'https://www.youtube.com/results?search_query=Australia+2018+Vettel+VSC+win'},
+  'bahrain-2014':      {videoId:null, start:0, end:null, winnerVideoId:null, winnerStart:0, winnerEnd:null, gif:null, winnerGif:null, youtube:'https://www.youtube.com/results?search_query=Bahrain+2014+Hamilton+Rosberg+battle'},
+  'mexico-2017':       {videoId:null, start:0, end:null, winnerVideoId:null, winnerStart:0, winnerEnd:null, gif:null, winnerGif:null, youtube:'https://www.youtube.com/results?search_query=Mexico+2017+Hamilton+fourth+title'},
+  'silverstone-2008':  {videoId:null, start:0, end:null, winnerVideoId:null, winnerStart:0, winnerEnd:null, gif:null, winnerGif:null, youtube:'https://www.youtube.com/results?search_query=Silverstone+2008+Hamilton+wet+masterclass'},
+  'belgium-1998':      {videoId:null, start:0, end:null, winnerVideoId:null, winnerStart:0, winnerEnd:null, gif:null, winnerGif:null, youtube:'https://www.youtube.com/results?search_query=Belgium+1998+Hill+Jordan+win'}
 };
 
 const TRACKS = [
@@ -784,6 +873,76 @@ const DRIVERS = [
   {id:'valtteri-bottas',name:'Valtteri Bottas',era:'2013–'}
 ];
 
+const TEAMS = [
+  {id:'mclaren',name:'McLaren',era:'1966–'},
+  {id:'ferrari',name:'Ferrari',era:'1950–'},
+  {id:'mercedes',name:'Mercedes',era:'1954–55, 2010–'},
+  {id:'red-bull-racing',name:'Red Bull Racing',era:'2005–'},
+  {id:'williams',name:'Williams',era:'1977–'},
+  {id:'lotus',name:'Lotus',era:'1958–1994, 2010–2015'},
+  {id:'renault',name:'Renault',era:'1977–85, 2002–11, 2016–20'},
+  {id:'benetton',name:'Benetton',era:'1986–2001'},
+  {id:'jordan',name:'Jordan',era:'1991–2005'},
+  {id:'tyrrell',name:'Tyrrell',era:'1970–1998'},
+  {id:'brabham',name:'Brabham',era:'1962–1992'},
+  {id:'honda',name:'Honda',era:'1964–1968, 2006–2008'},
+  {id:'sauber',name:'Sauber',era:'1993–'},
+  {id:'bar',name:'BAR',era:'1999–2005'},
+  {id:'toyota',name:'Toyota',era:'2002–2009'},
+  {id:'force-india',name:'Force India',era:'2008–2018'},
+  {id:'racing-point',name:'Racing Point',era:'2019–2020'},
+  {id:'aston-martin',name:'Aston Martin',era:'2021–'},
+  {id:'alpine',name:'Alpine',era:'2021–'},
+  {id:'toro-rosso',name:'Toro Rosso',era:'2006–2019'},
+  {id:'alphatauri',name:'AlphaTauri',era:'2020–2023'},
+  {id:'rb',name:'RB',era:'2024–'},
+  {id:'haas',name:'Haas',era:'2016–'},
+  {id:'stewart',name:'Stewart',era:'1997–1999'},
+  {id:'jaguar',name:'Jaguar',era:'2000–2004'},
+  {id:'minardi',name:'Minardi',era:'1985–2005'},
+  {id:'cooper',name:'Cooper',era:'1959–1968'},
+  {id:'brm',name:'BRM',era:'1951–1977'},
+  {id:'ligier',name:'Ligier',era:'1976–1996'},
+  {id:'brawn',name:'Brawn GP',era:'2009'},
+  {id:'caterham',name:'Caterham',era:'2010–2014'},
+  {id:'arrows',name:'Arrows',era:'1978–2002'},
+  {id:'prost',name:'Prost',era:'1997–2001'}
+];
+
+/* Team mapping for each moment (entry team for the featured driver). */
+const TEAM_BY_MOMENT = {
+  'brazil-2008':      'mclaren',
+  'donington-1993':   'mclaren',
+  'abu-dhabi-2021':   'red-bull-racing',
+  'spa-2000':         'mclaren',
+  'monaco-1988':      'mclaren',
+  'hungary-2006':     'honda',
+  'brazil-2012':      'red-bull-racing',
+  'spa-1992':         'benetton',
+  'estoril-1985':     'lotus',
+  'suzuka-2005':      'mclaren',
+  'brazil-2007':      'ferrari',
+  'hungary-1989':     'ferrari',
+  'spain-1996':       'ferrari',
+  'spa-2008':         'mclaren',
+  'monza-2008':       'toro-rosso',
+  'brazil-2016':      'red-bull-racing',
+  'hungary-2014':     'red-bull-racing',
+  'monza-2020':       'alphatauri',
+  'spain-2016':       'red-bull-racing',
+  'suzuka-1996':      'williams',
+  'adelaide-1986':    'mclaren',
+  'jerez-1997':       'williams',
+  'silverstone-1987': 'williams',
+  'monaco-1992':      'mclaren',
+  'suzuka-1989':      'mclaren',
+  'australia-2018':   'ferrari',
+  'bahrain-2014':     'mercedes',
+  'mexico-2017':      'mercedes',
+  'silverstone-2008': 'mclaren',
+  'belgium-1998':     'jordan'
+};
+
 const ROUNDS_PER_GAME = 7;
 const PTS_PER_Q = 500;
 const TOTAL_PER_ROUND = PTS_PER_Q * 2;
@@ -796,9 +955,9 @@ let state = {
   moments: [],
   roundIdx: 0,
   trackPick: null,
-  driverPick: null,
+  teamPick: null,
   trackSubmitted: false,
-  driverSubmitted: false,
+  teamSubmitted: false,
   scores: []
 };
 
@@ -843,17 +1002,17 @@ function renderStart(){
     <div class="start-card">
       <div class="eyebrow">Daily Challenge</div>
       <h1>GridGuessr</h1>
-      <p class="blurb">Guess the track and driver of <strong style="color:#fff">7 iconic Formula 1 moments</strong>, drawn from seventy years of Grand Prix history.</p>
+      <p class="blurb">Guess the track and team behind <strong style="color:#fff">7 iconic Formula 1 moments</strong>, drawn from seventy years of Grand Prix history.</p>
       <div class="start-features">
         <div class="start-feat">
           <div class="icon">◉</div>
           <div class="label">Find the Track</div>
-          <div class="meta">37 circuits</div>
+          <div class="meta">${TRACKS.length} circuits</div>
         </div>
         <div class="start-feat">
           <div class="icon">▲</div>
-          <div class="label">Name the Driver</div>
-          <div class="meta">38 drivers</div>
+          <div class="label">Name the Team</div>
+          <div class="meta">${TEAMS.length} teams</div>
         </div>
       </div>
       <button class="start-btn" id="startBtn">Start Playing →</button>
@@ -873,9 +1032,9 @@ function renderStart(){
 /* ---------------------- ROUND ---------------------- */
 function resetRound(){
   state.trackPick = null;
-  state.driverPick = null;
+  state.teamPick = null;
   state.trackSubmitted = false;
-  state.driverSubmitted = false;
+  state.teamSubmitted = false;
 }
 
 function renderRound(){
@@ -888,10 +1047,30 @@ function renderRound(){
     return `<div class="${cls}"></div>`;
   }).join('');
 
-  // Background: anime GIF if present, else mood gradient
+  // Visual priority: YouTube video > GIF > mood gradient placeholder.
+  // No description text — let the visual do the work (per design).
   const media = MEDIA[m.id] || {};
-  const bgClass = media.gif ? `moment-bg has-image ${m.mood}` : `moment-bg ${m.mood}`;
-  const bgStyle = media.gif ? `style="background-image:url('${media.gif}')"` : '';
+  let mediaBlock;
+  if(media.videoId){
+    const params = `autoplay=1&mute=1&controls=0&modestbranding=1&rel=0&playsinline=1&loop=1&playlist=${media.videoId}&start=${media.start||0}${media.end?`&end=${media.end}`:''}`;
+    mediaBlock = `
+      <div class="moment-video">
+        <iframe src="https://www.youtube-nocookie.com/embed/${media.videoId}?${params}"
+                frameborder="0"
+                allow="autoplay; encrypted-media; picture-in-picture"
+                allowfullscreen></iframe>
+        <div class="moment-video-overlay"></div>
+      </div>
+    `;
+  } else if(media.gif){
+    mediaBlock = `<div class="moment-bg has-image ${m.mood}" style="background-image:url('${media.gif}')"></div>`;
+  } else {
+    mediaBlock = `
+      <div class="moment-bg ${m.mood}"></div>
+      <div class="moment-year-bg">${m.year}</div>
+      <div class="moment-placeholder-note">// VIDEO PENDING</div>
+    `;
+  }
 
   app.innerHTML = `
     ${renderTopbar()}
@@ -901,8 +1080,7 @@ function renderRound(){
     </div>
 
     <div class="moment">
-      <div class="${bgClass}" ${bgStyle}></div>
-      ${!media.gif ? `<div class="moment-year-bg">${m.year}</div>` : ''}
+      ${mediaBlock}
       <div class="moment-hud">
         <div class="moment-top">
           <div class="moment-strip">
@@ -914,12 +1092,9 @@ function renderRound(){
             ${m.tags.map((t,i)=>`<span class="tag ${i===0 && /wet|night|mixed/i.test(t) ? 'weather' : ''}">${t}</span>`).join('')}
           </div>
         </div>
-        <div>
-          <div class="moment-desc">${m.desc}</div>
-          <div class="moment-foot" style="margin-top:0.7rem">
-            <span>${m.foot[1]}</span>
-            <span>F1 MOMENT #${state.roundIdx+1}</span>
-          </div>
+        <div class="moment-foot">
+          <span>${m.foot[1]}</span>
+          <span>MOMENT #${state.roundIdx+1}</span>
         </div>
       </div>
     </div>
@@ -930,7 +1105,7 @@ function renderRound(){
   `;
 
   renderTrackStep();
-  renderDriverStep();
+  renderTeamStep();
   renderRoundResult();
 }
 
@@ -944,6 +1119,8 @@ function renderTrackStep(){
     const sameCountry = pickedTrack && correctTrack && pickedTrack.country === correctTrack.country;
     const badgeCls = correct ? 'right' : (sameCountry ? 'close' : 'wrong');
     const badgeLbl = correct ? 'CORRECT' : (sameCountry ? 'RIGHT COUNTRY' : 'INCORRECT');
+    // After both submissions, the dossier shows everything; collapse step 1.
+    if(state.teamSubmitted){ wrap.innerHTML = ''; return; }
     wrap.innerHTML = `
       <div class="step-card">
         <div class="step-head">
@@ -977,75 +1154,79 @@ function renderTrackStep(){
   document.getElementById('submitTrack').onclick = submitTrack;
 }
 
-function renderDriverStep(){
+function renderTeamStep(){
   const wrap = document.getElementById('step2');
   if(!state.trackSubmitted){
     wrap.innerHTML = `
       <div class="step-card locked">
         <div class="step-head">
           <div class="step-num locked">2</div>
-          <div class="step-title">Name the Driver</div>
+          <div class="step-title">Name the Team</div>
         </div>
         <div class="locked-msg">// SUBMIT TRACK TO UNLOCK</div>
       </div>
     `;
     return;
   }
-  if(state.driverSubmitted){
-    const m = state.moments[state.roundIdx];
-    const pickedDriver = DRIVERS.find(d=>d.id===state.driverPick);
-    const correctDriver = DRIVERS.find(d=>d.id===m.driver);
-    const correct = state.driverPick === m.driver;
-    wrap.innerHTML = `
-      <div class="step-card">
-        <div class="step-head">
-          <div class="step-num done">✓</div>
-          <div class="step-title">Driver Result</div>
-          <div class="step-result"><span class="badge ${correct?'right':'wrong'}">${correct?'CORRECT':'INCORRECT'}</span></div>
-        </div>
-        <div class="answer-block">
-          <div class="ans">${correctDriver.name}</div>
-          <div class="ans-meta">${correctDriver.era}</div>
-          ${!correct ? `<div class="your wrong">YOU PICKED: ${pickedDriver ? pickedDriver.name : '—'}</div>` : ''}
-        </div>
-      </div>
-    `;
+  // After submission we no longer show a per-step result here; the unified
+  // dossier below the score card handles all reveals. Just collapse step 2.
+  if(state.teamSubmitted){
+    wrap.innerHTML = '';
     return;
   }
   wrap.innerHTML = `
     <div class="step-card active">
       <div class="step-head">
         <div class="step-num">2</div>
-        <div class="step-title">Name the Driver</div>
+        <div class="step-title">Name the Team</div>
       </div>
-      <div class="step-sub">// who was at the wheel?</div>
-      ${state.driverPick
-        ? renderSelected('driver', state.driverPick)
-        : renderSearch('driver', 'Search drivers…')}
-      <button class="submit-btn" id="submitDriver" ${state.driverPick?'':'disabled'}>Submit Driver →</button>
+      <div class="step-sub">// whose car is it?</div>
+      ${state.teamPick
+        ? renderSelected('team', state.teamPick)
+        : renderSearch('team', 'Search teams…')}
+      <button class="submit-btn" id="submitTeam" ${state.teamPick?'':'disabled'}>Submit Team →</button>
     </div>
   `;
-  bindSearch('driver');
-  document.getElementById('submitDriver').onclick = submitDriver;
+  bindSearch('team');
+  document.getElementById('submitTeam').onclick = submitTeam;
 }
 
 function renderRoundResult(){
-  if(!(state.trackSubmitted && state.driverSubmitted)) return;
+  if(!(state.trackSubmitted && state.teamSubmitted)) return;
   const wrap = document.getElementById('roundResult');
   const m = state.moments[state.roundIdx];
   const media = MEDIA[m.id] || {};
   const sc = state.scores[state.roundIdx];
   const pct = Math.round(sc.total / TOTAL_PER_ROUND * 100);
   const trackPct = Math.round(sc.trackPts / PTS_PER_Q * 100);
-  const driverPct = Math.round(sc.driverPts / PTS_PER_Q * 100);
+  const teamPct = Math.round(sc.teamPts / PTS_PER_Q * 100);
   const isLast = state.roundIdx === state.moments.length - 1;
   const driver = DRIVERS.find(d => d.id === m.driver);
   const track = TRACKS.find(t => t.id === m.track);
+  const correctTeam = TEAMS.find(t => t.id === TEAM_BY_MOMENT[m.id]);
+  const pickedTrack = TRACKS.find(t => t.id === sc.trackPick);
+  const pickedTeam = TEAMS.find(t => t.id === sc.teamPick);
+  const trackRight = sc.trackPick === m.track;
+  const trackClose = !trackRight && pickedTrack && track && pickedTrack.country === track.country;
+  const teamRight = sc.teamPick === (correctTeam && correctTeam.id);
 
-  const celebrationStyle = media.winnerGif
-    ? `style="background-image:url('${media.winnerGif}')"`
-    : '';
-  const celebrationCls = media.winnerGif ? 'celebration has-gif' : 'celebration';
+  // Winner reveal: video > gif > trophy placeholder
+  let winnerBlock;
+  if(media.winnerVideoId){
+    const params = `autoplay=1&mute=1&controls=0&modestbranding=1&rel=0&playsinline=1&loop=1&playlist=${media.winnerVideoId}&start=${media.winnerStart||0}${media.winnerEnd?`&end=${media.winnerEnd}`:''}`;
+    winnerBlock = `
+      <div class="celebration has-video">
+        <iframe src="https://www.youtube-nocookie.com/embed/${media.winnerVideoId}?${params}"
+                frameborder="0"
+                allow="autoplay; encrypted-media; picture-in-picture"
+                allowfullscreen></iframe>
+      </div>
+    `;
+  } else if(media.winnerGif){
+    winnerBlock = `<div class="celebration has-gif" style="background-image:url('${media.winnerGif}')"></div>`;
+  } else {
+    winnerBlock = `<div class="celebration"><div class="celebration-trophy">🏆</div></div>`;
+  }
 
   wrap.innerHTML = `
     <div class="score-card">
@@ -1054,15 +1235,45 @@ function renderRoundResult(){
       <div class="pts">${sc.total.toLocaleString()} / ${TOTAL_PER_ROUND.toLocaleString()} PTS</div>
       <div class="split">
         <div><div class="label">Track</div><div class="v">${trackPct}%</div></div>
-        <div><div class="label">Driver</div><div class="v">${driverPct}%</div></div>
+        <div><div class="label">Team</div><div class="v">${teamPct}%</div></div>
       </div>
     </div>
 
-    <div class="${celebrationCls}" ${celebrationStyle}>
-      ${!media.winnerGif ? `<div class="celebration-trophy">🏆</div>` : ''}
-      <div class="celebration-overlay">
-        <div class="winner-name">${driver.name}</div>
-        <div class="winner-meta">${track.name.split('(')[0].trim()} · ${m.year}</div>
+    ${winnerBlock}
+
+    <div class="dossier">
+      <div class="dossier-head">
+        <div class="dossier-year">${m.year}</div>
+        <div class="dossier-tags">${m.tags.map(t => `<span class="tag">${t}</span>`).join('')}</div>
+      </div>
+
+      <div class="dossier-row">
+        <div class="dossier-label">Track</div>
+        <div class="dossier-val">
+          <span class="dossier-name">${track.name.split('(')[0].trim()}</span>
+          <span class="dossier-meta">${track.country}</span>
+        </div>
+        <span class="badge ${trackRight ? 'right' : (trackClose ? 'close' : 'wrong')}">${trackRight ? '✓' : (trackClose ? '~' : '✗')}</span>
+      </div>
+      ${!trackRight ? `<div class="dossier-your">YOU PICKED: ${pickedTrack ? pickedTrack.name.split('(')[0].trim() : '—'}</div>` : ''}
+
+      <div class="dossier-row">
+        <div class="dossier-label">Team</div>
+        <div class="dossier-val">
+          <span class="dossier-name">${correctTeam ? correctTeam.name : '—'}</span>
+          <span class="dossier-meta">${correctTeam ? correctTeam.era : ''}</span>
+        </div>
+        <span class="badge ${teamRight ? 'right' : 'wrong'}">${teamRight ? '✓' : '✗'}</span>
+      </div>
+      ${!teamRight ? `<div class="dossier-your">YOU PICKED: ${pickedTeam ? pickedTeam.name : '—'}</div>` : ''}
+
+      <div class="dossier-row">
+        <div class="dossier-label">Driver</div>
+        <div class="dossier-val">
+          <span class="dossier-name">${driver.name}</span>
+          <span class="dossier-meta">${driver.era}</span>
+        </div>
+        <span class="badge info">FYI</span>
       </div>
     </div>
 
@@ -1088,7 +1299,8 @@ function renderSearch(kind, placeholder){
 }
 
 function renderSelected(kind, id){
-  const item = kind==='track' ? TRACKS.find(t=>t.id===id) : DRIVERS.find(d=>d.id===id);
+  const list = kind==='track' ? TRACKS : (kind==='team' ? TEAMS : DRIVERS);
+  const item = list.find(x => x.id === id);
   const meta = kind==='track' ? item.country : item.era;
   return `
     <div class="selected-display">
@@ -1102,7 +1314,7 @@ function bindSearch(kind){
   const input = document.getElementById(`${kind}Search`);
   if(!input) return;
   const sugg = document.getElementById(`${kind}Suggestions`);
-  const list = kind==='track' ? TRACKS : DRIVERS;
+  const list = kind==='track' ? TRACKS : (kind==='team' ? TEAMS : DRIVERS);
 
   let hoverIdx = -1;
   let filtered = [];
@@ -1146,14 +1358,14 @@ function bindSearch(kind){
 
 function pick(kind, id){
   if(kind === 'track') state.trackPick = id;
-  else state.driverPick = id;
-  if(kind === 'track') renderTrackStep(); else renderDriverStep();
+  else state.teamPick = id;
+  if(kind === 'track') renderTrackStep(); else renderTeamStep();
 }
 
 window.clearPick = function(kind){
   if(kind === 'track') state.trackPick = null;
-  else state.driverPick = null;
-  if(kind === 'track') renderTrackStep(); else renderDriverStep();
+  else state.teamPick = null;
+  if(kind === 'track') renderTrackStep(); else renderTeamStep();
 };
 
 /* ---------------------- SUBMIT / SCORING ---------------------- */
@@ -1166,27 +1378,29 @@ function submitTrack(){
   else if(pickedTrack && correctTrack && pickedTrack.country === correctTrack.country) pts = Math.round(PTS_PER_Q * 0.3);
   state.scores[state.roundIdx] = {
     trackPts: pts,
-    driverPts: 0,
+    teamPts: 0,
     total: pts,
     trackPick: state.trackPick,
-    driverPick: null
+    teamPick: null
   };
   state.trackSubmitted = true;
   renderTrackStep();
-  renderDriverStep();
+  renderTeamStep();
 }
 
-function submitDriver(){
+function submitTeam(){
   const m = state.moments[state.roundIdx];
+  const correctTeam = TEAM_BY_MOMENT[m.id];
   let pts = 0;
-  if(state.driverPick === m.driver) pts = PTS_PER_Q;
+  if(state.teamPick === correctTeam) pts = PTS_PER_Q;
   const sc = state.scores[state.roundIdx];
-  sc.driverPts = pts;
-  sc.driverPick = state.driverPick;
-  sc.total = sc.trackPts + sc.driverPts;
-  state.driverSubmitted = true;
-  renderDriverStep();
-  renderRoundResult();
+  sc.teamPts = pts;
+  sc.teamPick = state.teamPick;
+  sc.total = sc.trackPts + sc.teamPts;
+  state.teamSubmitted = true;
+  renderTrackStep();   // collapse step 1
+  renderTeamStep();    // collapse step 2
+  renderRoundResult(); // show full dossier
 }
 
 function nextRound(){
@@ -1208,9 +1422,9 @@ function renderFinal(){
   const maxPts = state.moments.length * TOTAL_PER_ROUND;
   const pct = Math.round(totalPts/maxPts*100);
   const trackPts = state.scores.reduce((s,r)=>s+r.trackPts,0);
-  const driverPts = state.scores.reduce((s,r)=>s+r.driverPts,0);
+  const teamPts = state.scores.reduce((s,r)=>s+r.teamPts,0);
   const trackPct = Math.round(trackPts / (state.moments.length * PTS_PER_Q) * 100);
-  const driverPct = Math.round(driverPts / (state.moments.length * PTS_PER_Q) * 100);
+  const teamPctTotal = Math.round(teamPts / (state.moments.length * PTS_PER_Q) * 100);
 
   const verdict = pct >= 90 ? 'Tifosi tier. You watch the practice sessions.'
                 : pct >= 70 ? 'Solid garage hand. You know your eras.'
@@ -1226,7 +1440,7 @@ function renderFinal(){
       <div class="pts">${totalPts.toLocaleString()} / ${maxPts.toLocaleString()} PTS</div>
       <div class="split">
         <div><div class="label">Tracks</div><div class="v">${trackPct}%</div></div>
-        <div><div class="label">Drivers</div><div class="v">${driverPct}%</div></div>
+        <div><div class="label">Teams</div><div class="v">${teamPctTotal}%</div></div>
       </div>
     </div>
     <div class="flavor">${verdict}</div>
@@ -1235,12 +1449,13 @@ function renderFinal(){
         const m = state.moments[i];
         const t = TRACKS.find(t=>t.id===m.track);
         const d = DRIVERS.find(d=>d.id===m.driver);
+        const team = TEAMS.find(x => x.id === TEAM_BY_MOMENT[m.id]);
         const rpct = Math.round(sc.total/TOTAL_PER_ROUND*100);
         const cls = rpct >= 75 ? 'good' : rpct >= 40 ? 'mid' : 'bad';
         return `
           <div class="round-row">
             <div class="rn">R${i+1} · ${m.year}</div>
-            <div class="rt"><strong>${t.name.split('(')[0].trim()}</strong> — ${d.name}</div>
+            <div class="rt"><strong>${t.name.split('(')[0].trim()}</strong><br><span style="font-size:0.74rem;color:var(--gray-2)">${team ? team.name : '—'} · ${d.name}</span></div>
             <div class="rs ${cls}">${rpct}%</div>
           </div>
         `;
