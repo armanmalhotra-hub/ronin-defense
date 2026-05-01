@@ -6,196 +6,322 @@
 <title>GridGuessr — Daily F1 Challenge</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Titillium+Web:wght@300;400;600;700;900&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Saira+Condensed:wght@400;600;700;800;900&family=Titillium+Web:wght@300;400;600;700;900&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
 <style>
   *{margin:0;padding:0;box-sizing:border-box}
   :root{
-    --bg:#070707;
-    --bg-2:#0e0e0e;
-    --card:#141414;
+    --bg:#050505;
+    --bg-2:#0c0c0c;
+    --card:#121212;
     --card-2:#1a1a1a;
-    --line:#252525;
-    --line-2:#333;
-    --red:#e10600;
+    --card-3:#222;
+    --line:#1f1f1f;
+    --line-2:#2e2e2e;
+    --line-3:#444;
+    --red:#e10600;        /* F1 red */
+    --red-bright:#ff1801;
     --red-dim:#a00400;
     --red-soft:rgba(225,6,0,0.12);
     --white:#fff;
-    --gray:#a8a8a8;
-    --gray-2:#777;
-    --muted:#555;
-    --green:#13c074;
-    --green-soft:rgba(19,192,116,0.12);
+    --gray:#b5b5b5;
+    --gray-2:#7c7c7c;
+    --muted:#4f4f4f;
+
+    /* Sector / qualifying colors — universal F1 timing-tower palette */
+    --sec-purple:#b300ff;          /* fastest overall (idol tier) */
+    --sec-purple-soft:rgba(179,0,255,0.14);
+    --sec-green:#00d96b;            /* personal best / right answer */
+    --sec-green-soft:rgba(0,217,107,0.14);
+    --sec-yellow:#f0a800;           /* slower */
+    --sec-yellow-soft:rgba(240,168,0,0.14);
+    --sec-red:#e10600;              /* off the pace */
+    --sec-red-soft:rgba(225,6,0,0.14);
+    --sec-blue:#1e88ff;             /* wet tyre */
+
+    /* Pirelli compound colors */
+    --tyre-soft:#e10600;
+    --tyre-medium:#f0a800;
+    --tyre-hard:#e0e0e0;
+    --tyre-inter:#13c074;
+    --tyre-wet:#1e88ff;
+
+    /* Legacy aliases used in older rules — keep for compatibility */
+    --green:#00d96b;
+    --green-soft:rgba(0,217,107,0.14);
     --yellow:#f0a800;
-    --yellow-soft:rgba(240,168,0,0.12);
+    --yellow-soft:rgba(240,168,0,0.14);
   }
-  html,body{background:var(--bg);color:var(--white);font-family:'Titillium Web',-apple-system,sans-serif;-webkit-font-smoothing:antialiased;letter-spacing:0.005em}
+
+  html,body{
+    background:var(--bg);
+    color:var(--white);
+    font-family:'Titillium Web',-apple-system,'Segoe UI',sans-serif;
+    -webkit-font-smoothing:antialiased;
+    -moz-osx-font-smoothing:grayscale;
+    letter-spacing:0.005em;
+  }
   body{
     min-height:100vh;
-    padding:1rem;
+    padding:0.85rem;
     padding-bottom:3rem;
     display:flex;
     flex-direction:column;
     align-items:center;
-    background-image:
-      radial-gradient(circle at 20% 0%, rgba(225,6,0,0.04) 0%, transparent 50%),
-      radial-gradient(circle at 80% 100%, rgba(225,6,0,0.03) 0%, transparent 50%);
+    background:
+      radial-gradient(circle at 18% -10%, rgba(225,6,0,0.10) 0%, transparent 45%),
+      radial-gradient(circle at 100% 100%, rgba(179,0,255,0.06) 0%, transparent 50%),
+      url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='8' height='8'><rect width='8' height='8' fill='%23050505'/><path d='M0 0L4 4M4 0L8 4M-4 4L0 8M4 4L8 8' stroke='%231a1a1a' stroke-width='0.5'/></svg>"),
+      var(--bg);
   }
-  .wrap{width:100%;max-width:520px}
+  .wrap{width:100%;max-width:520px;animation:fadein 0.4s ease both}
+  @keyframes fadein{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
   .mono{font-family:'JetBrains Mono',ui-monospace,monospace;font-feature-settings:"tnum"}
+  .display{font-family:'Saira Condensed','Titillium Web',sans-serif;font-weight:800;letter-spacing:-0.01em}
 
   /* TOPBAR */
-  .topbar{display:flex;align-items:center;justify-content:space-between;padding:0.5rem 0 1rem;margin-bottom:0.5rem}
-  .top-icon{width:36px;height:36px;border-radius:50%;background:var(--card);display:flex;align-items:center;justify-content:center;color:var(--gray);font-size:1rem;border:1px solid var(--line);cursor:pointer}
-  .top-icon:hover{border-color:var(--red);color:var(--white)}
-  .brand{display:flex;align-items:center;gap:0.5rem;font-weight:900;letter-spacing:0.18em;font-size:0.85rem}
-  .brand .chev{color:var(--red);font-weight:900}
+  .topbar{display:flex;align-items:center;justify-content:space-between;padding:0.45rem 0 1rem;margin-bottom:0.4rem}
+  .top-icon{
+    width:36px;height:36px;border-radius:50%;background:var(--card);
+    display:flex;align-items:center;justify-content:center;
+    color:var(--gray);font-size:0.95rem;border:1px solid var(--line-2);
+    cursor:pointer;transition:all 0.15s;
+  }
+  .top-icon:hover{border-color:var(--red);color:#fff;background:#1c1010}
+  .brand{
+    display:flex;align-items:center;gap:0.45rem;
+    font-family:'Saira Condensed',sans-serif;
+    font-weight:900;letter-spacing:0.14em;
+    font-size:1.1rem;
+    text-transform:uppercase;
+  }
+  .brand .chev{
+    color:var(--red);font-weight:900;
+    letter-spacing:-0.05em;
+    text-shadow:0 0 12px rgba(225,6,0,0.5);
+  }
+  .brand .one{
+    color:var(--red);font-style:italic;
+    text-shadow:0 0 12px rgba(225,6,0,0.4);
+  }
 
-  /* PROGRESS */
-  .progress-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:0.9rem;padding:0 0.1rem}
-  .progress-label{font-family:'JetBrains Mono',monospace;font-size:0.78rem;color:var(--gray);letter-spacing:0.06em}
-  .progress-label strong{color:var(--white);font-weight:700}
-  .progress-pips{display:flex;gap:5px}
-  .pip{width:30px;height:3px;background:var(--line)}
-  .pip.done{background:var(--red)}
-  .pip.active{background:var(--white)}
+  /* PROGRESS — lap counter style */
+  .progress-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:0.85rem;padding:0 0.1rem}
+  .progress-label{
+    font-family:'JetBrains Mono',monospace;
+    font-size:0.72rem;color:var(--gray-2);
+    letter-spacing:0.14em;text-transform:uppercase;
+  }
+  .progress-label strong{color:var(--white);font-weight:700;font-size:0.82rem}
+  .progress-pips{display:flex;gap:3px}
+  .pip{
+    width:28px;height:5px;
+    background:var(--line);
+    position:relative;overflow:hidden;
+    clip-path:polygon(8% 0,100% 0,92% 100%,0 100%); /* sector chevron */
+  }
+  .pip.done{background:var(--sec-green)}
+  .pip.active{
+    background:var(--white);
+    box-shadow:0 0 8px rgba(255,255,255,0.6);
+  }
+  .pip.active::after{
+    content:"";position:absolute;inset:0;
+    background:linear-gradient(90deg,transparent 0%,rgba(255,255,255,0.6) 50%,transparent 100%);
+    animation:pulse 1.5s ease-in-out infinite;
+  }
+  @keyframes pulse{0%,100%{transform:translateX(-100%)}50%{transform:translateX(100%)}}
 
   /* MOMENT CARD */
   .moment{
     position:relative;
-    border-radius:6px;
+    border-radius:4px;
     overflow:hidden;
     aspect-ratio:16/10;
-    margin-bottom:1rem;
+    margin-bottom:0.85rem;
     background:var(--card);
-    border:1px solid var(--line);
-    box-shadow:0 8px 30px rgba(0,0,0,0.4);
+    border:1px solid var(--line-2);
+    box-shadow:
+      0 0 0 1px rgba(225,6,0,0.10),
+      0 12px 40px rgba(0,0,0,0.6),
+      inset 0 1px 0 rgba(255,255,255,0.04);
+    animation:cardin 0.45s cubic-bezier(0.2,0.8,0.3,1) both;
   }
+  @keyframes cardin{from{opacity:0;transform:translateY(8px) scale(0.99)}to{opacity:1;transform:none}}
   .moment-bg{position:absolute;inset:0}
-  .moment-bg.wet{background:linear-gradient(135deg,#0d1830 0%,#1a2a4a 50%,#2c3e60 100%)}
+  .moment-bg.wet{background:linear-gradient(135deg,#08111f 0%,#1a2a4a 55%,#2c3e60 100%)}
   .moment-bg.dusk{background:linear-gradient(135deg,#1a0d1d 0%,#5a2540 50%,#c25030 100%)}
-  .moment-bg.night{background:linear-gradient(135deg,#020412 0%,#0a1530 50%,#1a2858 100%)}
+  .moment-bg.night{background:linear-gradient(135deg,#020412 0%,#0a1530 60%,#1a2858 100%)}
   .moment-bg.sun{background:linear-gradient(135deg,#0a3a78 0%,#2a78c4 60%,#a8d0ee 100%)}
   .moment-bg.heat{background:linear-gradient(135deg,#3a1a05 0%,#a04020 50%,#d8852e 100%)}
-  .moment-bg.classic{background:linear-gradient(135deg,#1a1a1a 0%,#2a2a2a 50%,#404040 100%)}
+  .moment-bg.classic{background:linear-gradient(135deg,#161616 0%,#2a2a2a 50%,#404040 100%)}
   .moment-bg.history{background:linear-gradient(135deg,#2a1808 0%,#5a3a18 50%,#8a6230 100%)}
   .moment-bg::after{
-    content:"";
-    position:absolute;inset:0;
+    content:"";position:absolute;inset:0;
     background-image:
-      repeating-linear-gradient(-30deg, transparent 0 22px, rgba(255,255,255,0.025) 22px 23px),
-      linear-gradient(180deg, transparent 60%, rgba(0,0,0,0.55) 100%);
+      repeating-linear-gradient(-28deg, transparent 0 18px, rgba(255,255,255,0.025) 18px 19px),
+      radial-gradient(ellipse at center, transparent 30%, rgba(0,0,0,0.4) 100%),
+      linear-gradient(180deg, rgba(0,0,0,0.3) 0%, transparent 25%, transparent 60%, rgba(0,0,0,0.7) 100%);
     pointer-events:none;
   }
   .moment-bg.has-image{background-size:cover;background-position:center}
   .moment-bg.has-image::after{
-    background:linear-gradient(180deg,rgba(0,0,0,0.25) 0%,transparent 30%,transparent 55%,rgba(0,0,0,0.85) 100%);
+    background:linear-gradient(180deg,rgba(0,0,0,0.35) 0%,transparent 30%,transparent 55%,rgba(0,0,0,0.88) 100%);
   }
   .moment-year-bg{
     position:absolute;
     top:50%;left:50%;
     transform:translate(-50%,-50%);
-    font-family:'JetBrains Mono',monospace;
-    font-size:11rem;
-    font-weight:700;
-    color:rgba(255,255,255,0.06);
+    font-family:'Saira Condensed',sans-serif;
+    font-size:13rem;font-weight:900;
+    color:rgba(255,255,255,0.05);
     letter-spacing:-0.04em;
-    pointer-events:none;
-    line-height:1;
+    pointer-events:none;line-height:1;
+    text-shadow:0 0 60px rgba(225,6,0,0.06);
   }
   .moment-hud{
     position:absolute;inset:0;
-    padding:0.95rem 1rem;
-    display:flex;
-    flex-direction:column;
-    justify-content:space-between;
-    color:#fff;
-    z-index:1;
+    padding:0.85rem 0.95rem 1rem;
+    display:flex;flex-direction:column;justify-content:space-between;
+    color:#fff;z-index:1;
   }
-  .moment-top{display:flex;justify-content:space-between;align-items:flex-start}
+  .moment-top{display:flex;justify-content:space-between;align-items:flex-start;gap:0.6rem}
+
+  /* Broadcast strip — looks like an F1 timing graphic */
   .moment-strip{
     display:inline-flex;align-items:center;gap:0.5rem;
-    background:rgba(0,0,0,0.55);
-    border-left:3px solid var(--red);
-    padding:0.32rem 0.65rem;
+    background:rgba(0,0,0,0.65);
+    padding:0.35rem 0.7rem;
     font-family:'JetBrains Mono',monospace;
-    font-size:0.7rem;
-    letter-spacing:0.08em;
-    text-transform:uppercase;
+    font-size:0.7rem;letter-spacing:0.1em;text-transform:uppercase;
     backdrop-filter:blur(6px);
+    border-left:3px solid var(--red);
+    position:relative;
+  }
+  .moment-strip::before{
+    content:"";position:absolute;left:-3px;top:-1px;bottom:-1px;width:3px;
+    background:var(--red);
+    box-shadow:0 0 10px rgba(225,6,0,0.7);
   }
   .moment-strip .yr{color:#fff;font-weight:700}
   .moment-strip .sep{color:var(--gray-2)}
   .moment-strip .lap{color:var(--gray)}
-  .moment-tags{display:flex;flex-direction:column;gap:0.3rem;align-items:flex-end}
+
+  /* Tag chips — broadcast info pills (DRS / VSC / SC look) */
+  .moment-tags{display:flex;flex-direction:column;gap:0.32rem;align-items:flex-end}
   .tag{
-    display:inline-block;
-    font-size:0.62rem;letter-spacing:0.12em;text-transform:uppercase;
-    background:rgba(255,255,255,0.12);
-    color:#fff;
-    padding:0.25rem 0.55rem;
-    font-weight:600;
-    backdrop-filter:blur(4px);
-  }
-  .tag.weather{background:rgba(225,6,0,0.85);color:#fff}
-  .moment-desc{
-    font-family:'Titillium Web',sans-serif;
-    font-size:1rem;
-    line-height:1.45;
-    font-weight:400;
-    text-shadow:0 1px 4px rgba(0,0,0,0.6);
-    max-width:90%;
-  }
-  .moment-foot{
-    display:flex;justify-content:space-between;
+    display:inline-flex;align-items:center;gap:0.35rem;
     font-family:'JetBrains Mono',monospace;
-    font-size:0.7rem;letter-spacing:0.1em;text-transform:uppercase;
-    color:rgba(255,255,255,0.7);
+    font-size:0.62rem;letter-spacing:0.14em;text-transform:uppercase;
+    background:rgba(0,0,0,0.65);
+    color:#fff;
+    padding:0.3rem 0.6rem;
+    font-weight:700;
+    backdrop-filter:blur(6px);
+    border:1px solid rgba(255,255,255,0.08);
+  }
+  .tag.weather{
+    background:rgba(225,6,0,0.92);color:#fff;
+    border-color:rgba(255,255,255,0.18);
+    box-shadow:0 0 14px rgba(225,6,0,0.4);
+  }
+  .tag::before{
+    content:"";width:5px;height:5px;border-radius:50%;
+    background:var(--white);
+    box-shadow:0 0 4px rgba(255,255,255,0.6);
+  }
+  .tag.weather::before{background:#fff;box-shadow:0 0 6px rgba(255,255,255,0.9)}
+
+  /* Tyre compound indicator (Pirelli pill) */
+  .tyre-pill{
+    display:inline-flex;align-items:center;gap:0.4rem;
+    background:rgba(0,0,0,0.65);
+    padding:0.28rem 0.55rem 0.28rem 0.5rem;
+    font-family:'JetBrains Mono',monospace;
+    font-size:0.6rem;letter-spacing:0.14em;text-transform:uppercase;
+    color:#fff;font-weight:700;
+    backdrop-filter:blur(6px);
+    border:1px solid rgba(255,255,255,0.08);
+  }
+  .tyre-dot{
+    width:14px;height:14px;border-radius:50%;
+    border:2px solid #000;
+    box-shadow:inset 0 0 0 2px rgba(255,255,255,0.15);
+  }
+  .tyre-dot.soft{background:var(--tyre-soft)}
+  .tyre-dot.medium{background:var(--tyre-medium)}
+  .tyre-dot.hard{background:var(--tyre-hard)}
+  .tyre-dot.inter{background:var(--tyre-inter)}
+  .tyre-dot.wet{background:var(--tyre-wet);box-shadow:inset 0 0 0 2px rgba(255,255,255,0.15),0 0 8px rgba(30,136,255,0.5)}
+
+  .moment-foot{
+    display:flex;justify-content:space-between;align-items:center;
+    font-family:'JetBrains Mono',monospace;
+    font-size:0.65rem;letter-spacing:0.16em;text-transform:uppercase;
+    color:rgba(255,255,255,0.55);
+  }
+  .moment-foot .moment-id{
+    background:rgba(0,0,0,0.5);
+    padding:0.2rem 0.5rem;
+    border:1px solid rgba(255,255,255,0.08);
+    color:#fff;font-weight:700;
   }
 
   /* STEP CARDS */
   .step-card{
-    background:var(--card);
-    border:1px solid var(--line);
-    border-radius:6px;
-    padding:1.1rem;
-    margin-bottom:0.9rem;
+    background:linear-gradient(180deg,var(--card) 0%,#0e0e0e 100%);
+    border:1px solid var(--line-2);
+    border-radius:4px;
+    padding:1.05rem 1.1rem 1rem;
+    margin-bottom:0.7rem;
     position:relative;
     overflow:hidden;
+    animation:cardin 0.35s cubic-bezier(0.2,0.8,0.3,1) both;
   }
   .step-card.active::before{
-    content:"";position:absolute;top:0;left:0;right:0;height:2px;background:var(--red);
+    content:"";position:absolute;top:0;left:0;right:0;height:2px;
+    background:linear-gradient(90deg,var(--red) 0%,var(--red-bright) 50%,transparent 100%);
   }
-  .step-head{display:flex;align-items:center;gap:0.65rem;margin-bottom:0.85rem}
+  .step-head{display:flex;align-items:center;gap:0.7rem;margin-bottom:0.85rem}
   .step-num{
-    width:24px;height:24px;
+    width:26px;height:26px;
     background:var(--red);color:#fff;
     display:flex;align-items:center;justify-content:center;
-    font-family:'JetBrains Mono',monospace;font-weight:700;font-size:0.78rem;
+    font-family:'Saira Condensed',sans-serif;
+    font-weight:800;font-size:0.95rem;
     flex-shrink:0;
+    box-shadow:0 0 10px rgba(225,6,0,0.4);
+    clip-path:polygon(15% 0,100% 0,85% 100%,0 100%);
   }
-  .step-num.done{background:var(--green)}
-  .step-num.locked{background:var(--line-2);color:var(--muted)}
+  .step-num.done{
+    background:var(--sec-green);
+    box-shadow:0 0 10px rgba(0,217,107,0.4);
+  }
+  .step-num.locked{background:var(--line-3);color:var(--muted);box-shadow:none}
   .step-title{
-    font-size:0.7rem;letter-spacing:0.16em;text-transform:uppercase;
-    color:var(--white);font-weight:700;
+    font-family:'Saira Condensed',sans-serif;
+    font-size:0.95rem;font-weight:700;
+    letter-spacing:0.12em;text-transform:uppercase;
+    color:var(--white);
   }
   .step-card.locked .step-title{color:var(--muted)}
   .step-sub{
     font-family:'JetBrains Mono',monospace;
-    font-size:0.7rem;letter-spacing:0.04em;
-    color:var(--gray-2);margin-top:-0.4rem;margin-bottom:0.7rem;margin-left:2.15rem;
+    font-size:0.68rem;letter-spacing:0.04em;
+    color:var(--gray-2);
+    margin-top:-0.35rem;margin-bottom:0.7rem;margin-left:2.4rem;
   }
   .step-result{margin-left:auto;display:flex;align-items:center;gap:0.5rem}
   .badge{
-    padding:0.2rem 0.55rem;
+    padding:0.22rem 0.6rem;
     font-family:'JetBrains Mono',monospace;
     font-size:0.65rem;font-weight:700;letter-spacing:0.1em;
     text-transform:uppercase;
   }
-  .badge.right{background:var(--green-soft);color:var(--green);border:1px solid rgba(19,192,116,0.3)}
-  .badge.close{background:var(--yellow-soft);color:var(--yellow);border:1px solid rgba(240,168,0,0.3)}
-  .badge.wrong{background:var(--red-soft);color:var(--red);border:1px solid rgba(225,6,0,0.35)}
-  .badge.info{background:rgba(255,255,255,0.05);color:var(--gray-2);border:1px solid var(--line)}
+  .badge.right{background:var(--sec-green-soft);color:var(--sec-green);border:1px solid rgba(0,217,107,0.35);box-shadow:0 0 12px rgba(0,217,107,0.15)}
+  .badge.close{background:var(--sec-yellow-soft);color:var(--sec-yellow);border:1px solid rgba(240,168,0,0.35)}
+  .badge.wrong{background:var(--sec-red-soft);color:var(--sec-red);border:1px solid rgba(225,6,0,0.35)}
+  .badge.info{background:rgba(255,255,255,0.04);color:var(--gray-2);border:1px solid var(--line-2)}
+  .badge.purple{background:var(--sec-purple-soft);color:var(--sec-purple);border:1px solid rgba(179,0,255,0.4);box-shadow:0 0 14px rgba(179,0,255,0.2)}
 
   /* SEARCH */
   .search-wrap{position:relative}
@@ -248,19 +374,43 @@
   .selected-display .clear:hover{color:var(--red)}
 
   .submit-btn{
-    width:100%;padding:0.95rem;
-    border:none;background:var(--red);color:#fff;
-    font-size:0.85rem;font-weight:700;
-    letter-spacing:0.14em;text-transform:uppercase;
-    cursor:pointer;margin-top:0.85rem;
-    font-family:'Titillium Web',sans-serif;
-    transition:background 0.15s;
+    width:100%;padding:1rem 1.1rem;
+    border:none;
+    background:linear-gradient(180deg,var(--red-bright) 0%,var(--red) 100%);
+    color:#fff;
+    font-size:0.85rem;font-weight:800;
+    letter-spacing:0.18em;text-transform:uppercase;
+    cursor:pointer;margin-top:0.8rem;
+    font-family:'Saira Condensed',sans-serif;
+    transition:transform 0.1s, box-shadow 0.15s, background 0.15s;
     border-radius:3px;
+    position:relative;overflow:hidden;
+    box-shadow:0 4px 20px rgba(225,6,0,0.25),inset 0 1px 0 rgba(255,255,255,0.18);
   }
-  .submit-btn:disabled{background:var(--card-2);color:var(--muted);cursor:not-allowed}
-  .submit-btn:not(:disabled):hover{background:#ff1801}
-  .submit-btn.dark{background:var(--card-2);border:1px solid var(--line-2)}
-  .submit-btn.dark:hover{background:var(--card);border-color:var(--red)}
+  .submit-btn::before{
+    content:"";position:absolute;top:0;left:-30%;width:35%;height:100%;
+    background:linear-gradient(90deg,transparent 0%,rgba(255,255,255,0.18) 50%,transparent 100%);
+    transform:skewX(-20deg);transition:left 0.5s;
+  }
+  .submit-btn:not(:disabled):hover{
+    transform:translateY(-1px);
+    box-shadow:0 6px 24px rgba(225,6,0,0.4),inset 0 1px 0 rgba(255,255,255,0.22);
+  }
+  .submit-btn:not(:disabled):hover::before{left:130%}
+  .submit-btn:not(:disabled):active{transform:translateY(0)}
+  .submit-btn:disabled{
+    background:var(--card-2);color:var(--muted);cursor:not-allowed;
+    box-shadow:none;
+  }
+  .submit-btn:disabled::before{display:none}
+  .submit-btn.dark{
+    background:linear-gradient(180deg,var(--card-2) 0%,var(--card) 100%);
+    border:1px solid var(--line-2);box-shadow:none;color:#fff;
+  }
+  .submit-btn.dark:hover{
+    background:linear-gradient(180deg,var(--card) 0%,var(--card-2) 100%);
+    border-color:var(--red);box-shadow:0 0 18px rgba(225,6,0,0.2);
+  }
 
   .locked-msg{
     padding:0.85rem 1rem;
@@ -279,39 +429,71 @@
   .answer-block .your{font-size:0.78rem;color:var(--gray-2);margin-top:0.4rem}
   .answer-block .your.wrong{color:var(--red)}
 
-  /* SCORE PANEL */
+  /* SCORE PANEL — timing tower aesthetic */
   .score-card{
-    background:var(--card);
-    border:1px solid var(--line);
-    padding:1.5rem 1.5rem;
+    background:linear-gradient(180deg,var(--card) 0%,var(--bg-2) 100%);
+    border:1px solid var(--line-2);
+    padding:1.5rem 1.5rem 1.4rem;
     text-align:center;
-    margin-bottom:1rem;
-    border-radius:6px;
+    margin-bottom:0.85rem;
+    border-radius:4px;
     position:relative;
     overflow:hidden;
+    animation:cardin 0.45s cubic-bezier(0.2,0.8,0.3,1) both;
   }
   .score-card::before{
-    content:"";position:absolute;top:0;left:0;right:0;height:2px;background:var(--red);
+    content:"";position:absolute;top:0;left:0;right:0;height:3px;
+    background:linear-gradient(90deg,var(--sec-red) 0%,var(--sec-yellow) 33%,var(--sec-green) 66%,var(--sec-purple) 100%);
+  }
+  .score-card::after{
+    content:"";position:absolute;
+    top:50%;right:-20%;width:80%;height:200%;
+    background:radial-gradient(ellipse at center,rgba(225,6,0,0.06) 0%,transparent 50%);
+    pointer-events:none;
   }
   .score-card .label{
     font-family:'JetBrains Mono',monospace;
-    font-size:0.7rem;letter-spacing:0.16em;text-transform:uppercase;
-    color:var(--gray);font-weight:500;margin-bottom:0.4rem;
+    font-size:0.66rem;letter-spacing:0.2em;text-transform:uppercase;
+    color:var(--gray);font-weight:500;margin-bottom:0.5rem;
+    position:relative;z-index:1;
   }
   .score-card .pct{
-    font-family:'JetBrains Mono',monospace;
-    font-size:4.2rem;font-weight:700;
-    letter-spacing:-0.04em;line-height:1;color:#fff;
+    font-family:'Saira Condensed',sans-serif;
+    font-size:5.2rem;font-weight:900;
+    letter-spacing:-0.05em;line-height:0.9;
+    color:#fff;position:relative;z-index:1;
+    animation:popin 0.6s cubic-bezier(0.34,1.56,0.64,1) both;
   }
+  @keyframes popin{from{opacity:0;transform:scale(0.7)}to{opacity:1;transform:scale(1)}}
+  /* Sector tier coloring on the headline percentage */
+  .score-card .pct.tier-purple{color:var(--sec-purple);text-shadow:0 0 30px rgba(179,0,255,0.5)}
+  .score-card .pct.tier-green{color:var(--sec-green);text-shadow:0 0 30px rgba(0,217,107,0.4)}
+  .score-card .pct.tier-yellow{color:var(--sec-yellow);text-shadow:0 0 30px rgba(240,168,0,0.4)}
+  .score-card .pct.tier-red{color:var(--sec-red);text-shadow:0 0 30px rgba(225,6,0,0.4)}
   .score-card .pts{
     font-family:'JetBrains Mono',monospace;
-    font-size:0.85rem;color:var(--gray-2);margin-top:0.3rem;letter-spacing:0.04em;
+    font-size:0.78rem;color:var(--gray-2);margin-top:0.45rem;
+    letter-spacing:0.14em;text-transform:uppercase;
+    position:relative;z-index:1;
   }
-  .split{display:flex;border-top:1px solid var(--line);margin-top:1.1rem;padding-top:1rem}
-  .split>div{flex:1;text-align:center}
-  .split>div+div{border-left:1px solid var(--line)}
-  .split .label{margin-bottom:0.3rem}
-  .split .v{font-family:'JetBrains Mono',monospace;font-size:1.7rem;font-weight:700;letter-spacing:-0.02em;color:#fff}
+  .split{
+    display:flex;
+    border-top:1px solid var(--line-2);
+    margin-top:1.2rem;padding-top:1rem;
+    position:relative;z-index:1;
+  }
+  .split>div{flex:1;text-align:center;position:relative}
+  .split>div+div{border-left:1px solid var(--line-2)}
+  .split .label{margin-bottom:0.4rem;font-size:0.62rem}
+  .split .v{
+    font-family:'Saira Condensed',sans-serif;
+    font-size:1.95rem;font-weight:800;
+    letter-spacing:-0.02em;color:#fff;line-height:1;
+  }
+  .split .v.tier-purple{color:var(--sec-purple)}
+  .split .v.tier-green{color:var(--sec-green)}
+  .split .v.tier-yellow{color:var(--sec-yellow)}
+  .split .v.tier-red{color:var(--sec-red)}
 
   /* YOUTUBE EMBED inside moment card */
   .moment-video{position:absolute;inset:0;background:#000}
@@ -346,45 +528,66 @@
     position:relative;overflow:hidden;
   }
   .dossier::before{
-    content:"";position:absolute;top:0;left:0;right:0;height:2px;
-    background:linear-gradient(90deg,var(--red) 0%,var(--green) 100%);
+    content:"";position:absolute;top:0;left:0;right:0;height:3px;
+    background:linear-gradient(90deg,var(--sec-purple) 0%,var(--sec-green) 50%,var(--sec-yellow) 100%);
   }
   .dossier-head{
     display:flex;justify-content:space-between;align-items:flex-start;
-    padding-bottom:0.85rem;border-bottom:1px solid var(--line);margin-bottom:0.85rem;
+    padding-bottom:0.85rem;border-bottom:1px solid var(--line-2);margin-bottom:0.6rem;
   }
   .dossier-year{
+    font-family:'Saira Condensed',sans-serif;
+    font-size:2.1rem;font-weight:900;color:#fff;line-height:0.9;
+    letter-spacing:-0.02em;
+  }
+  .dossier-tags{display:flex;flex-wrap:wrap;gap:0.32rem;justify-content:flex-end;max-width:60%}
+  .dossier-tag{
+    display:inline-block;
     font-family:'JetBrains Mono',monospace;
-    font-size:1.6rem;font-weight:700;color:#fff;line-height:1;
+    font-size:0.6rem;letter-spacing:0.14em;text-transform:uppercase;
+    background:rgba(255,255,255,0.04);
+    color:var(--gray);
+    padding:0.25rem 0.55rem;font-weight:700;
+    border:1px solid var(--line-2);
   }
-  .dossier-tags{display:flex;flex-wrap:wrap;gap:0.3rem;justify-content:flex-end;max-width:60%}
   .dossier-row{
-    display:grid;grid-template-columns:64px 1fr auto;
-    align-items:center;gap:0.75rem;padding:0.6rem 0;
-    border-bottom:1px solid var(--line);
+    display:grid;grid-template-columns:60px 1fr auto;
+    align-items:center;gap:0.75rem;padding:0.7rem 0;
+    border-bottom:1px solid var(--line-2);
+    position:relative;
   }
+  .dossier-row::before{
+    content:"";position:absolute;left:-1.1rem;top:50%;transform:translateY(-50%);
+    width:3px;height:60%;background:transparent;
+  }
+  .dossier-row.right::before{background:var(--sec-green)}
+  .dossier-row.close::before{background:var(--sec-yellow)}
+  .dossier-row.wrong::before{background:var(--sec-red)}
   .dossier-row:last-of-type{border-bottom:none}
   .dossier-label{
     font-family:'JetBrains Mono',monospace;
-    font-size:0.65rem;letter-spacing:0.14em;text-transform:uppercase;
-    color:var(--gray-2);font-weight:600;
+    font-size:0.62rem;letter-spacing:0.18em;text-transform:uppercase;
+    color:var(--gray-2);font-weight:700;
   }
-  .dossier-val{display:flex;flex-direction:column;gap:0.1rem;min-width:0}
+  .dossier-val{display:flex;flex-direction:column;gap:0.18rem;min-width:0}
   .dossier-name{
-    font-size:0.95rem;font-weight:700;color:#fff;
+    font-family:'Saira Condensed',sans-serif;
+    font-size:1.2rem;font-weight:700;color:#fff;
     overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
+    line-height:1;letter-spacing:-0.005em;
   }
   .dossier-meta{
     font-family:'JetBrains Mono',monospace;
-    font-size:0.68rem;color:var(--gray-2);
-    letter-spacing:0.04em;text-transform:uppercase;
+    font-size:0.65rem;color:var(--gray-2);
+    letter-spacing:0.08em;text-transform:uppercase;
   }
   .dossier-your{
     font-family:'JetBrains Mono',monospace;
-    font-size:0.65rem;letter-spacing:0.06em;
-    color:var(--red);padding:0.15rem 0 0.3rem 76px;
-    text-transform:uppercase;
+    font-size:0.6rem;letter-spacing:0.12em;
+    color:var(--red);padding:0.1rem 0 0.5rem 75px;
+    text-transform:uppercase;font-weight:700;
   }
+  .dossier-your::before{content:"× "; color:var(--red); margin-right:0.15rem}
 
   /* CELEBRATION REVEAL */
   .celebration{
@@ -470,64 +673,138 @@
   .flavor::before{content:"\\\"";color:var(--red);margin-right:0.15rem}
   .flavor::after{content:"\\\"";color:var(--red);margin-left:0.15rem}
 
-  /* START SCREEN */
+  /* START SCREEN — paddock entrance */
   .start-card{
-    background:var(--card);
-    border:1px solid var(--line);
-    padding:2.2rem 1.6rem;text-align:center;
-    margin-top:2rem;border-radius:8px;
+    background:
+      linear-gradient(180deg,var(--card) 0%,var(--bg-2) 100%);
+    border:1px solid var(--line-2);
+    padding:2.2rem 1.5rem 1.8rem;text-align:center;
+    margin-top:1.5rem;border-radius:6px;
     position:relative;overflow:hidden;
+    box-shadow:0 16px 50px rgba(0,0,0,0.5);
   }
   .start-card::before{
-    content:"";position:absolute;top:0;left:0;right:0;height:3px;
-    background:linear-gradient(90deg,var(--red) 0%,var(--red) 30%,transparent 30%,transparent 35%,var(--red) 35%,var(--red) 38%,transparent 38%,transparent 100%);
+    content:"";position:absolute;top:0;left:0;right:0;height:6px;
+    background:
+      repeating-linear-gradient(90deg,#fff 0 14px,#000 14px 28px);
+    /* checkered top edge */
   }
+  .start-card::after{
+    content:"";position:absolute;top:50%;left:-30%;
+    width:120%;height:120%;
+    background:radial-gradient(ellipse at center,rgba(225,6,0,0.08) 0%,transparent 50%);
+    pointer-events:none;
+    transform:translateY(-50%);
+  }
+  .start-inner{position:relative;z-index:1}
   .start-card .eyebrow{
+    display:inline-flex;align-items:center;gap:0.45rem;
     font-family:'JetBrains Mono',monospace;
-    font-size:0.7rem;letter-spacing:0.2em;text-transform:uppercase;
-    color:var(--red);font-weight:700;margin-bottom:0.8rem;
+    font-size:0.7rem;letter-spacing:0.22em;text-transform:uppercase;
+    color:var(--red);font-weight:700;margin-bottom:0.85rem;margin-top:0.6rem;
+    padding:0.3rem 0.75rem;
+    border:1px solid rgba(225,6,0,0.4);
+    background:rgba(225,6,0,0.08);
   }
+  .start-card .eyebrow::before{
+    content:"";width:6px;height:6px;border-radius:50%;
+    background:var(--red);
+    box-shadow:0 0 8px var(--red);
+    animation:blink 1.6s ease-in-out infinite;
+  }
+  @keyframes blink{0%,100%{opacity:0.4}50%{opacity:1}}
   .start-card h1{
-    font-family:'Titillium Web',sans-serif;
-    font-size:2.6rem;font-weight:900;
-    letter-spacing:-0.02em;margin-bottom:0.6rem;
-    color:#fff;line-height:1;
+    font-family:'Saira Condensed',sans-serif;
+    font-size:3.6rem;font-weight:900;
+    letter-spacing:-0.025em;
+    margin-bottom:0.6rem;
+    color:#fff;line-height:0.9;
+    text-transform:uppercase;
   }
+  .start-card h1 .accent{color:var(--red);font-style:italic;text-shadow:0 0 30px rgba(225,6,0,0.4)}
   .start-card .blurb{
     color:var(--gray);font-size:0.95rem;line-height:1.55;
-    margin:0 auto 1.6rem;max-width:380px;
+    margin:0 auto 1.5rem;max-width:380px;
   }
   .start-features{
     display:flex;justify-content:center;gap:0;
-    border-top:1px solid var(--line);
-    border-bottom:1px solid var(--line);
-    padding:1.2rem 0;margin-bottom:1.5rem;
+    border-top:1px solid var(--line-2);
+    border-bottom:1px solid var(--line-2);
+    padding:1.2rem 0;margin-bottom:1.4rem;
   }
   .start-feat{flex:1;display:flex;flex-direction:column;align-items:center;gap:0.5rem}
-  .start-feat+.start-feat{border-left:1px solid var(--line)}
-  .start-feat .icon{font-size:1.4rem;color:var(--red)}
-  .start-feat .label{font-size:0.78rem;color:var(--white);font-weight:600;letter-spacing:0.06em;text-transform:uppercase}
-  .start-feat .meta{font-family:'JetBrains Mono',monospace;font-size:0.65rem;color:var(--gray-2);letter-spacing:0.06em}
+  .start-feat+.start-feat{border-left:1px solid var(--line-2)}
+  .start-feat .icon{
+    font-size:1.5rem;color:var(--red);
+    text-shadow:0 0 16px rgba(225,6,0,0.5);
+  }
+  .start-feat .label{
+    font-family:'Saira Condensed',sans-serif;
+    font-size:0.95rem;color:var(--white);
+    font-weight:700;letter-spacing:0.1em;text-transform:uppercase;
+  }
+  .start-feat .meta{
+    font-family:'JetBrains Mono',monospace;
+    font-size:0.65rem;color:var(--gray-2);letter-spacing:0.1em;text-transform:uppercase;
+  }
   .start-btn{
-    width:100%;padding:1.05rem;
-    background:var(--red);color:#fff;
-    border:none;font-size:0.9rem;font-weight:700;
-    letter-spacing:0.18em;text-transform:uppercase;
-    cursor:pointer;font-family:'Titillium Web',sans-serif;
+    width:100%;padding:1.1rem;
+    background:linear-gradient(180deg,var(--red-bright) 0%,var(--red) 100%);
+    color:#fff;
+    border:none;font-size:0.95rem;font-weight:800;
+    letter-spacing:0.2em;text-transform:uppercase;
+    cursor:pointer;font-family:'Saira Condensed',sans-serif;
     border-radius:3px;
+    box-shadow:0 6px 24px rgba(225,6,0,0.35),inset 0 1px 0 rgba(255,255,255,0.2);
+    position:relative;overflow:hidden;
+    transition:transform 0.1s,box-shadow 0.15s;
   }
-  .start-btn:hover{background:#ff1801}
+  .start-btn::before{
+    content:"";position:absolute;top:0;left:-30%;width:35%;height:100%;
+    background:linear-gradient(90deg,transparent 0%,rgba(255,255,255,0.22) 50%,transparent 100%);
+    transform:skewX(-20deg);transition:left 0.6s;
+  }
+  .start-btn:hover{
+    transform:translateY(-1px);
+    box-shadow:0 10px 32px rgba(225,6,0,0.5),inset 0 1px 0 rgba(255,255,255,0.25);
+  }
+  .start-btn:hover::before{left:130%}
+  .start-btn:active{transform:translateY(0)}
   .start-btn-ghost{
-    width:100%;padding:0.85rem;
+    width:100%;padding:0.9rem;
     background:transparent;color:var(--gray);
-    border:1px solid var(--line-2);font-size:0.78rem;font-weight:600;
-    letter-spacing:0.14em;text-transform:uppercase;
-    cursor:pointer;font-family:'Titillium Web',sans-serif;
-    border-radius:3px;margin-top:0.55rem;
-    transition:border-color 0.15s,color 0.15s;
+    border:1px solid var(--line-2);
+    font-family:'Saira Condensed',sans-serif;
+    font-size:0.82rem;font-weight:700;
+    letter-spacing:0.18em;text-transform:uppercase;
+    cursor:pointer;border-radius:3px;margin-top:0.55rem;
+    transition:border-color 0.15s,color 0.15s,background 0.15s;
   }
-  .start-btn-ghost:hover{border-color:var(--red);color:#fff}
-  .start-meta{margin-top:1rem;font-family:'JetBrains Mono',monospace;font-size:0.68rem;letter-spacing:0.1em;color:var(--muted)}
+  .start-btn-ghost:hover{border-color:var(--red);color:#fff;background:rgba(225,6,0,0.06)}
+  .start-meta{margin-top:1rem;font-family:'JetBrains Mono',monospace;font-size:0.65rem;letter-spacing:0.18em;color:var(--muted);text-transform:uppercase}
+
+  /* LIGHTS-OUT row — sits above the start card on entry */
+  .lights-row{
+    display:flex;justify-content:center;gap:0.5rem;
+    margin:0.5rem 0 1rem;height:42px;align-items:center;
+  }
+  .light{
+    width:30px;height:30px;border-radius:50%;
+    background:#1a0606;
+    border:2px solid #2a0606;
+    transition:all 0.4s;
+    position:relative;
+  }
+  .light.on{
+    background:radial-gradient(circle at 30% 30%,#ff5040 0%,#e10600 60%,#700 100%);
+    border-color:#ff1801;
+    box-shadow:0 0 20px rgba(225,6,0,0.7),inset 0 0 6px rgba(255,80,40,0.6);
+  }
+  .light.go{
+    background:radial-gradient(circle at 30% 30%,#7fffae 0%,#00d96b 60%,#005a30 100%);
+    border-color:#00d96b;
+    box-shadow:0 0 24px rgba(0,217,107,0.8),inset 0 0 6px rgba(127,255,174,0.6);
+  }
 
   /* SHARE CARD */
   .share-card{
@@ -543,56 +820,109 @@
   }
   .share-label{
     font-family:'JetBrains Mono',monospace;
-    font-size:0.65rem;letter-spacing:0.16em;text-transform:uppercase;
-    color:var(--gray-2);font-weight:600;margin-bottom:0.7rem;
+    font-size:0.62rem;letter-spacing:0.2em;text-transform:uppercase;
+    color:var(--gray-2);font-weight:700;margin-bottom:0.8rem;
   }
   .share-grid{
     font-family:'JetBrains Mono',monospace;
-    font-size:0.95rem;line-height:1.5;
-    background:var(--bg-2);
-    border:1px solid var(--line);
+    font-size:1.05rem;line-height:1.5;
+    background:var(--bg);
+    border:1px solid var(--line-2);
     border-radius:4px;
-    padding:0.85rem;
+    padding:1rem;
     color:var(--white);
     text-align:left;
     white-space:pre;
     overflow-x:auto;
     margin-bottom:0.8rem;
+    box-shadow:inset 0 0 30px rgba(0,0,0,0.6);
   }
   .countdown{
     font-family:'JetBrains Mono',monospace;
-    font-size:0.72rem;color:var(--gray-2);
-    letter-spacing:0.08em;text-transform:uppercase;
+    font-size:0.7rem;color:var(--gray-2);
+    letter-spacing:0.16em;text-transform:uppercase;
     margin-top:0.85rem;
   }
+  .countdown strong{color:var(--white);font-weight:700}
 
-  /* FINAL */
+  /* TIFOSI TIER — final verdict ribbon */
+  .tier-card{
+    background:linear-gradient(180deg,var(--card) 0%,var(--bg-2) 100%);
+    border:1px solid var(--line-2);
+    padding:1.2rem 1.4rem;
+    text-align:center;
+    margin-bottom:0.85rem;
+    border-radius:4px;
+    position:relative;
+    overflow:hidden;
+  }
+  .tier-card::before{
+    content:"";position:absolute;top:0;left:0;right:0;height:3px;
+    background:var(--tier-color,var(--red));
+    box-shadow:0 0 14px var(--tier-color,var(--red));
+  }
+  .tier-eyebrow{
+    font-family:'JetBrains Mono',monospace;
+    font-size:0.62rem;letter-spacing:0.22em;text-transform:uppercase;
+    color:var(--gray-2);font-weight:700;margin-bottom:0.55rem;
+  }
+  .tier-name{
+    font-family:'Saira Condensed',sans-serif;
+    font-size:2.4rem;font-weight:900;
+    letter-spacing:-0.01em;line-height:1;
+    color:var(--tier-color,var(--white));
+    text-transform:uppercase;
+    text-shadow:0 0 30px var(--tier-glow,transparent);
+  }
+  .tier-sub{
+    font-family:'Titillium Web',sans-serif;
+    color:var(--gray);font-size:0.9rem;font-style:italic;
+    margin-top:0.55rem;line-height:1.4;
+  }
+
+  /* FINAL — round list as classification sheet */
   .round-list{
     background:var(--card);
-    border:1px solid var(--line);
-    padding:0.4rem 1rem;margin-bottom:1rem;
-    border-radius:6px;
+    border:1px solid var(--line-2);
+    padding:0.3rem 1rem;margin-bottom:0.85rem;
+    border-radius:4px;
   }
   .round-row{
     display:flex;justify-content:space-between;align-items:center;
-    padding:0.7rem 0;border-bottom:1px solid var(--line);
-    font-size:0.85rem;
+    padding:0.75rem 0;border-bottom:1px solid var(--line-2);
+    font-size:0.85rem;gap:0.6rem;
   }
   .round-row:last-child{border-bottom:none}
-  .round-row .rn{font-family:'JetBrains Mono',monospace;color:var(--red);font-size:0.75rem;width:75px;letter-spacing:0.04em;font-weight:700}
-  .round-row .rt{flex:1;color:var(--gray);font-size:0.82rem}
-  .round-row .rt strong{color:#fff;font-weight:600}
-  .round-row .rs{font-family:'JetBrains Mono',monospace;font-weight:700;color:#fff;font-size:0.9rem}
-  .round-row .rs.bad{color:var(--red)}
-  .round-row .rs.mid{color:var(--yellow)}
-  .round-row .rs.good{color:var(--green)}
+  .round-row .rn{
+    font-family:'JetBrains Mono',monospace;
+    color:var(--red);font-size:0.72rem;width:80px;
+    letter-spacing:0.1em;font-weight:700;
+    flex-shrink:0;
+  }
+  .round-row .rt{flex:1;color:var(--gray);font-size:0.78rem;line-height:1.4}
+  .round-row .rt strong{
+    color:#fff;font-weight:600;
+    font-family:'Saira Condensed',sans-serif;
+    font-size:0.95rem;letter-spacing:0;
+  }
+  .round-row .rs{
+    font-family:'Saira Condensed',sans-serif;
+    font-weight:800;color:#fff;font-size:1.1rem;
+    min-width:50px;text-align:right;
+  }
+  .round-row .rs.bad{color:var(--sec-red)}
+  .round-row .rs.mid{color:var(--sec-yellow)}
+  .round-row .rs.good{color:var(--sec-green)}
+  .round-row .rs.elite{color:var(--sec-purple);text-shadow:0 0 12px rgba(179,0,255,0.4)}
 
   /* responsive */
   @media(max-width:520px){
-    .moment-year-bg{font-size:7rem}
-    .moment-desc{font-size:0.92rem}
-    .start-card h1{font-size:2.1rem}
-    .score-card .pct{font-size:3.6rem}
+    .moment-year-bg{font-size:8rem}
+    .start-card h1{font-size:2.6rem}
+    .score-card .pct{font-size:4.2rem}
+    .dossier-year{font-size:1.7rem}
+    .tier-name{font-size:2rem}
+    .light{width:24px;height:24px}
   }
 </style>
 </head>
@@ -1095,13 +1425,41 @@ function clearState(){
 }
 
 /* =========================================================
+   VISUAL HELPERS — sector tiers + tyre compound mapping
+   ========================================================= */
+// Map a percentage 0..100 to an F1 timing-tower sector tier.
+function tier(pct){
+  if(pct >= 90) return 'purple';   // overall best
+  if(pct >= 65) return 'green';    // personal best
+  if(pct >= 35) return 'yellow';   // mid
+  return 'red';                    // off the pace
+}
+
+// Tyre compound colour cue based on mood
+function tyreForMood(mood){
+  if(mood === 'wet') return 'wet';
+  if(mood === 'night') return 'medium';
+  if(mood === 'classic' || mood === 'history') return 'hard';
+  if(mood === 'sun' || mood === 'heat' || mood === 'dusk') return 'soft';
+  return 'medium';
+}
+function tyreLabelForMood(mood){
+  if(mood === 'wet') return 'Wet';
+  if(mood === 'night') return 'Night';
+  if(mood === 'classic' || mood === 'history') return 'Classic';
+  if(mood === 'sun' || mood === 'heat') return 'Dry';
+  if(mood === 'dusk') return 'Dusk';
+  return 'Race';
+}
+
+/* =========================================================
    RENDER ROOT
    ========================================================= */
 const app = document.getElementById('app');
 const renderTopbar = () => `
   <div class="topbar">
     <div class="top-icon" title="How to play">?</div>
-    <div class="brand"><span class="chev">&gt;&gt;&gt;</span> GRIDGUESSR</div>
+    <div class="brand"><span class="chev">▶</span> GRID<span class="one">GUESSR</span></div>
     <div class="top-icon" title="Share">↗</div>
   </div>
 `;
@@ -1118,27 +1476,29 @@ function renderStart(){
   app.innerHTML = `
     ${renderTopbar()}
     <div class="start-card">
-      <div class="eyebrow">Daily Challenge · Day ${day}</div>
-      <h1>GridGuessr</h1>
-      <p class="blurb">Guess the track and team behind <strong style="color:#fff">7 iconic Formula 1 moments</strong>. Same 7 for everyone, every day.</p>
-      <div class="start-features">
-        <div class="start-feat">
-          <div class="icon">◉</div>
-          <div class="label">Find the Track</div>
-          <div class="meta">${TRACKS.length} circuits</div>
+      <div class="start-inner">
+        <div class="eyebrow">Daily Challenge · Day ${day}</div>
+        <h1>Grid<span class="accent">Guessr</span></h1>
+        <p class="blurb">Seven iconic Formula 1 moments. Guess the <strong style="color:#fff">track</strong> and the <strong style="color:#fff">team</strong>. Same seven for everyone, every day.</p>
+        <div class="start-features">
+          <div class="start-feat">
+            <div class="icon">◉</div>
+            <div class="label">Find the Track</div>
+            <div class="meta">${TRACKS.length} circuits</div>
+          </div>
+          <div class="start-feat">
+            <div class="icon">▲</div>
+            <div class="label">Name the Team</div>
+            <div class="meta">${TEAMS.length} teams</div>
+          </div>
         </div>
-        <div class="start-feat">
-          <div class="icon">▲</div>
-          <div class="label">Name the Team</div>
-          <div class="meta">${TEAMS.length} teams</div>
-        </div>
+        <button class="start-btn" id="startBtn">Lights Out →</button>
+        <button class="start-btn-ghost" id="practiceBtn">Practice Mode · Random 7</button>
+        <div class="start-meta">${ALL_MOMENTS.length} Moments · ${ROUNDS_PER_GAME} Rounds · Max ${(ROUNDS_PER_GAME*TOTAL_PER_ROUND).toLocaleString()} pts</div>
       </div>
-      <button class="start-btn" id="startBtn">Play Today's Puzzle →</button>
-      <button class="start-btn-ghost" id="practiceBtn">Practice Mode (random)</button>
-      <div class="start-meta">${ALL_MOMENTS.length} MOMENTS · ${ROUNDS_PER_GAME} ROUNDS · MAX ${(ROUNDS_PER_GAME*TOTAL_PER_ROUND).toLocaleString()} PTS</div>
     </div>
   `;
-  document.getElementById('startBtn').onclick = () => {
+  document.getElementById('startBtn').onclick = () => playLightsOutThen(() => {
     state.view = 'round';
     state.mode = 'daily';
     state.day = day;
@@ -1148,8 +1508,8 @@ function renderStart(){
     resetRound();
     saveState();
     render();
-  };
-  document.getElementById('practiceBtn').onclick = () => {
+  });
+  document.getElementById('practiceBtn').onclick = () => playLightsOutThen(() => {
     state.view = 'round';
     state.mode = 'practice';
     state.day = null;
@@ -1158,7 +1518,35 @@ function renderStart(){
     state.moments = selectRandomMoments();
     resetRound();
     render();
+  });
+}
+
+// 5 red lights, then GO — F1 race start sequence.
+function playLightsOutThen(cb){
+  // Replace start card buttons with lights row
+  const startBtn = document.getElementById('startBtn');
+  if(!startBtn){ cb(); return; }
+  const card = startBtn.closest('.start-inner') || startBtn.parentElement;
+  const lightsRow = document.createElement('div');
+  lightsRow.className = 'lights-row';
+  lightsRow.innerHTML = '<div class="light"></div>'.repeat(5);
+  card.appendChild(lightsRow);
+  startBtn.style.display = 'none';
+  const ghost = document.getElementById('practiceBtn');
+  if(ghost) ghost.style.display = 'none';
+  const lights = lightsRow.querySelectorAll('.light');
+  let i = 0;
+  const tick = () => {
+    if(i < 5){ lights[i].classList.add('on'); i++; setTimeout(tick, 380); }
+    else {
+      // Hold, then "lights out" (turn green and GO)
+      setTimeout(() => {
+        lights.forEach(l => { l.classList.remove('on'); l.classList.add('go'); });
+        setTimeout(cb, 280);
+      }, 700);
+    }
   };
+  tick();
 }
 
 /* ---------------------- ROUND ---------------------- */
@@ -1225,8 +1613,8 @@ function renderRound(){
           </div>
         </div>
         <div class="moment-foot">
-          <span>${m.foot[1]}</span>
-          <span>MOMENT #${state.roundIdx+1}</span>
+          <span class="tyre-pill"><span class="tyre-dot ${tyreForMood(m.mood)}"></span>${tyreLabelForMood(m.mood)}</span>
+          <span class="moment-id">M·${String(state.roundIdx+1).padStart(2,'0')}</span>
         </div>
       </div>
     </div>
@@ -1360,14 +1748,18 @@ function renderRoundResult(){
     winnerBlock = `<div class="celebration"><div class="celebration-trophy">🏆</div></div>`;
   }
 
+  const pctTier = tier(pct);
+  const trackTier = tier(trackPct);
+  const teamTier = tier(teamPct);
+
   wrap.innerHTML = `
     <div class="score-card">
       <div class="label">Round ${state.roundIdx+1} Result</div>
-      <div class="pct">${pct}%</div>
-      <div class="pts">${sc.total.toLocaleString()} / ${TOTAL_PER_ROUND.toLocaleString()} PTS</div>
+      <div class="pct tier-${pctTier}">${pct}%</div>
+      <div class="pts">${sc.total.toLocaleString()} / ${TOTAL_PER_ROUND.toLocaleString()} pts</div>
       <div class="split">
-        <div><div class="label">Track</div><div class="v">${trackPct}%</div></div>
-        <div><div class="label">Team</div><div class="v">${teamPct}%</div></div>
+        <div><div class="label">Track</div><div class="v tier-${trackTier}">${trackPct}%</div></div>
+        <div><div class="label">Team</div><div class="v tier-${teamTier}">${teamPct}%</div></div>
       </div>
     </div>
 
@@ -1376,28 +1768,28 @@ function renderRoundResult(){
     <div class="dossier">
       <div class="dossier-head">
         <div class="dossier-year">${m.year}</div>
-        <div class="dossier-tags">${m.tags.map(t => `<span class="tag">${t}</span>`).join('')}</div>
+        <div class="dossier-tags">${m.tags.map(t => `<span class="dossier-tag">${t}</span>`).join('')}</div>
       </div>
 
-      <div class="dossier-row">
+      <div class="dossier-row ${trackRight ? 'right' : (trackClose ? 'close' : 'wrong')}">
         <div class="dossier-label">Track</div>
         <div class="dossier-val">
           <span class="dossier-name">${track.name.split('(')[0].trim()}</span>
           <span class="dossier-meta">${track.country}</span>
         </div>
-        <span class="badge ${trackRight ? 'right' : (trackClose ? 'close' : 'wrong')}">${trackRight ? '✓' : (trackClose ? '~' : '✗')}</span>
+        <span class="badge ${trackRight ? 'right' : (trackClose ? 'close' : 'wrong')}">${trackRight ? '✓ Hit' : (trackClose ? '~ Country' : '✗ Miss')}</span>
       </div>
-      ${!trackRight ? `<div class="dossier-your">YOU PICKED: ${pickedTrack ? pickedTrack.name.split('(')[0].trim() : '—'}</div>` : ''}
+      ${!trackRight ? `<div class="dossier-your">You picked: ${pickedTrack ? pickedTrack.name.split('(')[0].trim() : '—'}</div>` : ''}
 
-      <div class="dossier-row">
+      <div class="dossier-row ${teamRight ? 'right' : 'wrong'}">
         <div class="dossier-label">Team</div>
         <div class="dossier-val">
           <span class="dossier-name">${correctTeam ? correctTeam.name : '—'}</span>
           <span class="dossier-meta">${correctTeam ? correctTeam.era : ''}</span>
         </div>
-        <span class="badge ${teamRight ? 'right' : 'wrong'}">${teamRight ? '✓' : '✗'}</span>
+        <span class="badge ${teamRight ? 'right' : 'wrong'}">${teamRight ? '✓ Hit' : '✗ Miss'}</span>
       </div>
-      ${!teamRight ? `<div class="dossier-your">YOU PICKED: ${pickedTeam ? pickedTeam.name : '—'}</div>` : ''}
+      ${!teamRight ? `<div class="dossier-your">You picked: ${pickedTeam ? pickedTeam.name : '—'}</div>` : ''}
 
       <div class="dossier-row">
         <div class="dossier-label">Driver</div>
@@ -1405,7 +1797,7 @@ function renderRoundResult(){
           <span class="dossier-name">${driver.name}</span>
           <span class="dossier-meta">${driver.era}</span>
         </div>
-        <span class="badge info">FYI</span>
+        <span class="badge info">Driver</span>
       </div>
     </div>
 
@@ -1564,34 +1956,43 @@ function renderFinal(){
   const trackPct = Math.round(trackPts / (state.moments.length * PTS_PER_Q) * 100);
   const teamPctTotal = Math.round(teamPts / (state.moments.length * PTS_PER_Q) * 100);
 
-  const verdict = pct >= 90 ? 'Tifosi tier. You watch the practice sessions.'
-                : pct >= 70 ? 'Solid garage hand. You know your eras.'
-                : pct >= 50 ? 'Casual fan with taste.'
-                : pct >= 25 ? 'A few classics in the locker.'
-                : 'Welcome to F1. Stick around — the racing’s good.';
+  const tierData = pct >= 95 ? {name:'Fangio',  sub:'Five-time world champion energy. Are you OK?', color:'var(--sec-purple)', glow:'rgba(179,0,255,0.5)'}
+                : pct >= 85 ? {name:'World Champion', sub:'You watch the practice sessions. Twice.', color:'var(--sec-purple)', glow:'rgba(179,0,255,0.4)'}
+                : pct >= 70 ? {name:'Podium',  sub:'Solid garage hand. You know your eras.', color:'var(--sec-green)',  glow:'rgba(0,217,107,0.4)'}
+                : pct >= 50 ? {name:'In the Points', sub:'Casual fan with taste.', color:'var(--sec-green)',  glow:'rgba(0,217,107,0.3)'}
+                : pct >= 25 ? {name:'Q2 Knockout', sub:'A few classics in the locker.', color:'var(--sec-yellow)', glow:'rgba(240,168,0,0.3)'}
+                :             {name:'Gravel Trap', sub:'Welcome to F1. Stick around — the racing’s good.', color:'var(--sec-red)', glow:'rgba(225,6,0,0.3)'};
 
   const isDaily = state.mode === 'daily';
   const dayLabel = isDaily ? `Day ${state.day}` : 'Practice';
+  const totalTier = tier(pct);
+  const trackTotalTier = tier(trackPct);
+  const teamTotalTier = tier(teamPctTotal);
 
   app.innerHTML = `
     ${renderTopbar()}
     <div class="score-card">
       <div class="label">${isDaily ? 'Final Result · ' + dayLabel : 'Practice Result'}</div>
-      <div class="pct">${pct}%</div>
-      <div class="pts">${totalPts.toLocaleString()} / ${maxPts.toLocaleString()} PTS</div>
+      <div class="pct tier-${totalTier}">${pct}%</div>
+      <div class="pts">${totalPts.toLocaleString()} / ${maxPts.toLocaleString()} pts</div>
       <div class="split">
-        <div><div class="label">Tracks</div><div class="v">${trackPct}%</div></div>
-        <div><div class="label">Teams</div><div class="v">${teamPctTotal}%</div></div>
+        <div><div class="label">Tracks</div><div class="v tier-${trackTotalTier}">${trackPct}%</div></div>
+        <div><div class="label">Teams</div><div class="v tier-${teamTotalTier}">${teamPctTotal}%</div></div>
       </div>
     </div>
-    <div class="flavor">${verdict}</div>
+
+    <div class="tier-card" style="--tier-color:${tierData.color};--tier-glow:${tierData.glow}">
+      <div class="tier-eyebrow">Classification</div>
+      <div class="tier-name">${tierData.name}</div>
+      <div class="tier-sub">${tierData.sub}</div>
+    </div>
 
     ${isDaily ? `
       <div class="share-card">
         <div class="share-label">Spoiler-free share grid</div>
         <pre class="share-grid" id="shareGrid">${escapeHtml(buildShareText())}</pre>
-        <button class="submit-btn" id="shareBtn">📋 Copy Result</button>
-        <div class="countdown" id="countdown">Next puzzle in —</div>
+        <button class="submit-btn" id="shareBtn">Copy Result</button>
+        <div class="countdown" id="countdown">Next puzzle in <strong>—</strong></div>
       </div>
     ` : `
       <button class="submit-btn" id="playAgain">Play Again →</button>
@@ -1604,11 +2005,11 @@ function renderFinal(){
         const d = DRIVERS.find(d=>d.id===m.driver);
         const team = TEAMS.find(x => x.id === TEAM_BY_MOMENT[m.id]);
         const rpct = Math.round(sc.total/TOTAL_PER_ROUND*100);
-        const cls = rpct >= 75 ? 'good' : rpct >= 40 ? 'mid' : 'bad';
+        const cls = rpct >= 95 ? 'elite' : rpct >= 70 ? 'good' : rpct >= 35 ? 'mid' : 'bad';
         return `
           <div class="round-row">
             <div class="rn">R${i+1} · ${m.year}</div>
-            <div class="rt"><strong>${t.name.split('(')[0].trim()}</strong><br><span style="font-size:0.74rem;color:var(--gray-2)">${team ? team.name : '—'} · ${d.name}</span></div>
+            <div class="rt"><strong>${t.name.split('(')[0].trim()}</strong><br><span>${team ? team.name : '—'} · ${d.name}</span></div>
             <div class="rs ${cls}">${rpct}%</div>
           </div>
         `;
@@ -1690,7 +2091,7 @@ function startCountdown(){
     const h = Math.floor(diff / 3600000); diff -= h*3600000;
     const m = Math.floor(diff / 60000);    diff -= m*60000;
     const s = Math.floor(diff / 1000);
-    el.textContent = `Next puzzle in ${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
+    el.innerHTML = `Next puzzle in <strong>${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}</strong>`;
   };
   tick();
   countdownTimer = setInterval(tick, 1000);
