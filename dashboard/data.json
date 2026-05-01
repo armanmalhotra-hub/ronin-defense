@@ -3196,6 +3196,179 @@
       ],
       "stockists": [],
       "bio": "Russian-born watchmaker who works on traditional and conceptual fronts \u2014 the Joker Wristmons reinterpret hours/minutes/moonphase as a face. AHCI member since 2010. Operates from Moscow."
+    },
+    {
+      "name": "Cartier",
+      "tier": 3,
+      "url": "https://www.cartier.com/en-us/watches",
+      "founded": 1847,
+      "cities": [
+        "Paris",
+        "Le Locle"
+      ],
+      "country": "France/Switzerland",
+      "style": "Tank rectangular dress, jewelry-house lineage",
+      "price_range": "$3-30K+",
+      "tags": [
+        "dress",
+        "Tank"
+      ],
+      "bio": "Founded 1847 in Paris by Louis-Fran\u00e7ois Cartier as a jeweler first. Louis Cartier invented the Tank in 1917, modeled on Renault tanks of WWI. Watch production has long since moved to Cartier's Swiss workshops in Le Locle. The Tank is the most recognizable dress-watch silhouette in the world."
+    },
+    {
+      "name": "Rolex",
+      "tier": 3,
+      "url": "https://www.rolex.com/",
+      "founded": 1905,
+      "cities": [
+        "Geneva"
+      ],
+      "country": "Switzerland",
+      "style": "Oyster case, Perpetual rotor, mainstream luxury sport / dress",
+      "price_range": "$6K+",
+      "tags": [
+        "mainstream",
+        "Oyster"
+      ],
+      "bio": "Founded 1905 in London by Hans Wilsdorf, relocated to Geneva in 1919. Pioneered the waterproof Oyster case in 1926 and the Perpetual rotor in 1931. Now the world's most recognized luxury watch maker, vertically integrated and entirely opaque."
+    },
+    {
+      "name": "Omega",
+      "tier": 3,
+      "url": "https://www.omegawatches.com/",
+      "founded": 1848,
+      "cities": [
+        "Bienne"
+      ],
+      "country": "Switzerland",
+      "style": "Co-axial escapement, broad lineup spanning sport / dress",
+      "price_range": "$5-30K+",
+      "tags": [
+        "mainstream",
+        "Co-axial"
+      ],
+      "bio": "Founded 1848 in La Chaux-de-Fonds, Omega has been headquartered in Bienne since 1903. The Speedmaster went to the moon in 1969. Adopted George Daniels' co-axial escapement across the lineup post-2007 \u2014 the brand's most consequential horological move in decades."
+    },
+    {
+      "name": "Patek Philippe",
+      "tier": 1,
+      "url": "https://www.patek.com/",
+      "founded": 1839,
+      "cities": [
+        "Geneva"
+      ],
+      "country": "Switzerland",
+      "style": "Calatrava dress, Nautilus, Grand Complications",
+      "price_range": "$24K+",
+      "tags": [
+        "mainstream",
+        "Stern family"
+      ],
+      "bio": "Founded 1839 in Geneva by Antoni Patek. Owned by the Stern family since 1932 \u2014 one of the last family-owned mainstream Swiss houses. The Calatrava 96, designed in 1932, defined the modern dress watch and remains the brand's restrained pillar reference."
+    },
+    {
+      "name": "Jaeger-LeCoultre",
+      "tier": 3,
+      "url": "https://www.jaeger-lecoultre.com/",
+      "founded": 1833,
+      "cities": [
+        "Le Sentier"
+      ],
+      "country": "Switzerland",
+      "style": "Reverso rectangular, manufacture-des-manufactures supply chain",
+      "price_range": "$9K+",
+      "tags": [
+        "Reverso",
+        "manufacture"
+      ],
+      "bio": "Founded 1833 in Le Sentier by Antoine LeCoultre. Long known as the manufacture des manufactures \u2014 supplier of movements to many of Switzerland's most prestigious houses. The Reverso, born in 1931 as a polo solution with a flippable case, is the most recognized rectangular watch in horology."
+    },
+    {
+      "name": "Tudor",
+      "tier": 3,
+      "url": "https://www.tudorwatch.com/",
+      "founded": 1946,
+      "cities": [
+        "Geneva"
+      ],
+      "country": "Switzerland",
+      "style": "Rolex-sister at accessible tier, vintage-revival sport + dress",
+      "price_range": "$1.8-6K+",
+      "tags": [
+        "sister-brand",
+        "accessible"
+      ],
+      "bio": "Founded 1946 in Geneva by Hans Wilsdorf as Rolex's accessible sibling. After decades of obscurity, the brand's vintage-revival relaunch in 2010 (Black Bay, Heritage Chronograph) restored Tudor as a serious mainstream alternative to its older sister."
+    },
+    {
+      "name": "Hamilton",
+      "tier": 3,
+      "url": "https://www.hamiltonwatch.com/",
+      "founded": 1892,
+      "cities": [
+        "Bienne"
+      ],
+      "country": "USA/Switzerland",
+      "style": "American-heritage military / field watches",
+      "price_range": "$500-3K",
+      "tags": [
+        "accessible",
+        "field",
+        "military"
+      ],
+      "bio": "Founded 1892 in Lancaster, Pennsylvania. Made watches for American railroads and the US military through both World Wars. Now Swiss-owned by Swatch Group and produced in Bienne, but the design language and naming still draws on Hamilton's American military lineage."
+    },
+    {
+      "name": "Junghans",
+      "tier": 3,
+      "url": "https://www.junghans.de/",
+      "founded": 1861,
+      "cities": [
+        "Schramberg"
+      ],
+      "country": "Germany",
+      "style": "Bauhaus minimalism, Max Bill design lineage",
+      "price_range": "$1-3K+",
+      "tags": [
+        "Bauhaus",
+        "Max Bill"
+      ],
+      "bio": "Founded 1861 in Schramberg by Erhard Junghans. Was briefly the world's largest watchmaker before WWI. The 1961 collaboration with Bauhaus designer Max Bill produced the watches that still define the brand's identity \u2014 uncluttered painted dials, domed plexi crystals, hand-wound mechanical simplicity."
+    },
+    {
+      "name": "NOMOS Glash\u00fctte",
+      "tier": 2,
+      "url": "https://nomos-glashuette.com/",
+      "founded": 1990,
+      "cities": [
+        "Glash\u00fctte"
+      ],
+      "country": "Germany",
+      "style": "Bauhaus dress, in-house Alpha and DUW calibers",
+      "price_range": "$1.9-5K",
+      "tags": [
+        "Bauhaus",
+        "Glash\u00fctte",
+        "in-house"
+      ],
+      "bio": "Founded 1990 in Glash\u00fctte, immediately after German reunification, by Roland Schwertner. NOMOS produces ~25,000 watches per year \u2014 small by mainstream standards but large for an indie. The Tangente is the original Bauhaus reference; the in-house Alpha (hand-wound) and DUW caliber families now power the entire lineup."
+    },
+    {
+      "name": "A. Lange & S\u00f6hne",
+      "tier": 1,
+      "url": "https://www.alange-soehne.com/",
+      "founded": 1845,
+      "cities": [
+        "Glash\u00fctte"
+      ],
+      "country": "Germany",
+      "style": "Saxon haute-horlogerie, three-quarter plate, untreated German silver",
+      "price_range": "$21K+",
+      "tags": [
+        "Saxon",
+        "haute-horlogerie"
+      ],
+      "bio": "Founded 1845 in Glash\u00fctte by Ferdinand Adolph Lange \u2014 the founder of Saxon watchmaking. The brand was nationalized after WWII and disappeared until 1990, when Walter Lange (great-grandson) revived it after reunification. Now considered the German pinnacle: untreated German silver three-quarter plates, hand-engraved balance cocks, gold chatons. ~5,500 watches a year."
     }
   ],
   "sellers": [

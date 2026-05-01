@@ -728,15 +728,12 @@ function initPlayStateOnce() {
     stage: "map",
     guessLatLng: null,
     selectedBrand: "",
+    sliderPrice: 5000,
   };
   savePlay();
 }
 
 function priceFor(w) { return w.price_usd ?? w.price_usd_low ?? null; }
-
-function brandPoints(guess, w) {
-  return guess === w.brand ? 50 : 0;
-}
 
 function pricePoints(guess, w) {
   const truth = priceFor(w);
@@ -750,15 +747,16 @@ function pricePoints(guess, w) {
   return 0;
 }
 
-function quipFor(brandPts, locPts) {
-  const b = brandPts > 0;
+function quipFor(locPts, pricePts) {
   const l = locPts >= 28;
-  if (brandPts === 50 && locPts === 50) return "Hajime would weep. You're a menace.";
-  if (b && l) return "Quietly excellent.";
-  if (b && locPts > 0) return "You know the maker. The geography — close-ish.";
-  if (b && !l) return "Right maker. Wrong continent.";
-  if (!b && l) return "Your geography is elite. Your eye is in witness protection.";
-  if (!b && locPts > 0) return "Both guesses orbiting truth. Try again.";
+  const p = pricePts >= 28;
+  if (locPts === 50 && pricePts === 50) return "Hajime would weep. You're a menace.";
+  if (l && p) return "Quietly excellent.";
+  if (l && !p) return "You found the workshop. Now figure out what it costs.";
+  if (!l && p) return "Your pricing is elite. Your geography is in witness protection.";
+  if (l && pricePts > 0) return "Right city. Wrong tier.";
+  if (locPts > 0 && p) return "Right tier. Wrong continent.";
+  if (locPts > 0 || pricePts > 0) return "Both guesses orbiting truth. Try again.";
   return "Big swing, big miss. Tomorrow's another day.";
 }
 
@@ -776,6 +774,7 @@ function startNewDayIfNeeded() {
       stage: "map",
       guessLatLng: null,
       selectedBrand: "",
+      sliderPrice: 5000,
     };
     savePlay();
   }
@@ -869,28 +868,27 @@ async function commitDayResultIfComplete() {
 
 async function submitMap() {
   if (!playState.guessLatLng) return;
-  playState.stage = "brand";
+  playState.stage = "price";
   savePlay();
   renderPlay();
 }
 
-async function submitBrand() {
-  if (!playState.selectedBrand) return;
+async function submitPrice() {
   const w = data.favorites.find(x => x.id === playState.watches[playState.idx]);
   if (!w) return;
   const truth = coordsForWatch(w);
   const km = playState.guessLatLng && truth ? haversineKm(playState.guessLatLng, truth) : null;
   const locPts = locationPoints(km);
-  const brandPts = brandPoints(playState.selectedBrand, w);
+  const pricePts = pricePoints(playState.sliderPrice, w);
   const round = {
     watchId: w.id,
     guessLatLng: playState.guessLatLng,
     actualLatLng: truth,
     locKm: km,
     locPts,
-    brand: playState.selectedBrand,
-    brandPts,
-    total: locPts + brandPts,
+    price: playState.sliderPrice,
+    pricePts,
+    total: locPts + pricePts,
   };
   playState.rounds.push(round);
   playState.stage = "reveal";
@@ -910,6 +908,7 @@ async function nextRound() {
   playState.stage = "map";
   playState.guessLatLng = null;
   playState.selectedBrand = "";
+  playState.sliderPrice = 5000;
   savePlay();
   renderPlay();
 }
@@ -968,6 +967,11 @@ function renderPlay() {
     const isLast = playState.idx + 1 >= playState.watches.length;
     const pct = Math.round(100 * r.total / 100);
     const kmStr = r.locKm == null ? "—" : r.locKm < 1 ? "<1 km" : `${Math.round(r.locKm).toLocaleString()} km`;
+    const truthPrice = priceFor(w);
+    const guessPrice = r.price ?? null;
+    const priceOffStr = (truthPrice && guessPrice != null)
+      ? `$${Math.abs(truthPrice - guessPrice).toLocaleString()} off`
+      : "—";
     stage.className = "play-stage" + (hasImg ? " with-image" : "");
     stage.innerHTML = `
       <img class="silhouette" src="${imgSrc}" alt="${w.brand} ${w.model}" onerror="this.style.display='none'"/>
@@ -977,20 +981,21 @@ function renderPlay() {
         <div class="big-pct">${pct}<span>%</span></div>
         <p class="day-sub">${r.total} / 100 pts</p>
         <h4 class="reveal-watch">${w.brand} — ${w.model}</h4>
+        <p class="reveal-meta">${w.made_in || ""}${w.country ? ", " + w.country : ""} · ${w.price_label || formatPrice(w)}</p>
         ${r.actualLatLng && r.guessLatLng ? `<div id="reveal-map" class="reveal-map"></div>` : ""}
         <div class="reveal-grid">
           <div class="reveal-row">
             <span class="rl">Made in</span>
             <span class="rg">${kmStr} off</span>
-            <span class="rc">${r.locPts > 0 ? `<span class="pts">+${r.locPts}</span>` : ""} <span class="rwrong">${w.made_in || "—"}</span></span>
+            <span class="rc">${r.locPts > 0 ? `<span class="pts">+${r.locPts}</span>` : `<span class="rwrong">+0</span>`}</span>
           </div>
           <div class="reveal-row">
-            <span class="rl">Brand</span>
-            <span class="rg">${r.brand || "—"}</span>
-            <span class="rc">${r.brandPts > 0 ? `<span class="pts">+${r.brandPts}</span>` : `<span class="rwrong">${w.brand}</span>`}</span>
+            <span class="rl">Price</span>
+            <span class="rg">$${(guessPrice ?? 0).toLocaleString()} · ${priceOffStr}</span>
+            <span class="rc">${r.pricePts > 0 ? `<span class="pts">+${r.pricePts}</span>` : `<span class="rwrong">+0</span>`}</span>
           </div>
         </div>
-        <p class="quip">${quipFor(r.brandPts, r.locPts)}</p>
+        <p class="quip">${quipFor(r.locPts, r.pricePts)}</p>
         ${w.note ? `<p class="clue-line" style="color:var(--muted)">${w.note}</p>` : ""}
         ${brandBio(w.brand) ? `<p class="bio reveal-bio"><span class="bio-label">About ${w.brand}</span> ${brandBio(w.brand)}</p>` : ""}
         <div class="play-buttons" style="margin-top:8px">
@@ -1003,9 +1008,9 @@ function renderPlay() {
     return;
   }
 
-  // STAGE: map or brand
+  // STAGE: map | price
   stage.className = "play-stage" + (hasImg ? " with-image" : "");
-  const stageBody = playState.stage === "map" ? renderStageMap(w) : renderStageBrand(w, brands);
+  const stageBody = playState.stage === "map" ? renderStageMap(w) : renderStagePrice(w);
   stage.innerHTML = `
     <img class="silhouette hidden-img" src="${imgSrc}" alt="mystery watch" onerror="this.style.display='none'"/>
     <div class="clue">
@@ -1034,16 +1039,18 @@ function renderPlay() {
     initMap();
     stage.querySelector("#g-submit-map")?.addEventListener("click", submitMap);
     stage.querySelector("#g-skip-map")?.addEventListener("click", nextRound);
-  } else if (playState.stage === "brand") {
-    stage.querySelectorAll(".brand-tile").forEach(b => {
-      b.addEventListener("click", () => {
-        playState.selectedBrand = b.dataset.brand;
-        savePlay();
-        renderPlay();
-      });
+  } else if (playState.stage === "price") {
+    const slider = stage.querySelector("#price-slider");
+    const display = stage.querySelector("#price-display");
+    slider?.addEventListener("input", e => {
+      const pct = +e.target.value;
+      const v = Math.round(sliderToPrice(pct));
+      playState.sliderPrice = v;
+      display.textContent = `$${v.toLocaleString()}`;
     });
-    stage.querySelector("#g-submit-brand")?.addEventListener("click", submitBrand);
-    stage.querySelector("#g-skip-brand")?.addEventListener("click", nextRound);
+    slider?.addEventListener("change", () => savePlay());
+    stage.querySelector("#g-submit-price")?.addEventListener("click", submitPrice);
+    stage.querySelector("#g-skip-price")?.addEventListener("click", nextRound);
   }
 
   renderLeaderboard();

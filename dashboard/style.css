@@ -435,7 +435,11 @@ nav.tabs #search:focus { outline: none; border-bottom-color: var(--ink); }
   border-radius: 2px; font-style: italic; color: var(--ink); font-size: 13px;
 }
 .reveal-watch {
-  margin: 8px 0 4px; font-family: var(--serif); font-size: 18px; font-weight: 600;
+  margin: 8px 0 2px; font-family: var(--serif); font-size: 20px; font-weight: 600;
+}
+.reveal-meta {
+  margin: 0 0 6px; color: var(--muted); font-size: 12px;
+  text-transform: uppercase; letter-spacing: 0.06em;
 }
 
 .day-grid {
