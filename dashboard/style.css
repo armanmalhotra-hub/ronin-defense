@@ -175,6 +175,24 @@ nav.tabs #search:focus { outline: none; border-bottom-color: var(--ink); }
 }
 .card .note.dim { color: var(--muted); }
 
+/* Editorial bio paragraph — used on brand cards and Offhand reveal */
+.bio {
+  margin: 6px 0 0; font-family: var(--serif);
+  font-size: 14px; line-height: 1.55; color: var(--ink);
+  font-weight: 500; letter-spacing: 0.005em;
+}
+.reveal-bio {
+  margin-top: 10px; padding: 10px 14px;
+  background: var(--paper); border-left: 2px solid var(--brass);
+  border-radius: 2px;
+}
+.bio-label {
+  display: block; margin-bottom: 4px;
+  font-family: var(--sans); font-size: 10px;
+  text-transform: uppercase; letter-spacing: 0.12em;
+  color: var(--brass); font-weight: 600;
+}
+
 /* row of small status pills */
 .pills { display: flex; gap: 6px; flex-wrap: wrap; }
 .pill {

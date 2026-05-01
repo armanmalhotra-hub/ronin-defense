@@ -334,14 +334,13 @@ function renderFavorites() {
   });
   for (const w of list) {
     if (!matchesSearch(w.brand, w.model, (w.tags || []).join(" "), w.dial)) continue;
-    const img = w.image
-      ? `<a class="img" href="${w.url}" target="_blank" rel="noopener"><img loading="lazy" alt="${w.brand} ${w.model}" src="${w.image}"/></a>`
-      : "";
+    const imgSrc = w.image || `./images/${w.id}.png`;
+    const img = `<a class="img" href="${w.url}" target="_blank" rel="noopener"><img loading="lazy" alt="${w.brand} ${w.model}" src="${imgSrc}" onerror="this.parentElement.style.display='none'; this.parentElement.parentElement.classList.remove('with-image')"/></a>`;
     const statusClass = w.status === "own-target" || w.status === "lottery" ? "accent"
       : w.status === "available" ? "good"
       : w.status === "salon-only" ? "accent" : "dim";
     grid.insertAdjacentHTML("beforeend", `
-      <article class="card${w.image ? " with-image" : ""}" data-id="${w.id}">
+      <article class="card with-image" data-id="${w.id}">
         ${img}
         <div class="body">
           <h2>${w.model}</h2>
@@ -421,18 +420,23 @@ function renderBrands() {
       <article class="card" data-id="${id}">
         <div class="body">
           <h2>${b.name}</h2>
-          <p class="sub">${(b.cities || []).join(" · ")}${b.founded ? ` · est. ${b.founded}` : ""}</p>
+          <p class="sub">${(b.cities || []).join(" · ")}${b.founded ? ` · est. ${b.founded}` : ""}${b.country ? " · " + b.country : ""}</p>
           <p class="price">${b.price_range || ""}</p>
           <div class="pills">
             <span class="pill accent">Tier ${b.tier}</span>
           </div>
-          ${b.note ? `<p class="note">${b.note}</p>` : ""}
+          ${b.bio ? `<p class="bio">${b.bio}</p>` : (b.note ? `<p class="note">${b.note}</p>` : "")}
           ${stockists ? `<p class="kv">Through: ${stockists}</p>` : ""}
           ${actionFoot(id, b.url, "site")}
         </div>
       </article>`);
   }
   bindCardActions(grid);
+}
+
+function brandBio(brandName) {
+  const b = (data.brands || []).find(x => x.name === brandName);
+  return b?.bio || "";
 }
 
 // Stores: city chips at top, then grid. Tap a chip to filter.
@@ -880,7 +884,8 @@ function renderPlay() {
   const watchId = playState.watches[playState.idx];
   const w = data.favorites.find(x => x.id === watchId);
   const brands = [...new Set(data.favorites.map(x => x.brand))].sort();
-  const hasImg = !!w.image;
+  const imgSrc = w.image || `./images/${w.id}.png`;
+  const hasImg = true; // try always; hidden via onerror if missing
 
   // PROGRESS BAR
   const segs = playState.watches.map((_, i) => {
@@ -895,7 +900,7 @@ function renderPlay() {
     const pct = Math.round(100 * r.total / 100);
     stage.className = "play-stage" + (hasImg ? " with-image" : "");
     stage.innerHTML = `
-      ${hasImg ? `<img class="silhouette" src="${w.image}" alt="${w.brand} ${w.model}"/>` : ""}
+      <img class="silhouette" src="${imgSrc}" alt="${w.brand} ${w.model}" onerror="this.style.display='none'"/>
       <div class="clue">
         <p class="day-label">Round ${playState.idx + 1} of ${playState.watches.length}</p>
         <div class="progress">${segs}</div>
@@ -916,6 +921,7 @@ function renderPlay() {
         </div>
         <p class="quip">${quipFor(r.brandPts, r.pricePts)}</p>
         ${w.note ? `<p class="clue-line" style="color:var(--muted)">${w.note}</p>` : ""}
+        ${brandBio(w.brand) ? `<p class="bio reveal-bio"><span class="bio-label">About ${w.brand}</span> ${brandBio(w.brand)}</p>` : ""}
         <div class="play-buttons" style="margin-top:8px">
           <button id="g-next">${isLast ? "See day result →" : "Next watch →"}</button>
         </div>
@@ -929,7 +935,7 @@ function renderPlay() {
   stage.className = "play-stage" + (hasImg ? " with-image" : "");
   const stageBody = playState.stage === "brand" ? renderStageBrand(w, brands) : renderStagePrice(w);
   stage.innerHTML = `
-    ${hasImg ? `<img class="silhouette hidden-img" src="${w.image}" alt="mystery watch"/>` : ""}
+    <img class="silhouette hidden-img" src="${imgSrc}" alt="mystery watch" onerror="this.style.display='none'"/>
     <div class="clue">
       <p class="day-label">Round ${playState.idx + 1} of ${playState.watches.length}</p>
       <div class="progress">${segs}</div>

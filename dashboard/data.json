@@ -1198,6 +1198,935 @@
       "note": "First Japanese AHCI member; world's only wristwatch wadokei converting traditional seasonal time.",
       "country": "Japan",
       "made_in": "Tokyo"
+    },
+    {
+      "id": "kurono-calendrier-type-i",
+      "brand": "Kurono Tokyo",
+      "model": "Calendrier Type I",
+      "size_mm": 38,
+      "strap": "leather",
+      "dial": "lacquered black, day/date sub-discs, applied indices",
+      "url": "https://kuronotokyo.com/pages/calendrier-type-1",
+      "price_usd_low": 1750,
+      "price_usd_high": 3500,
+      "price_label": "$1,786 retail (sold out) \u00b7 $2,500-3,500 secondary",
+      "status": "watching",
+      "fit": 8,
+      "tags": [
+        "calendar",
+        "discontinued"
+      ],
+      "note": "Original 2022 calendar; line is now retired so secondary only.",
+      "country": "Japan",
+      "made_in": "Tokyo"
+    },
+    {
+      "id": "kurono-tokio-classic-ct003p-bronze",
+      "brand": "Kurono Tokyo",
+      "model": "Tokio Classic CT003P 'Reiwa' Bronze",
+      "size_mm": 36,
+      "strap": "leather",
+      "dial": "bronze outer track with glossy black inner, no numerals",
+      "url": "https://shop.getbezel.com/watches/kurono-tokyo",
+      "price_usd_low": 2500,
+      "price_usd_high": 4500,
+      "price_label": "unverified \u00b7 ~$2,500-4,500 secondary",
+      "status": "watching",
+      "fit": 7,
+      "tags": [
+        "limited 50",
+        "vintage spec",
+        "bronze dial"
+      ],
+      "note": "TiCTAC \u00d7 Asaoka 36mm Reiwa edition limited to 50 pieces.",
+      "country": "Japan",
+      "made_in": "Tokyo"
+    },
+    {
+      "id": "kurono-bunkyo-midnight-blue",
+      "brand": "Kurono Tokyo",
+      "model": "Bunkyo Tokyo Midnight Blue",
+      "size_mm": 37,
+      "strap": "leather",
+      "dial": "midnight blue sunburst, polished sticks at 12/3/6/9",
+      "url": "https://kuronotokyo.com/",
+      "price_usd_low": 2200,
+      "price_usd_high": 4200,
+      "price_label": "unverified \u00b7 ~$2,200-4,200 secondary",
+      "status": "watching",
+      "fit": 8,
+      "tags": [
+        "LE 50",
+        "first series"
+      ],
+      "note": "First-series 2019 Bunkyo Tokyo in deep blue.",
+      "country": "Japan",
+      "made_in": "Tokyo"
+    },
+    {
+      "id": "kurono-bunkyo-mystic-grey",
+      "brand": "Kurono Tokyo",
+      "model": "Bunkyo Tokyo Mystic Grey",
+      "size_mm": 37,
+      "strap": "leather",
+      "dial": "dark sunburst grey, no numerals, railroad minutes",
+      "url": "https://kuronotokyo.com/",
+      "price_usd_low": 2200,
+      "price_usd_high": 4200,
+      "price_label": "unverified \u00b7 ~$2,200-4,200 secondary",
+      "status": "watching",
+      "fit": 8,
+      "tags": [
+        "LE 50",
+        "first series",
+        "subtle grey"
+      ],
+      "note": "Most under-the-radar of the original 2019 trio.",
+      "country": "Japan",
+      "made_in": "Tokyo"
+    },
+    {
+      "id": "kurono-34mm-calligra-silver-white",
+      "brand": "Kurono Tokyo",
+      "model": "34mm Calligra Silver White",
+      "size_mm": 34,
+      "strap": "leather",
+      "dial": "silver-white with hand-designed Breguet numerals",
+      "url": "https://kuronotokyo.com/pages/34mm_2024",
+      "price_usd_low": 1170,
+      "price_usd_high": 2200,
+      "price_label": "$1,170 retail \u00b7 $1,500-2,200 secondary",
+      "status": "watching",
+      "fit": 8,
+      "tags": [
+        "34mm",
+        "Breguet numerals",
+        "188 pcs"
+      ],
+      "note": "First Kurono with Asaoka's bespoke Breguet numerals.",
+      "country": "Japan",
+      "made_in": "Tokyo"
+    },
+    {
+      "id": "kurono-34mm-calligra-stark-black",
+      "brand": "Kurono Tokyo",
+      "model": "34mm Calligra Stark Black",
+      "size_mm": 34,
+      "strap": "leather",
+      "dial": "deep black lacquer, Breguet numerals",
+      "url": "https://kuronotokyo.com/pages/34mm_2024",
+      "price_usd_low": 1170,
+      "price_usd_high": 2200,
+      "price_label": "$1,170 retail \u00b7 $1,500-2,200 secondary",
+      "status": "watching",
+      "fit": 8,
+      "tags": [
+        "34mm",
+        "black dial"
+      ],
+      "note": "Black-dial sibling of the Calligra trio.",
+      "country": "Japan",
+      "made_in": "Tokyo"
+    },
+    {
+      "id": "kurono-34mm-calligra-dark-mop",
+      "brand": "Kurono Tokyo",
+      "model": "34mm Calligra Dark MOP",
+      "size_mm": 34,
+      "strap": "leather",
+      "dial": "dark mother-of-pearl, Breguet numerals",
+      "url": "https://kuronotokyo.com/pages/34mm_2024",
+      "price_usd_low": 1170,
+      "price_usd_high": 2400,
+      "price_label": "$1,170 retail \u00b7 $1,600-2,400 secondary",
+      "status": "watching",
+      "fit": 7,
+      "tags": [
+        "34mm",
+        "MOP"
+      ],
+      "note": "MOP variant \u2014 most visually intricate of the Calligra dial trio.",
+      "country": "Japan",
+      "made_in": "Tokyo"
+    },
+    {
+      "id": "kurono-34mm-star-dial-2025",
+      "brand": "Kurono Tokyo",
+      "model": "34mm Star Dial Special Project",
+      "size_mm": 34,
+      "strap": "leather",
+      "dial": "starburst guilloche-style center, polished sticks",
+      "url": "https://kuronotokyo.com/pages/34mm_2025",
+      "price_usd_low": 1300,
+      "price_usd_high": 2500,
+      "price_label": "unverified \u00b7 ~$1,300 retail",
+      "status": "watching",
+      "fit": 8,
+      "tags": [
+        "34mm",
+        "star pattern",
+        "2025"
+      ],
+      "note": "2025 successor to the Calligra special-project line.",
+      "country": "Japan",
+      "made_in": "Tokyo"
+    },
+    {
+      "id": "kurono-anniversary-reiwa-2024",
+      "brand": "Kurono Tokyo",
+      "model": "2024 Anniversary Reiwa 'Ruri-Numa'",
+      "size_mm": 37,
+      "strap": "leather",
+      "dial": "lapis-green metallic periphery with deep black mirrored center",
+      "url": "https://kuronotokyo.com/pages/2024-anniversary-reiwa",
+      "price_usd_low": 4500,
+      "price_usd_high": 8500,
+      "price_label": "unverified \u00b7 ~$4,500 retail \u00b7 $6,500-8,500 secondary",
+      "status": "watching",
+      "fit": 9,
+      "tags": [
+        "Grand Series",
+        "5th anniversary",
+        "retired"
+      ],
+      "note": "Final Reiwa ever \u2014 only ~5% of dials passed QC. Line retired permanently.",
+      "country": "Japan",
+      "made_in": "Tokyo"
+    },
+    {
+      "id": "naoya-hida-type-4a",
+      "brand": "Naoya Hida & Co.",
+      "model": "NH Type 4A",
+      "size_mm": 36,
+      "strap": "leather",
+      "dial": "German silver, hand-engraved indices, sub-40 sport profile",
+      "url": "https://naoyahidawatch.com/new-release/nh-type-4a/?lang=en",
+      "price_usd_low": 19200,
+      "price_usd_high": 22000,
+      "price_label": "$19,200 retail",
+      "status": "lottery",
+      "fit": 9,
+      "tags": [
+        "sport-leaning dress",
+        "36mm"
+      ],
+      "note": "Sub-40 sports-positioned variant in the Type 4 family.",
+      "country": "Japan",
+      "made_in": "Tokyo"
+    },
+    {
+      "id": "naoya-hida-type-5a",
+      "brand": "Naoya Hida & Co.",
+      "model": "NH Type 5A Rectangular",
+      "size_mm": 26,
+      "strap": "leather",
+      "dial": "two-part German silver, 1930s-inspired rectangular",
+      "url": "https://monochrome-watches.com/naoya-hida-unveils-its-2024-collection-including-a-stunning-rectangular-type-5a-japan-indie-watchmaking-specs-availability-price/",
+      "price_usd_low": 32000,
+      "price_usd_high": 38000,
+      "price_label": "unverified \u00b7 ~$32,000-38,000",
+      "status": "lottery",
+      "fit": 9,
+      "tags": [
+        "rectangular",
+        "Art Deco",
+        "10pc total"
+      ],
+      "note": "26\u00d743.5mm tonneau case, custom calibre 2524SS. 10 pieces 2024-2025.",
+      "country": "Japan",
+      "made_in": "Tokyo"
+    },
+    {
+      "id": "naoya-hida-type-8a-31mm",
+      "brand": "Naoya Hida & Co.",
+      "model": "NH Type 8A 31mm",
+      "size_mm": 31,
+      "strap": "leather",
+      "dial": "engraved German silver, Breguet numerals, sub-seconds",
+      "url": "https://naoyahidawatch.com/?lang=en",
+      "price_usd_low": 18000,
+      "price_usd_high": 24000,
+      "price_label": "unverified \u00b7 ~$18,000-24,000",
+      "status": "lottery",
+      "fit": 8,
+      "tags": [
+        "31mm",
+        "Breguet",
+        "2026"
+      ],
+      "note": "Smallest NH ever at 31mm with new Cal. 2326SS. 2026 release.",
+      "country": "Japan",
+      "made_in": "Tokyo"
+    },
+    {
+      "id": "anordain-model-1-paynes-grey",
+      "brand": "anOrdain",
+      "model": "Model 1 Payne's Grey Fum\u00e9",
+      "size_mm": 38,
+      "strap": "leather",
+      "dial": "Payne's Grey vitreous enamel fum\u00e9 on silver, domed",
+      "url": "https://anordain.com/products/model-1-paynes-grey-fume",
+      "price_usd_low": 2400,
+      "price_usd_high": 2800,
+      "price_label": "~$2,400-2,800 retail",
+      "status": "watching",
+      "fit": 9,
+      "tags": [
+        "enamel",
+        "fum\u00e9"
+      ],
+      "note": "Smoke-grey enamel fum\u00e9 \u2014 collector favorite.",
+      "country": "Scotland",
+      "made_in": "Glasgow"
+    },
+    {
+      "id": "anordain-model-1-oxblood",
+      "brand": "anOrdain",
+      "model": "Model 1 Oxblood",
+      "size_mm": 38,
+      "strap": "leather",
+      "dial": "deep oxblood vitreous enamel",
+      "url": "https://anordain.com/products/model-1-oxblood",
+      "price_usd_low": 2400,
+      "price_usd_high": 2800,
+      "price_label": "~$2,400-2,800 retail",
+      "status": "watching",
+      "fit": 8,
+      "tags": [
+        "enamel",
+        "burgundy"
+      ],
+      "note": "Rich oxblood/burgundy enamel \u2014 saturated alternative to the Plum Fum\u00e9.",
+      "country": "Scotland",
+      "made_in": "Glasgow"
+    },
+    {
+      "id": "anordain-model-1-parisian-blue",
+      "brand": "anOrdain",
+      "model": "Model 1 Parisian Blue",
+      "size_mm": 38,
+      "strap": "leather",
+      "dial": "deep solid Parisian-blue vitreous enamel",
+      "url": "https://anordain.com/products/model-1-parisian-blue",
+      "price_usd_low": 2400,
+      "price_usd_high": 2800,
+      "price_label": "~$2,400-2,800 retail",
+      "status": "watching",
+      "fit": 8,
+      "tags": [
+        "enamel",
+        "blue"
+      ],
+      "note": "Solid (non-fum\u00e9) vitreous enamel blue with crisp gloss surface.",
+      "country": "Scotland",
+      "made_in": "Glasgow"
+    },
+    {
+      "id": "anordain-model-2-brown-fume",
+      "brand": "anOrdain",
+      "model": "Model 2 Brown Fum\u00e9",
+      "size_mm": 36,
+      "strap": "leather",
+      "dial": "warm caramel/tropical brown fum\u00e9 enamel",
+      "url": "https://anordain.com/products/model-2",
+      "price_usd_low": 2300,
+      "price_usd_high": 3500,
+      "price_label": "unverified \u00b7 ~$2,300 retail \u00b7 30pc final run",
+      "status": "watching",
+      "fit": 8,
+      "tags": [
+        "enamel",
+        "tropical",
+        "30pc final"
+      ],
+      "note": "Final fum\u00e9 in the Model 2 series \u2014 30 pieces, tropical-dial vibe.",
+      "country": "Scotland",
+      "made_in": "Glasgow"
+    },
+    {
+      "id": "anordain-model-3-method-aqua",
+      "brand": "anOrdain",
+      "model": "Model 3 Method (Aqua wood-grain)",
+      "size_mm": 39,
+      "strap": "leather",
+      "dial": "carved wood-grain pattern under aqua vitreous enamel",
+      "url": "https://anordain.com/collections/method",
+      "price_usd_low": 4500,
+      "price_usd_high": 6500,
+      "price_label": "unverified \u00b7 ~$4,500-6,500 retail",
+      "status": "watching",
+      "fit": 9,
+      "tags": [
+        "enamel",
+        "wood-grain",
+        "method"
+      ],
+      "note": "Method dials carve wood under translucent enamel \u2014 unique technique.",
+      "country": "Scotland",
+      "made_in": "Glasgow"
+    },
+    {
+      "id": "lang-heyne-konrad",
+      "brand": "Lang & Heyne",
+      "model": "Konrad",
+      "size_mm": 39,
+      "strap": "leather",
+      "dial": "enamel, Roman numerals, off-center sub-seconds",
+      "url": "https://www.lang-und-heyne.de/en/modelle/konrad/",
+      "price_usd_low": 30000,
+      "price_usd_high": 45000,
+      "price_label": "unverified \u00b7 ~$30,000-45,000",
+      "status": "lottery",
+      "fit": 9,
+      "tags": [
+        "enamel",
+        "Saxon",
+        "small seconds"
+      ],
+      "note": "Classical small-seconds dress piece in the Saxon ruler-named series.",
+      "country": "Germany",
+      "made_in": "Radeberg"
+    },
+    {
+      "id": "lang-heyne-anton-tourbillon",
+      "brand": "Lang & Heyne",
+      "model": "Anton Flying Tourbillon",
+      "size_mm": 41,
+      "strap": "leather",
+      "dial": "enamel, Roman numerals, flying tourbillon at 6",
+      "url": "https://www.lang-und-heyne.de/en/modelle/anton/",
+      "price_usd_low": 95000,
+      "price_usd_high": 110000,
+      "price_label": "~\u20ac86k RG / \u20ac99k Pt retail (~$95-110k)",
+      "status": "lottery",
+      "fit": 10,
+      "tags": [
+        "dream",
+        "tourbillon",
+        "atelier flagship"
+      ],
+      "note": "House flagship tourbillon \u2014 atelier-flagship size exception at 41mm.",
+      "country": "Germany",
+      "made_in": "Radeberg"
+    },
+    {
+      "id": "moser-concept-funky-blue-wg",
+      "brand": "H. Moser & Cie.",
+      "model": "Endeavour Centre Seconds Concept Funky Blue (WG)",
+      "size_mm": 40,
+      "strap": "leather",
+      "dial": "Funky Blue fum\u00e9, no logo, no indices",
+      "url": "https://h-moser.com/",
+      "price_usd_low": 22000,
+      "price_usd_high": 26000,
+      "price_label": "unverified \u00b7 ~$22,000-26,000 retail",
+      "status": "watching",
+      "fit": 9,
+      "tags": [
+        "fum\u00e9",
+        "no-logo",
+        "white gold"
+      ],
+      "note": "WG version of the Funky Blue Concept \u2014 limited 100.",
+      "country": "Switzerland",
+      "made_in": "Schaffhausen"
+    },
+    {
+      "id": "moser-concept-blue-lagoon",
+      "brand": "H. Moser & Cie.",
+      "model": "Endeavour Centre Seconds Concept Blue Lagoon (WG)",
+      "size_mm": 40,
+      "strap": "leather",
+      "dial": "Blue Lagoon fum\u00e9, tropical-water turquoise gradient",
+      "url": "https://h-moser.com/",
+      "price_usd_low": 22000,
+      "price_usd_high": 28000,
+      "price_label": "~\u20ac21,000 retail",
+      "status": "watching",
+      "fit": 9,
+      "tags": [
+        "fum\u00e9",
+        "no-logo",
+        "LE 50"
+      ],
+      "note": "SIHH 2019 Blue Lagoon, 50pc WG.",
+      "country": "Switzerland",
+      "made_in": "Schaffhausen"
+    },
+    {
+      "id": "moser-concept-cosmic-green",
+      "brand": "H. Moser & Cie.",
+      "model": "Endeavour Centre Seconds Concept Cosmic Green",
+      "size_mm": 40,
+      "strap": "leather",
+      "dial": "Cosmic Green fum\u00e9, deep emerald-to-black gradient",
+      "url": "https://h-moser.com/",
+      "price_usd_low": 24000,
+      "price_usd_high": 32000,
+      "price_label": "unverified \u00b7 ~$24-32K (LE 20)",
+      "status": "lottery",
+      "fit": 10,
+      "tags": [
+        "dream",
+        "fum\u00e9",
+        "LE 20"
+      ],
+      "note": "Limited to 20 pieces \u2014 rarest of the Concept colors.",
+      "country": "Switzerland",
+      "made_in": "Schaffhausen"
+    },
+    {
+      "id": "moser-concept-burgundy",
+      "brand": "H. Moser & Cie.",
+      "model": "Endeavour Centre Seconds Concept Burgundy",
+      "size_mm": 40,
+      "strap": "leather",
+      "dial": "Burgundy fum\u00e9, wine-red gradient",
+      "url": "https://h-moser.com/",
+      "price_usd_low": 22000,
+      "price_usd_high": 28000,
+      "price_label": "unverified \u00b7 ~$22-28K",
+      "status": "watching",
+      "fit": 9,
+      "tags": [
+        "fum\u00e9",
+        "burgundy",
+        "5th anniversary"
+      ],
+      "note": "5th-anniversary Concept color.",
+      "country": "Switzerland",
+      "made_in": "Schaffhausen"
+    },
+    {
+      "id": "garrick-s2-deadbeat",
+      "brand": "Garrick",
+      "model": "S2 Deadbeat Seconds",
+      "size_mm": 40,
+      "strap": "leather",
+      "dial": "engine-turned silver with applied chapter ring",
+      "url": "https://garrick.co.uk/products/s2-timepiece",
+      "price_usd_low": 30000,
+      "price_usd_high": 35000,
+      "price_label": "\u00a323,000 ex-VAT (~$29-35K)",
+      "status": "watching",
+      "fit": 9,
+      "tags": [
+        "deadbeat seconds",
+        "guilloche"
+      ],
+      "note": "Norwich-built Cal. DB-G06; 24-month build queue.",
+      "country": "United Kingdom",
+      "made_in": "Norfolk"
+    },
+    {
+      "id": "garrick-s3-mk2",
+      "brand": "Garrick",
+      "model": "S3 MK2 Openworked",
+      "size_mm": 40,
+      "strap": "leather",
+      "dial": "openworked, hand-skeletonized bridges, applied indices",
+      "url": "https://garrick.co.uk/products/s3-timepiece",
+      "price_usd_low": 28000,
+      "price_usd_high": 36000,
+      "price_label": "unverified \u00b7 ~\u00a322,000 ex-VAT",
+      "status": "watching",
+      "fit": 8,
+      "tags": [
+        "openworked",
+        "in-house UT-G04"
+      ],
+      "note": "Updated S3 with openworked Calibre UT-G04.",
+      "country": "United Kingdom",
+      "made_in": "Norfolk"
+    },
+    {
+      "id": "carl-suchy-waltz-blue-danube",
+      "brand": "Carl Suchy & S\u00f6hne",
+      "model": "Waltz N\u00b01 Blue Danube",
+      "size_mm": 41,
+      "strap": "leather",
+      "dial": "blue ribbed Viennese-modernism, alternating polished/brushed surfaces",
+      "url": "https://www.carlsuchy.com/",
+      "price_usd_low": 8500,
+      "price_usd_high": 11500,
+      "price_label": "unverified \u00b7 ~CHF 8,500 retail",
+      "status": "watching",
+      "fit": 8,
+      "tags": [
+        "Vienna",
+        "Viennese modernism"
+      ],
+      "note": "Dial pattern echoes Adolf Loos / Josef Hoffmann ornament.",
+      "country": "Austria",
+      "made_in": "Vienna"
+    },
+    {
+      "id": "carl-suchy-waltz-hoffmann",
+      "brand": "Carl Suchy & S\u00f6hne",
+      "model": "Waltz N\u00b01 Hoffmann Edition",
+      "size_mm": 41,
+      "strap": "leather",
+      "dial": "ultra-thin checkerboard pattern in tribute to Josef Hoffmann",
+      "url": "https://www.carlsuchy.com/",
+      "price_usd_low": 9500,
+      "price_usd_high": 13500,
+      "price_label": "unverified \u00b7 ~$9,500-13,500",
+      "status": "watching",
+      "fit": 9,
+      "tags": [
+        "LE",
+        "ultra-thin",
+        "Hoffmann tribute"
+      ],
+      "note": "Architectural Hoffmann-grid dial \u2014 Vienna's clearest design statement.",
+      "country": "Austria",
+      "made_in": "Vienna"
+    },
+    {
+      "id": "carl-suchy-waltz-skeleton",
+      "brand": "Carl Suchy & S\u00f6hne",
+      "model": "Waltz N\u00b01 Skeleton",
+      "size_mm": 41,
+      "strap": "leather",
+      "dial": "openworked hand-polished movement view",
+      "url": "https://www.carlsuchy.com/",
+      "price_usd_low": 14000,
+      "price_usd_high": 22000,
+      "price_label": "unverified \u00b7 ~$14-22K (steel)",
+      "status": "watching",
+      "fit": 8,
+      "tags": [
+        "skeleton",
+        "limited"
+      ],
+      "note": "Skeleton variant exposing hand-finished Soprod-base movement.",
+      "country": "Austria",
+      "made_in": "Vienna"
+    },
+    {
+      "id": "auffret-tourbillon-a-paris",
+      "brand": "Th\u00e9o Auffret",
+      "model": "Tourbillon \u00e0 Paris (Souscription)",
+      "size_mm": 39,
+      "strap": "leather",
+      "dial": "frosted silver, hand-engraved chapter ring, exposed tourbillon",
+      "url": "https://www.acollectedman.com/collections/auffret-paris",
+      "price_usd_low": 115000,
+      "price_usd_high": 122000,
+      "price_label": "\u20ac108,000 ex-VAT (~$115-122K)",
+      "status": "lottery",
+      "fit": 10,
+      "tags": [
+        "dream",
+        "tourbillon",
+        "souscription"
+      ],
+      "note": "Subscription tourbillon by France's most-watched young watchmaker.",
+      "country": "France",
+      "made_in": "Paris"
+    },
+    {
+      "id": "brivet-naudot-eccentricity",
+      "brand": "Cyril Brivet-Naudot",
+      "model": "Eccentricity",
+      "size_mm": 39,
+      "strap": "leather",
+      "dial": "frosted gold, key-wound, libre excentrique escapement visible",
+      "url": "https://watchesbysjx.com/2020/03/brivet-naudot-eccentricity.html",
+      "price_usd_low": 80000,
+      "price_usd_high": 90000,
+      "price_label": "CHF 75,000 (~$82K)",
+      "status": "lottery",
+      "fit": 10,
+      "tags": [
+        "dream",
+        "no-CNC",
+        "key-wind"
+      ],
+      "note": "Made entirely without CNC \u2014 every part hand-cut. Single-maker in Brittany.",
+      "country": "France",
+      "made_in": "Brittany"
+    },
+    {
+      "id": "brivet-naudot-eccentricity-rdm",
+      "brand": "Cyril Brivet-Naudot",
+      "model": "Eccentricity R\u00e9serve de Marche",
+      "size_mm": 39,
+      "strap": "leather",
+      "dial": "frosted gold, retrograde power-reserve hand at 12",
+      "url": "https://www.acollectedman.com/",
+      "price_usd_low": 95000,
+      "price_usd_high": 110000,
+      "price_label": "unverified \u00b7 ~$95-110K",
+      "status": "lottery",
+      "fit": 10,
+      "tags": [
+        "dream",
+        "power reserve",
+        "no-CNC"
+      ],
+      "note": "Updated Eccentricity with retrograde PR; entirely hand-fabricated.",
+      "country": "France",
+      "made_in": "Brittany"
+    },
+    {
+      "id": "prokop-broz-fenix",
+      "brand": "Prokop & Bro\u017e",
+      "model": "Fenix",
+      "size_mm": 41,
+      "strap": "leather",
+      "dial": "industrial-modernist sandwich dial, sub-seconds",
+      "url": "https://www.prokop-broz.cz/en/",
+      "price_usd_low": 4000,
+      "price_usd_high": 7500,
+      "price_label": "unverified \u00b7 ~$4,000-7,500",
+      "status": "watching",
+      "fit": 7,
+      "tags": [
+        "Czech",
+        "small batch",
+        "Wenceslas Square"
+      ],
+      "note": "Designer-watchmaker pairing in Prague; private and limited editions.",
+      "country": "Czech Republic",
+      "made_in": "Prague"
+    },
+    {
+      "id": "minhoon-yoo-carved-piece",
+      "brand": "Minhoon Yoo",
+      "model": "The Carved Piece",
+      "size_mm": 38,
+      "strap": "leather",
+      "dial": "hand-carved freehand silver, hand-cut applied indices",
+      "url": "https://minhoonyoo.com/",
+      "price_usd_low": 18000,
+      "price_usd_high": 22000,
+      "price_label": "$18,000 retail",
+      "status": "watching",
+      "fit": 9,
+      "tags": [
+        "hand-carved",
+        "Korean indie"
+      ],
+      "note": "Seoul's first internationally-recognized indie watchmaker.",
+      "country": "South Korea",
+      "made_in": "Seoul"
+    },
+    {
+      "id": "moi-watch-tourbillon-ii",
+      "brand": "MOI Watch",
+      "model": "MOI Tourbillon II",
+      "size_mm": 40,
+      "strap": "leather",
+      "dial": "hand-finished silver, exposed tourbillon at 6",
+      "url": "https://masterhorologer.com/moi-watch/",
+      "price_usd_low": 35000,
+      "price_usd_high": 60000,
+      "price_label": "unverified \u00b7 price by inquiry",
+      "status": "watching",
+      "fit": 8,
+      "tags": [
+        "Korean",
+        "tourbillon"
+      ],
+      "note": "Han Moi Kim's atelier \u2014 Korea's quietest indie pioneer.",
+      "country": "South Korea",
+      "made_in": "Seoul"
+    },
+    {
+      "id": "sjoo-sandstrom-royal-steel-36",
+      "brand": "Sj\u00f6\u00f6 Sandstr\u00f6m",
+      "model": "Royal Steel Classic 36mm",
+      "size_mm": 36,
+      "strap": "leather",
+      "dial": "lacquered with applied indices, made-to-order",
+      "url": "https://www.sjoosandstrom.com/products/royal-steel-classic-36mm",
+      "price_usd_low": 3500,
+      "price_usd_high": 5500,
+      "price_label": "unverified \u00b7 ~SEK 35-45k (~$3,500-5,500)",
+      "status": "watching",
+      "fit": 7,
+      "tags": [
+        "Swedish",
+        "made-to-order"
+      ],
+      "note": "Each watch assembled and fine-tuned in Stockholm.",
+      "country": "Sweden",
+      "made_in": "Stockholm"
+    },
+    {
+      "id": "gos-sarek-damascus",
+      "brand": "GoS Watches",
+      "model": "Sarek (Damascus dial)",
+      "size_mm": 39,
+      "strap": "leather",
+      "dial": "hand-forged Damascus steel pattern, blued steel hands",
+      "url": "https://www.goswatches.com/sarek",
+      "price_usd_low": 8500,
+      "price_usd_high": 12000,
+      "price_label": "$8,500-12,000 retail (varies by dial)",
+      "status": "watching",
+      "fit": 9,
+      "tags": [
+        "Damascus",
+        "Viking craft"
+      ],
+      "note": "Master bladesmith + master watchmaker partnership; each Damascus dial unique.",
+      "country": "Sweden",
+      "made_in": "Link\u00f6ping"
+    },
+    {
+      "id": "gos-fullero-sword",
+      "brand": "GoS Watches",
+      "model": "Fuller\u00f6 Sword",
+      "size_mm": 40,
+      "strap": "leather",
+      "dial": "Damascus forged from Viking-style blade, raw or midnight blue",
+      "url": "https://www.goswatches.com/",
+      "price_usd_low": 11500,
+      "price_usd_high": 13500,
+      "price_label": "$11,500-13,500 ex-VAT retail",
+      "status": "watching",
+      "fit": 9,
+      "tags": [
+        "Damascus",
+        "Viking blade"
+      ],
+      "note": "Dial forged from sword steel \u2014 literal Viking craft story.",
+      "country": "Sweden",
+      "made_in": "Link\u00f6ping"
+    },
+    {
+      "id": "lehmann-intemporal-1",
+      "brand": "Lehmann",
+      "model": "Intemporal 1",
+      "size_mm": 39,
+      "strap": "leather",
+      "dial": "purist three-hand, hand-finished, in-house electroplating",
+      "url": "https://www.lehmann-uhren.de/en/Home",
+      "price_usd_low": 7000,
+      "price_usd_high": 12000,
+      "price_label": "unverified \u00b7 ~\u20ac6,250+ retail",
+      "status": "watching",
+      "fit": 7,
+      "tags": [
+        "Black Forest",
+        "in-house",
+        "old Junghans building"
+      ],
+      "note": "Schramberg manufacture in old Junghans building.",
+      "country": "Germany",
+      "made_in": "Schramberg"
+    },
+    {
+      "id": "andersen-jumping-hours-platinum",
+      "brand": "Andersen Gen\u00e8ve",
+      "model": "Jumping Hours 40th Anniversary (Platinum)",
+      "size_mm": 38,
+      "strap": "leather",
+      "dial": "guilloch\u00e9 silver with jumping hour aperture, sub-minute disc",
+      "url": "https://watchesbysjx.com/2021/06/andersen-geneve-jumping-hours-platinum.html",
+      "price_usd_low": 45000,
+      "price_usd_high": 55000,
+      "price_label": "CHF 41,600 retail (~$45-55K)",
+      "status": "lottery",
+      "fit": 10,
+      "tags": [
+        "dream",
+        "jumping hours",
+        "guilloch\u00e9"
+      ],
+      "note": "Svend Andersen's signature jumping hour at his 40th anniversary.",
+      "country": "Switzerland",
+      "made_in": "Geneva"
+    },
+    {
+      "id": "andersen-rising-sun",
+      "brand": "Andersen Gen\u00e8ve",
+      "model": "Jumping Hours Rising Sun (Japan-only)",
+      "size_mm": 38,
+      "strap": "leather",
+      "dial": "red lacquer with hand-engraved rising-sun rays, jumping hour at 12",
+      "url": "https://monochrome-watches.com/",
+      "price_usd_low": 52000,
+      "price_usd_high": 60000,
+      "price_label": "CHF 48,800 retail",
+      "status": "lottery",
+      "fit": 9,
+      "tags": [
+        "LE",
+        "Japan-exclusive",
+        "jumping hours"
+      ],
+      "note": "Japan-only platinum LE; rising-sun motif by Eric Ertz.",
+      "country": "Switzerland",
+      "made_in": "Geneva"
+    },
+    {
+      "id": "debethune-db28xs-meteorite",
+      "brand": "De Bethune",
+      "model": "DB28xs Meteorite",
+      "size_mm": 39,
+      "strap": "leather",
+      "dial": "hand-finished meteorite with mirror-polished moon",
+      "url": "https://www.debethune.ch/en/collections/db28-collection",
+      "price_usd_low": 80000,
+      "price_usd_high": 100000,
+      "price_label": "unverified \u00b7 ~$80-100K",
+      "status": "lottery",
+      "fit": 10,
+      "tags": [
+        "dream",
+        "meteorite",
+        "floating lugs"
+      ],
+      "note": "39mm DB28; meteorite dial \u2014 most cosmic of the line.",
+      "country": "Switzerland",
+      "made_in": "Sainte-Croix"
+    },
+    {
+      "id": "debethune-db28xp-steel-wheels",
+      "brand": "De Bethune",
+      "model": "DB28XP Steel Wheels",
+      "size_mm": 40,
+      "strap": "leather",
+      "dial": "semi-skeletonized polished titanium, exposed balance",
+      "url": "https://www.debethune.ch/",
+      "price_usd_low": 90000,
+      "price_usd_high": 115000,
+      "price_label": "unverified \u00b7 ~$90-115K",
+      "status": "lottery",
+      "fit": 9,
+      "tags": [
+        "dream",
+        "titanium",
+        "skeletonized"
+      ],
+      "note": "Ultra-thin variant with floating lug system and exposed balance.",
+      "country": "Switzerland",
+      "made_in": "Sainte-Croix"
+    },
+    {
+      "id": "chaykin-joker-classic",
+      "brand": "Konstantin Chaykin",
+      "model": "Joker Classic",
+      "size_mm": 38,
+      "strap": "leather",
+      "dial": "guilloch\u00e9 face-dial, hours/minutes as eyes, moonphase mouth",
+      "url": "https://konstantinchaykin.com/",
+      "price_usd_low": 23600,
+      "price_usd_high": 30000,
+      "price_label": "$23,600 retail",
+      "status": "watching",
+      "fit": 7,
+      "tags": [
+        "Wristmons",
+        "moonphase",
+        "face-dial"
+      ],
+      "note": "Most iconic Wristmon \u2014 multi-layer hand-finished face dial.",
+      "country": "Russia",
+      "made_in": "Moscow"
     }
   ],
   "brands": [
@@ -1617,6 +2546,228 @@
       ],
       "stockists": [],
       "bio": "Stepan Sarpaneva's Helsinki brand \u2014 distinctive at a glance for the human-faced moonphase and the seven-armed scalloped case. Trained at Parmigiani / Vianney Halter. Output: low double digits to ~50 a year."
+    },
+    {
+      "name": "Carl Suchy & S\u00f6hne",
+      "tier": 2,
+      "url": "https://www.carlsuchy.com/",
+      "founded": 2017,
+      "cities": [
+        "Vienna"
+      ],
+      "country": "Austria",
+      "style": "Viennese-modernism dials, Hoffmann-grid patterns",
+      "price_range": "$8.5-22K",
+      "tags": [
+        "Vienna",
+        "Viennese Werkst\u00e4tte"
+      ],
+      "stockists": [],
+      "bio": "Austrian revival brand reborn in 2017, drawing on a 200-year-old Viennese watchmaking name. The Waltz N\u00b01 dial pattern echoes Adolf Loos and Josef Hoffmann ornament \u2014 pure Wiener Werkst\u00e4tte. Movements assembled in Switzerland, finished in Vienna."
+    },
+    {
+      "name": "Th\u00e9o Auffret",
+      "tier": 1,
+      "url": "https://www.acollectedman.com/collections/auffret-paris",
+      "founded": 2018,
+      "cities": [
+        "Paris"
+      ],
+      "country": "France",
+      "style": "Hand-built tourbillons, frosted silver dials",
+      "price_range": "$115-145K",
+      "tags": [
+        "AHCI",
+        "tourbillon"
+      ],
+      "stockists": [
+        {
+          "name": "A Collected Man",
+          "url": "https://www.acollectedman.com/collections/auffret-paris"
+        }
+      ],
+      "bio": "Young French independent who emerged with a hand-built tourbillon as his d\u00e9but piece \u2014 the Tourbillon \u00e0 Paris souscription. Trained at Geneva's WOSTEP, now operates from Paris. Distributed exclusively via A Collected Man."
+    },
+    {
+      "name": "Cyril Brivet-Naudot",
+      "tier": 1,
+      "url": "https://watchesbysjx.com/2020/03/brivet-naudot-eccentricity.html",
+      "founded": 2018,
+      "cities": [
+        "Brittany"
+      ],
+      "country": "France",
+      "style": "Hand-cut, no-CNC, key-wound",
+      "price_range": "$80-110K",
+      "tags": [
+        "AHCI",
+        "no-CNC",
+        "key-wind"
+      ],
+      "stockists": [],
+      "bio": "Single-maker in coastal Brittany who builds his Eccentricity entirely without CNC \u2014 every wheel and pinion hand-cut on a treadle lathe. The 'libre excentrique' escapement is his own design. Roughly three watches a year."
+    },
+    {
+      "name": "Prokop & Bro\u017e",
+      "tier": 3,
+      "url": "https://www.prokop-broz.cz/en/",
+      "founded": 2017,
+      "cities": [
+        "Prague"
+      ],
+      "country": "Czech Republic",
+      "style": "Industrial-modernist sandwich dials",
+      "price_range": "$4-7.5K",
+      "tags": [
+        "Czech",
+        "Wenceslas Square"
+      ],
+      "stockists": [],
+      "bio": "Designer Tom\u00e1\u0161 Prokop and watchmaker Petr Bro\u017e, working from a Wenceslas Square atelier in Prague. Industrial-modernist sandwich dials. One of the few active Czech ateliers operating in the indie tradition."
+    },
+    {
+      "name": "Minhoon Yoo",
+      "tier": 2,
+      "url": "https://minhoonyoo.com/",
+      "founded": 2018,
+      "cities": [
+        "Seoul"
+      ],
+      "country": "South Korea",
+      "style": "Hand-carved freehand silver dials",
+      "price_range": "$18-22K",
+      "tags": [
+        "Korean indie",
+        "hand-carved"
+      ],
+      "stockists": [],
+      "bio": "Korea's first internationally recognized indie watchmaker. Replaces guilloch\u00e9 with hand-carved freehand silver dials cut directly with a graver. The Carved Piece is the debut. Operating since the late 2010s."
+    },
+    {
+      "name": "MOI Watch",
+      "tier": 3,
+      "url": "https://masterhorologer.com/moi-watch/",
+      "founded": 2010,
+      "cities": [
+        "Seoul"
+      ],
+      "country": "South Korea",
+      "style": "Tourbillon-focused, traditional finishing",
+      "price_range": "$35-60K",
+      "tags": [
+        "Korean",
+        "tourbillon"
+      ],
+      "stockists": [],
+      "bio": "Korea's most established indie watchmaker \u2014 design, production, and QC all by Han Moi Kim. Tourbillon-focused work with traditional hand-finishing. Korean horology's quiet pioneer."
+    },
+    {
+      "name": "Sj\u00f6\u00f6 Sandstr\u00f6m",
+      "tier": 3,
+      "url": "https://www.sjoosandstrom.com/",
+      "founded": 1986,
+      "cities": [
+        "Stockholm"
+      ],
+      "country": "Sweden",
+      "style": "Made-to-order Swedish dress",
+      "price_range": "$3.5-5.5K",
+      "tags": [
+        "Swedish",
+        "MTO"
+      ],
+      "stockists": [],
+      "bio": "Swedish made-to-order watchmaker; each piece assembled and regulated in Stockholm. Royal Steel Classic 36mm is the brand's restrained dress reference. Smaller-batch than the Nordic peers."
+    },
+    {
+      "name": "GoS Watches",
+      "tier": 2,
+      "url": "https://www.goswatches.com/",
+      "founded": 2007,
+      "cities": [
+        "Link\u00f6ping"
+      ],
+      "country": "Sweden",
+      "style": "Hand-forged Damascus steel dials",
+      "price_range": "$8.5-13.5K",
+      "tags": [
+        "Damascus",
+        "Viking craft"
+      ],
+      "stockists": [],
+      "bio": "Master bladesmith and master watchmaker partnership in Sweden, producing watches with hand-forged Damascus steel dials. The Fuller\u00f6 Sword dial is forged from an actual Viking-style blade. Each Damascus dial is unique."
+    },
+    {
+      "name": "Lehmann",
+      "tier": 3,
+      "url": "https://www.lehmann-uhren.de/en/Home",
+      "founded": 2009,
+      "cities": [
+        "Schramberg"
+      ],
+      "country": "Germany",
+      "style": "Vertically-integrated Black Forest manufacture",
+      "price_range": "$7-12K",
+      "tags": [
+        "Black Forest",
+        "in-house"
+      ],
+      "stockists": [],
+      "bio": "German manufacture in the old Junghans building \u2014 Black Forest watchmaking with almost all parts produced in-house. The Intemporal 1 is the entry to the line. Uncommon among accessible-tier brands for actual vertical integration."
+    },
+    {
+      "name": "Andersen Gen\u00e8ve",
+      "tier": 1,
+      "url": "https://www.andersen-geneve.ch/",
+      "founded": 1980,
+      "cities": [
+        "Geneva"
+      ],
+      "country": "Switzerland",
+      "style": "Jumping hours, guilloch\u00e9, one-of-ones",
+      "price_range": "$45-60K",
+      "tags": [
+        "AHCI",
+        "jumping hours"
+      ],
+      "stockists": [],
+      "bio": "Svend Andersen's Geneva atelier (founded 1980) \u2014 pioneering AHCI member known for jumping-hour displays and one-of-one pieces. Eric Ertz now leads the workshop. ~50 watches a year. The hidden gem of Geneva indie watchmaking."
+    },
+    {
+      "name": "De Bethune",
+      "tier": 1,
+      "url": "https://www.debethune.ch/",
+      "founded": 2002,
+      "cities": [
+        "Sainte-Croix"
+      ],
+      "country": "Switzerland",
+      "style": "Floating lugs, mirror-polished spheres, blued titanium",
+      "price_range": "$80-115K",
+      "tags": [
+        "AHCI",
+        "floating lugs"
+      ],
+      "stockists": [],
+      "bio": "Founded 2002 by Denis Flageollet and David Zanetta \u2014 radical movement architecture (floating lugs, mirror-polished spheres, blued titanium). The DB28 series is the design statement. Around 200 watches a year."
+    },
+    {
+      "name": "Konstantin Chaykin",
+      "tier": 2,
+      "url": "https://konstantinchaykin.com/",
+      "founded": 2003,
+      "cities": [
+        "Moscow"
+      ],
+      "country": "Russia",
+      "style": "Wristmons face-dials, hand-finished",
+      "price_range": "$23-30K",
+      "tags": [
+        "AHCI",
+        "Wristmons"
+      ],
+      "stockists": [],
+      "bio": "Russian-born watchmaker who works on traditional and conceptual fronts \u2014 the Joker Wristmons reinterpret hours/minutes/moonphase as a face. AHCI member since 2010. Operates from Moscow."
     }
   ],
   "sellers": [
