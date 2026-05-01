@@ -1283,6 +1283,33 @@
       ]
     }
   ],
+  "surveys": [
+    {
+      "id": "gift-pick",
+      "question": "If we chip in to gift Arman one watch, which?",
+      "scope": "all"
+    },
+    {
+      "id": "best-under-3k",
+      "question": "Best buy under $3,000 (secondary OK)",
+      "scope": "max_price_3000"
+    },
+    {
+      "id": "best-urushi",
+      "question": "Most beautiful urushi dial",
+      "scope": "tag:urushi"
+    },
+    {
+      "id": "best-small-case",
+      "question": "Best 34-37mm dress watch in the catalog",
+      "scope": "size_max_37"
+    },
+    {
+      "id": "dream-piece",
+      "question": "If price were no object — the one",
+      "scope": "all"
+    }
+  ],
   "cities": [
     {
       "name": "Tokyo",

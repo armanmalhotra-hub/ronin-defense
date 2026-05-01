@@ -328,6 +328,8 @@ function renderAll() {
   renderStores();
   renderCities();
   renderSellers();
+  renderSurveys();
+  renderPlay();
   renderFriends();
 }
 
@@ -538,6 +540,221 @@ function renderSellers() {
       </article>`);
   }
   bindCardActions(grid);
+}
+
+// ---------- Survey ----------
+function watchesForScope(scope) {
+  const all = data.favorites || [];
+  if (!scope || scope === "all") return all;
+  if (scope.startsWith("max_price_")) {
+    const max = +scope.replace("max_price_", "");
+    return all.filter(w => (w.price_usd_low ?? w.price_usd ?? Infinity) <= max);
+  }
+  if (scope.startsWith("size_max_")) {
+    const max = +scope.replace("size_max_", "");
+    return all.filter(w => w.size_mm <= max);
+  }
+  if (scope.startsWith("tag:")) {
+    const tag = scope.slice(4);
+    return all.filter(w => (w.tags || []).map(t => t.toLowerCase()).includes(tag.toLowerCase()));
+  }
+  return all;
+}
+
+async function castVote(surveyId, watchId) {
+  if (!me) { nickInput.focus(); return; }
+  state.surveys = state.surveys || {};
+  state.surveys[surveyId] = state.surveys[surveyId] || {};
+  state.surveys[surveyId][me] = watchId;
+  await Storage.save(state);
+  renderSurveys();
+}
+
+function tallySurvey(surveyId) {
+  const votes = state.surveys?.[surveyId] || {};
+  const counts = {};
+  for (const id of Object.values(votes)) counts[id] = (counts[id] || 0) + 1;
+  return { counts, total: Object.keys(votes).length };
+}
+
+function renderSurveys() {
+  const grid = $("grid-surveys");
+  if (!grid) return;
+  grid.innerHTML = "";
+  const Q = q();
+  for (const s of (data.surveys || [])) {
+    if (Q && !`${s.question}`.toLowerCase().includes(Q)) continue;
+    const watches = watchesForScope(s.scope);
+    const myVote = me && state.surveys?.[s.id]?.[me];
+    const tally = tallySurvey(s.id);
+    const showResults = tally.total > 0;
+    const sorted = [...watches].sort((a, b) => (tally.counts[b.id] || 0) - (tally.counts[a.id] || 0));
+    const opts = sorted.map(w => {
+      const cnt = tally.counts[w.id] || 0;
+      const pct = tally.total ? Math.round(100 * cnt / tally.total) : 0;
+      const picked = myVote === w.id;
+      return `
+        <button class="survey-option ${picked ? "picked" : ""}" data-survey="${s.id}" data-watch="${w.id}">
+          <span class="label"><span>${w.model}</span><span class="brand">${w.brand}</span></span>
+          ${showResults ? `<span class="survey-results-row" style="display:flex;gap:8px;align-items:center"><span class="bar" style="width:${Math.max(2, pct * 0.6)}px"></span><span class="pct">${cnt} · ${pct}%</span></span>` : ""}
+        </button>`;
+    }).join("");
+    grid.insertAdjacentHTML("beforeend", `
+      <article class="card" style="grid-column: span 2; max-width: 720px;">
+        <div class="body">
+          <h2>${s.question}</h2>
+          <p class="sub">${watches.length} options · ${tally.total} ${tally.total === 1 ? "vote" : "votes"}</p>
+          <div class="survey-options">${opts}</div>
+          ${myVote ? `<p class="survey-meta">You voted: ${watches.find(w => w.id === myVote)?.model || myVote}. Click another to change.</p>` : `<p class="survey-meta">${me ? "Pick one to cast your vote." : "Set a nickname above to vote."}</p>`}
+        </div>
+      </article>`);
+  }
+  grid.querySelectorAll(".survey-option").forEach(btn => {
+    btn.addEventListener("click", () => castVote(btn.dataset.survey, btn.dataset.watch));
+  });
+}
+
+// ---------- Play (guess the watch) ----------
+const PLAY_KEY = "watch-watch:play";
+let playState = JSON.parse(localStorage.getItem(PLAY_KEY) || "null") || { round: null };
+
+function newRound() {
+  const pool = data.favorites || [];
+  if (!pool.length) return null;
+  const watch = pool[Math.floor(Math.random() * pool.length)];
+  return { watchId: watch.id, guessBrand: "", guessBucket: "", revealed: false };
+}
+
+function priceBucket(w) {
+  const p = w.price_usd ?? w.price_usd_low ?? null;
+  if (p == null) return "unknown";
+  if (p < 2000) return "<$2k";
+  if (p < 5000) return "$2-5k";
+  if (p < 10000) return "$5-10k";
+  if (p < 25000) return "$10-25k";
+  return "$25k+";
+}
+
+function savePlay() { localStorage.setItem(PLAY_KEY, JSON.stringify(playState)); }
+
+async function submitGuess() {
+  const r = playState.round;
+  if (!r) return;
+  const w = data.favorites.find(x => x.id === r.watchId);
+  if (!w) return;
+  const correctBrand = w.brand;
+  const correctBucket = priceBucket(w);
+  const brandPts = r.guessBrand === correctBrand ? 5 : 0;
+  const bucketPts = r.guessBucket === correctBucket ? 3 : 0;
+  const pts = brandPts + bucketPts;
+  r.revealed = true;
+  r.brandCorrect = brandPts > 0;
+  r.bucketCorrect = bucketPts > 0;
+  r.points = pts;
+
+  if (me) {
+    state.scores = state.scores || {};
+    state.scores[me] = state.scores[me] || { lifetime: 0, rounds: 0, lastPlayed: null };
+    state.scores[me].lifetime += pts;
+    state.scores[me].rounds += 1;
+    state.scores[me].lastPlayed = new Date().toISOString().slice(0, 10);
+    await Storage.save(state);
+  }
+  savePlay();
+  renderPlay();
+}
+
+function nextRound() {
+  playState.round = newRound();
+  savePlay();
+  renderPlay();
+}
+
+function renderPlay() {
+  const stage = $("play-stage");
+  const lb = $("grid-leaderboard");
+  if (!stage) return;
+  if (!playState.round) playState.round = newRound();
+
+  const r = playState.round;
+  const w = data.favorites.find(x => x.id === r.watchId);
+  if (!w) { stage.innerHTML = `<p class="kv">No catalog yet.</p>`; return; }
+
+  const brands = [...new Set(data.favorites.map(x => x.brand))].sort();
+  const buckets = ["<$2k", "$2-5k", "$5-10k", "$10-25k", "$25k+", "unknown"];
+  const hasImg = !!w.image;
+
+  stage.className = "play-stage" + (hasImg ? " with-image" : "");
+  stage.innerHTML = `
+    ${hasImg ? `<img class="silhouette ${r.revealed ? "" : "hidden-img"}" src="${w.image}" alt="mystery watch"/>` : ""}
+    <div class="clue">
+      <h3>Guess the watch</h3>
+      <p class="clue-line"><b>Case:</b> ${w.size_mm}mm · ${w.strap || "—"}</p>
+      <p class="clue-line"><b>Dial:</b> ${w.dial || "—"}</p>
+      ${w.tags?.length ? `<div class="pills">${w.tags.slice(0, 3).map(t => `<span class="pill dim">${t}</span>`).join("")}</div>` : ""}
+      ${r.revealed ? renderReveal(w, r) : `
+        <form class="play-form" onsubmit="return false">
+          <label>Brand
+            <select id="g-brand">
+              <option value="">pick…</option>
+              ${brands.map(b => `<option value="${b}" ${r.guessBrand === b ? "selected" : ""}>${b}</option>`).join("")}
+            </select>
+          </label>
+          <label>Retail bucket
+            <select id="g-bucket">
+              <option value="">pick…</option>
+              ${buckets.map(b => `<option value="${b}" ${r.guessBucket === b ? "selected" : ""}>${b}</option>`).join("")}
+            </select>
+          </label>
+          <div class="play-buttons">
+            <button id="g-submit">Submit</button>
+            <button id="g-skip" class="secondary">Skip</button>
+          </div>
+          <p class="survey-meta">${me ? `Playing as ${me}` : "Set a nickname to track your score."}</p>
+        </form>
+      `}
+    </div>`;
+
+  if (!r.revealed) {
+    stage.querySelector("#g-brand").addEventListener("change", e => { r.guessBrand = e.target.value; savePlay(); });
+    stage.querySelector("#g-bucket").addEventListener("change", e => { r.guessBucket = e.target.value; savePlay(); });
+    stage.querySelector("#g-submit").addEventListener("click", submitGuess);
+    stage.querySelector("#g-skip").addEventListener("click", nextRound);
+  } else {
+    stage.querySelector("#g-next")?.addEventListener("click", nextRound);
+  }
+
+  // leaderboard
+  const scores = Object.entries(state.scores || {}).map(([nick, s]) => ({ nick, ...s }));
+  scores.sort((a, b) => (b.lifetime || 0) - (a.lifetime || 0));
+  lb.innerHTML = "";
+  if (!scores.length) {
+    lb.innerHTML = `<p class="kv">No scores yet — play a round.</p>`;
+    return;
+  }
+  for (const s of scores) {
+    lb.insertAdjacentHTML("beforeend", `
+      <article class="card">
+        <div class="body">
+          <h2>${s.nick}${s.nick === me ? " · you" : ""}</h2>
+          <p class="sub">${s.rounds} round${s.rounds === 1 ? "" : "s"} · last played ${s.lastPlayed || "—"}</p>
+          <p class="price">${s.lifetime || 0} pts</p>
+        </div>
+      </article>`);
+  }
+}
+
+function renderReveal(w, r) {
+  return `
+    <div class="reveal">
+      <h4>${w.brand} — ${w.model}</h4>
+      <p class="clue-line">Brand guess: ${r.brandCorrect ? `<span class="pts">+5</span>` : "—"} · Price guess: ${r.bucketCorrect ? `<span class="pts">+3</span>` : "—"}</p>
+      <p class="clue-line"><b>+${r.points} pts</b> · retail ${priceBucket(w)} · ${w.price_label || formatPrice(w)}</p>
+      <p class="clue-line">${w.note || ""}</p>
+      <div class="play-buttons" style="margin-top:8px">
+        <button id="g-next" onclick="">Next round</button>
+      </div>
+    </div>`;
 }
 
 // Friends: each card = a person and their stars

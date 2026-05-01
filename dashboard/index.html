@@ -30,6 +30,8 @@
     <button class="tab" data-tab="stores">Stores</button>
     <button class="tab" data-tab="cities">Cities</button>
     <button class="tab" data-tab="sellers">Sellers</button>
+    <button class="tab" data-tab="survey">Survey</button>
+    <button class="tab" data-tab="play">Play</button>
     <button class="tab" data-tab="friends">Friends</button>
     <input id="search" type="search" placeholder="search…"/>
   </nav>
@@ -57,6 +59,16 @@
 
   <section class="panel hidden" id="panel-sellers">
     <div class="grid" id="grid-sellers"></div>
+  </section>
+
+  <section class="panel hidden" id="panel-survey">
+    <div class="grid" id="grid-surveys"></div>
+  </section>
+
+  <section class="panel hidden" id="panel-play">
+    <div class="play-stage" id="play-stage"></div>
+    <h3 class="play-title">Leaderboard</h3>
+    <div class="grid" id="grid-leaderboard"></div>
   </section>
 
   <section class="panel hidden" id="panel-friends">
