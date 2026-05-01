@@ -209,7 +209,57 @@ nav.tabs #search:focus { outline: none; border-bottom-color: var(--ink); }
 .kv { font-size: 12px; color: var(--muted); margin: 0; }
 .kv b { color: var(--ink); font-weight: 500; }
 
-/* ---------- survey ---------- */
+/* ---------- survey: upvote list ---------- */
+.survey-intro { margin: 0 0 20px; }
+.survey-intro h2 {
+  font-family: var(--serif); font-weight: 600; margin: 0 0 4px;
+  font-size: 22px;
+}
+.survey-intro .sub { color: var(--muted); font-size: 13px; margin: 0; max-width: 600px; }
+
+.upvote-list {
+  display: flex; flex-direction: column; gap: 4px;
+  max-width: 760px;
+}
+.upvote-row {
+  display: grid; grid-template-columns: 32px 32px 1fr auto;
+  gap: 12px; align-items: center;
+  padding: 10px 14px; border: 1px solid var(--line); border-radius: 4px;
+  background: var(--paper); cursor: pointer; font: inherit; text-align: left;
+  color: var(--ink);
+  transition: border-color 0.12s ease;
+}
+.upvote-row:hover { border-color: var(--muted); }
+.upvote-row.mine { border-color: var(--accent); background: var(--accent-soft); }
+.upvote-row .upbtn {
+  font-size: 18px; line-height: 1;
+  color: var(--muted); text-align: center;
+}
+.upvote-row.mine .upbtn { color: var(--accent); }
+.upvote-row .count {
+  font-variant-numeric: tabular-nums; font-weight: 600; color: var(--ink);
+  min-width: 24px; text-align: right; font-size: 13px;
+}
+.upvote-row .label { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+.upvote-row .label .model {
+  font-family: var(--serif); font-size: 16px; font-weight: 600;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.upvote-row .label .brand { color: var(--muted); font-size: 12px; }
+.upvote-row .names {
+  display: flex; flex-wrap: wrap; gap: 4px; justify-content: flex-end;
+  max-width: 240px;
+}
+.name-chip {
+  font-size: 11px; padding: 2px 8px; background: var(--accent-soft); color: var(--accent);
+  border-radius: 999px; white-space: nowrap;
+}
+@media (max-width: 600px) {
+  .upvote-row { grid-template-columns: 28px 28px 1fr; }
+  .upvote-row .names { display: none; }
+}
+
+/* ---------- legacy survey question cards (kept for fallback) ---------- */
 .survey-options {
   display: flex; flex-direction: column; gap: 6px; margin: 8px 0 0;
 }
@@ -281,7 +331,20 @@ nav.tabs #search:focus { outline: none; border-bottom-color: var(--ink); }
   font-size: 13px;
 }
 .reveal h4 { margin: 0 0 4px; font-family: var(--serif); font-size: 16px; font-weight: 600; }
-.reveal .pts { color: var(--accent); font-weight: 500; }
+.reveal .pts { color: var(--good); font-weight: 600; font-size: 12px; }
+.reveal .rwrong { color: var(--warn); font-size: 12px; }
+.reveal-grid {
+  display: flex; flex-direction: column; gap: 4px; margin-top: 8px;
+  border-top: 1px dashed var(--line); padding-top: 8px;
+}
+.reveal-row {
+  display: grid; grid-template-columns: 130px 1fr auto;
+  gap: 12px; font-size: 12px; align-items: center;
+  padding: 2px 0;
+}
+.reveal-row .rl { color: var(--muted); text-transform: uppercase; letter-spacing: 0.06em; font-size: 10px; }
+.reveal-row .rg { color: var(--ink); }
+.q-pts { color: var(--muted); font-weight: 400; font-size: 10px; margin-left: 4px; }
 .play-title {
   margin: 0 0 16px; font-family: var(--serif); font-weight: 600;
   font-size: 18px; color: var(--ink);

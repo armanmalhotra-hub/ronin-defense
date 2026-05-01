@@ -542,75 +542,54 @@ function renderSellers() {
   bindCardActions(grid);
 }
 
-// ---------- Survey ----------
-function watchesForScope(scope) {
-  const all = data.favorites || [];
-  if (!scope || scope === "all") return all;
-  if (scope.startsWith("max_price_")) {
-    const max = +scope.replace("max_price_", "");
-    return all.filter(w => (w.price_usd_low ?? w.price_usd ?? Infinity) <= max);
-  }
-  if (scope.startsWith("size_max_")) {
-    const max = +scope.replace("size_max_", "");
-    return all.filter(w => w.size_mm <= max);
-  }
-  if (scope.startsWith("tag:")) {
-    const tag = scope.slice(4);
-    return all.filter(w => (w.tags || []).map(t => t.toLowerCase()).includes(tag.toLowerCase()));
-  }
-  return all;
-}
-
-async function castVote(surveyId, watchId) {
+// ---------- Survey: upvote-with-name list ----------
+async function toggleUpvote(watchId) {
   if (!me) { nickInput.focus(); return; }
-  state.surveys = state.surveys || {};
-  state.surveys[surveyId] = state.surveys[surveyId] || {};
-  state.surveys[surveyId][me] = watchId;
+  state.surveyUpvotes = state.surveyUpvotes || {};
+  const list = state.surveyUpvotes[watchId] = state.surveyUpvotes[watchId] || [];
+  const i = list.indexOf(me);
+  if (i >= 0) list.splice(i, 1); else list.push(me);
   await Storage.save(state);
   renderSurveys();
 }
 
-function tallySurvey(surveyId) {
-  const votes = state.surveys?.[surveyId] || {};
-  const counts = {};
-  for (const id of Object.values(votes)) counts[id] = (counts[id] || 0) + 1;
-  return { counts, total: Object.keys(votes).length };
+function upvotesFor(watchId) {
+  return state.surveyUpvotes?.[watchId] || [];
 }
 
 function renderSurveys() {
   const grid = $("grid-surveys");
   if (!grid) return;
-  grid.innerHTML = "";
   const Q = q();
-  for (const s of (data.surveys || [])) {
-    if (Q && !`${s.question}`.toLowerCase().includes(Q)) continue;
-    const watches = watchesForScope(s.scope);
-    const myVote = me && state.surveys?.[s.id]?.[me];
-    const tally = tallySurvey(s.id);
-    const showResults = tally.total > 0;
-    const sorted = [...watches].sort((a, b) => (tally.counts[b.id] || 0) - (tally.counts[a.id] || 0));
-    const opts = sorted.map(w => {
-      const cnt = tally.counts[w.id] || 0;
-      const pct = tally.total ? Math.round(100 * cnt / tally.total) : 0;
-      const picked = myVote === w.id;
-      return `
-        <button class="survey-option ${picked ? "picked" : ""}" data-survey="${s.id}" data-watch="${w.id}">
-          <span class="label"><span>${w.model}</span><span class="brand">${w.brand}</span></span>
-          ${showResults ? `<span class="survey-results-row" style="display:flex;gap:8px;align-items:center"><span class="bar" style="width:${Math.max(2, pct * 0.6)}px"></span><span class="pct">${cnt} · ${pct}%</span></span>` : ""}
-        </button>`;
-    }).join("");
-    grid.insertAdjacentHTML("beforeend", `
-      <article class="card" style="grid-column: span 2; max-width: 720px;">
-        <div class="body">
-          <h2>${s.question}</h2>
-          <p class="sub">${watches.length} options · ${tally.total} ${tally.total === 1 ? "vote" : "votes"}</p>
-          <div class="survey-options">${opts}</div>
-          ${myVote ? `<p class="survey-meta">You voted: ${watches.find(w => w.id === myVote)?.model || myVote}. Click another to change.</p>` : `<p class="survey-meta">${me ? "Pick one to cast your vote." : "Set a nickname above to vote."}</p>`}
-        </div>
-      </article>`);
-  }
-  grid.querySelectorAll(".survey-option").forEach(btn => {
-    btn.addEventListener("click", () => castVote(btn.dataset.survey, btn.dataset.watch));
+  // Survey scope: watches under $3K
+  const inScope = (w) => (w.price_usd ?? w.price_usd_low ?? Infinity) <= 3000;
+  const list = data.favorites
+    .filter(inScope)
+    .sort((a, b) => upvotesFor(b.id).length - upvotesFor(a.id).length);
+  grid.innerHTML = `
+    <div class="survey-intro">
+      <h2>Friends' picks · under $3,000</h2>
+      <p class="sub">Click any watches you'd vote for. Your name attaches publicly — flag the ones you'd actually wear or gift.</p>
+    </div>
+  `;
+  const rows = list.map(w => {
+    if (Q && !`${w.brand} ${w.model} ${(w.tags||[]).join(' ')}`.toLowerCase().includes(Q)) return "";
+    const ups = upvotesFor(w.id);
+    const mine = me && ups.includes(me);
+    return `
+      <button class="upvote-row ${mine ? 'mine' : ''}" data-id="${w.id}">
+        <span class="upbtn">${mine ? '★' : '☆'}</span>
+        <span class="count">${ups.length || ''}</span>
+        <span class="label">
+          <span class="model">${w.model}</span>
+          <span class="brand">${w.brand} · ${w.size_mm}mm · ${w.price_label || formatPrice(w)}</span>
+        </span>
+        <span class="names">${ups.map(n => `<span class="name-chip">${n}</span>`).join('')}</span>
+      </button>`;
+  }).join("");
+  grid.insertAdjacentHTML("beforeend", `<div class="upvote-list">${rows}</div>`);
+  grid.querySelectorAll(".upvote-row").forEach(btn => {
+    btn.addEventListener("click", () => toggleUpvote(btn.dataset.id));
   });
 }
 
@@ -619,14 +598,12 @@ const PLAY_KEY = "watch-watch:play";
 let playState = JSON.parse(localStorage.getItem(PLAY_KEY) || "null") || { round: null };
 
 function newRound() {
-  // Only include watches with a known price bucket so scoring is fair.
   const pool = (data.favorites || []).filter(w => priceBucket(w) !== "unknown");
   if (!pool.length) return null;
   const lastId = playState.round?.watchId;
-  // Prefer not to repeat the immediately previous watch.
   const candidates = pool.length > 1 ? pool.filter(w => w.id !== lastId) : pool;
   const watch = candidates[Math.floor(Math.random() * candidates.length)];
-  return { watchId: watch.id, guessBrand: "", guessBucket: "", revealed: false };
+  return { watchId: watch.id, guesses: {}, revealed: false };
 }
 
 function priceBucket(w) {
@@ -639,6 +616,62 @@ function priceBucket(w) {
   return "$25k+";
 }
 
+function caseBucket(w) {
+  if (w.size_mm < 35) return "34mm";
+  if (w.size_mm <= 37) return "35-37mm";
+  return "38mm+";
+}
+
+function dialMaterial(w) {
+  const t = ((w.tags || []).join(" ") + " " + (w.dial || "")).toLowerCase();
+  if (/urushi|lacquer/.test(t)) return "urushi/lacquer";
+  if (/guilloch/.test(t)) return "guilloche";
+  if (/meteorite/.test(t)) return "meteorite";
+  if (/lapis/.test(t)) return "lapis lazuli";
+  if (/argentium|german silver|sterling/.test(t)) return "silver";
+  if (/sector/.test(t)) return "sector";
+  if (/sunburst/.test(t)) return "sunburst";
+  return "other";
+}
+
+function productionTier(w) {
+  const text = ((w.tags || []).join(" ") + " " + (w.note || "")).toLowerCase();
+  const m = text.match(/(\d+)\s*(?:pieces|pcs|pc\b)/);
+  if (m) {
+    const n = +m[1];
+    if (n < 50) return "<50";
+    if (n < 200) return "50-200";
+    if (n < 500) return "200-500";
+    if (n < 2000) return "500-2000";
+    return "2000+";
+  }
+  // fallback heuristics
+  if (/atelier|tourbillon|in-house|dream/.test(text)) return "<50";
+  return "200-500";
+}
+
+const Q_DEFS = [
+  { key: "country",      label: "Country",         pts: 1, opts: ["Japan", "Switzerland", "Germany", "UK", "USA", "Other"] },
+  { key: "city",         label: "City made",       pts: 2, opts: ["Tokyo", "Akita", "Geneva", "Glashütte", "Other"] },
+  { key: "brand",        label: "Brand",           pts: 5, opts: null },
+  { key: "retailBucket", label: "Retail bucket",   pts: 3, opts: ["<$2k", "$2-5k", "$5-10k", "$10-25k", "$25k+"] },
+  { key: "caseBucket",   label: "Case size",       pts: 1, opts: ["34mm", "35-37mm", "38mm+"] },
+  { key: "dialMaterial", label: "Dial material",   pts: 3, opts: ["urushi/lacquer", "guilloche", "silver", "meteorite", "lapis lazuli", "sector", "sunburst", "other"] },
+  { key: "production",   label: "Production tier", pts: 2, opts: ["<50", "50-200", "200-500", "500-2000", "2000+"] },
+];
+
+function correctAnswers(w) {
+  return {
+    country: w.country || "Other",
+    city: ["Tokyo", "Akita", "Geneva", "Glashütte"].includes(w.made_in) ? w.made_in : "Other",
+    brand: w.brand,
+    retailBucket: priceBucket(w),
+    caseBucket: caseBucket(w),
+    dialMaterial: dialMaterial(w),
+    production: productionTier(w),
+  };
+}
+
 function savePlay() { localStorage.setItem(PLAY_KEY, JSON.stringify(playState)); }
 
 async function submitGuess() {
@@ -646,14 +679,15 @@ async function submitGuess() {
   if (!r) return;
   const w = data.favorites.find(x => x.id === r.watchId);
   if (!w) return;
-  const correctBrand = w.brand;
-  const correctBucket = priceBucket(w);
-  const brandPts = r.guessBrand === correctBrand ? 5 : 0;
-  const bucketPts = r.guessBucket === correctBucket ? 3 : 0;
-  const pts = brandPts + bucketPts;
+  const truth = correctAnswers(w);
+  let pts = 0;
+  r.results = {};
+  for (const def of Q_DEFS) {
+    const ok = (r.guesses[def.key] || "") === truth[def.key];
+    r.results[def.key] = { ok, correct: truth[def.key], guess: r.guesses[def.key] || "—", pts: ok ? def.pts : 0 };
+    if (ok) pts += def.pts;
+  }
   r.revealed = true;
-  r.brandCorrect = brandPts > 0;
-  r.bucketCorrect = bucketPts > 0;
   r.points = pts;
 
   if (me) {
@@ -685,16 +719,28 @@ function renderPlay() {
   if (!w) { stage.innerHTML = `<p class="kv">No catalog yet.</p>`; return; }
 
   const brands = [...new Set(data.favorites.map(x => x.brand))].sort();
-  const buckets = ["<$2k", "$2-5k", "$5-10k", "$10-25k", "$25k+"];
   const hasImg = !!w.image;
+  r.guesses = r.guesses || {};
+
+  const questionFields = Q_DEFS.map(def => {
+    const opts = def.opts || brands;
+    const cur = r.guesses[def.key] || "";
+    return `
+      <label>${def.label} <span class="q-pts">+${def.pts}</span>
+        <select data-q="${def.key}">
+          <option value="">pick…</option>
+          ${opts.map(o => `<option value="${o}" ${cur === o ? "selected" : ""}>${o}</option>`).join("")}
+        </select>
+      </label>`;
+  }).join("");
 
   stage.className = "play-stage" + (hasImg ? " with-image" : "");
   stage.innerHTML = `
     ${hasImg ? `<img class="silhouette ${r.revealed ? "" : "hidden-img"}" src="${w.image}" alt="mystery watch"/>` : ""}
     <div class="clue">
       <h3>Offhand</h3>
-      <p class="sub">a game to explore the unknown</p>
-      <p class="clue-line"><b>Case:</b> ${w.size_mm}mm · ${w.strap || "—"}</p>
+      <p class="sub">a game to explore the unknown · 7 questions per round</p>
+      <p class="clue-line"><b>Strap:</b> ${w.strap || "—"}</p>
       <p class="clue-line"><b>Dial:</b> ${w.dial || "—"}</p>
       ${(() => {
         const safe = (w.tags || []).filter(t => {
@@ -708,30 +754,23 @@ function renderPlay() {
       })()}
       ${r.revealed ? renderReveal(w, r) : `
         <form class="play-form" onsubmit="return false">
-          <label>Brand
-            <select id="g-brand">
-              <option value="">pick…</option>
-              ${brands.map(b => `<option value="${b}" ${r.guessBrand === b ? "selected" : ""}>${b}</option>`).join("")}
-            </select>
-          </label>
-          <label>Retail bucket
-            <select id="g-bucket">
-              <option value="">pick…</option>
-              ${buckets.map(b => `<option value="${b}" ${r.guessBucket === b ? "selected" : ""}>${b}</option>`).join("")}
-            </select>
-          </label>
+          ${questionFields}
           <div class="play-buttons">
             <button id="g-submit">Submit</button>
             <button id="g-skip" class="secondary">Skip</button>
           </div>
-          <p class="survey-meta">${me ? `Playing as ${me}` : "Set a nickname to track your score."}</p>
+          <p class="survey-meta">${me ? `Playing as ${me} · max ${Q_DEFS.reduce((s, d) => s + d.pts, 0)} pts/round` : "Set a nickname to track your score."}</p>
         </form>
       `}
     </div>`;
 
   if (!r.revealed) {
-    stage.querySelector("#g-brand").addEventListener("change", e => { r.guessBrand = e.target.value; savePlay(); });
-    stage.querySelector("#g-bucket").addEventListener("change", e => { r.guessBucket = e.target.value; savePlay(); });
+    stage.querySelectorAll("select[data-q]").forEach(sel => {
+      sel.addEventListener("change", e => {
+        r.guesses[sel.dataset.q] = e.target.value;
+        savePlay();
+      });
+    });
     stage.querySelector("#g-submit").addEventListener("click", submitGuess);
     stage.querySelector("#g-skip").addEventListener("click", nextRound);
   } else {
@@ -759,14 +798,24 @@ function renderPlay() {
 }
 
 function renderReveal(w, r) {
+  const rows = Q_DEFS.map(def => {
+    const res = r.results?.[def.key] || { ok: false, correct: "—", guess: "—", pts: 0 };
+    return `
+      <div class="reveal-row">
+        <span class="rl">${def.label}</span>
+        <span class="rg">${res.guess}</span>
+        <span class="rc">${res.ok ? `<span class="pts">+${def.pts}</span>` : `<span class="rwrong">${res.correct}</span>`}</span>
+      </div>`;
+  }).join("");
   return `
     <div class="reveal">
       <h4>${w.brand} — ${w.model}</h4>
-      <p class="clue-line">Brand guess: ${r.brandCorrect ? `<span class="pts">+5</span>` : "—"} · Price guess: ${r.bucketCorrect ? `<span class="pts">+3</span>` : "—"}</p>
-      <p class="clue-line"><b>+${r.points} pts</b> · retail ${priceBucket(w)} · ${w.price_label || formatPrice(w)}</p>
-      <p class="clue-line">${w.note || ""}</p>
+      <p class="clue-line">${w.country}${w.made_in ? " · " + w.made_in : ""} · ${w.price_label || formatPrice(w)}</p>
+      <div class="reveal-grid">${rows}</div>
+      <p class="clue-line" style="margin-top:8px"><b>+${r.points} pts</b> this round</p>
+      ${w.note ? `<p class="clue-line" style="color:var(--muted)">${w.note}</p>` : ""}
       <div class="play-buttons" style="margin-top:8px">
-        <button id="g-next" onclick="">Next round</button>
+        <button id="g-next">Next round</button>
       </div>
     </div>`;
 }

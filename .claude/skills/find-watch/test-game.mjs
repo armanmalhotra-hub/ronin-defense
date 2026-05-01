@@ -33,14 +33,14 @@ await page.click('nav.tabs .tab[data-tab="play"]');
 await page.waitForTimeout(500);
 await page.screenshot({ path: "/tmp/play-1.png", fullPage: false });
 
-// 3. Inspect: brand select + bucket select present?
-const brandCount = await page.locator("#g-brand option").count();
-const bucketCount = await page.locator("#g-bucket option").count();
-console.log(`brand options: ${brandCount}, bucket options: ${bucketCount}`);
+// 3. Inspect overall question count
+const qCount = await page.locator("select[data-q]").count();
+console.log(`question dropdowns: ${qCount}`);
 
-// 4. Pick first non-empty brand and bucket, then submit
-await page.selectOption("#g-brand", { index: 1 });
-await page.selectOption("#g-bucket", { index: 1 });
+// 4. Fill all 7 question dropdowns, then submit
+const sels = await page.locator("select[data-q]").elementHandles();
+console.log(`question selects: ${sels.length}`);
+for (const s of sels) await s.selectOption({ index: 1 });
 await page.click("#g-submit");
 await page.waitForTimeout(500);
 await page.screenshot({ path: "/tmp/play-2.png", fullPage: false });
