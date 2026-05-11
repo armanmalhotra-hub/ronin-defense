@@ -1,0 +1,74 @@
+name: Fetch watch photos
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "dashboard/data.json"
+      - ".github/workflows/fetch-photos.yml"
+      - ".claude/skills/find-watch/shoot-watches.mjs"
+      - ".claude/skills/find-watch/screenshot.mjs"
+  workflow_dispatch:
+    inputs:
+      target:
+        description: "Specific target id (blank = all)"
+        required: false
+        default: ""
+  schedule:
+    # Weekly — Saturday 09:00 UTC
+    - cron: "0 9 * * 6"
+
+permissions:
+  contents: write
+
+concurrency:
+  group: fetch-photos
+  cancel-in-progress: false
+
+jobs:
+  shoot:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Install Playwright + Chromium
+        run: |
+          # Install playwright locally so screenshot.mjs can require() it
+          # via standard node_modules ancestor lookup.
+          npm init -y
+          npm install playwright@1.56.1
+          npx playwright install chromium --with-deps
+
+      - name: Run screenshotter
+        run: |
+          set -e
+          if [ -n "${{ github.event.inputs.target }}" ]; then
+            node .claude/skills/find-watch/shoot-watches.mjs "${{ github.event.inputs.target }}"
+          else
+            node .claude/skills/find-watch/shoot-watches.mjs
+          fi
+
+      - name: Move photos into dashboard
+        run: |
+          mkdir -p dashboard/images
+          # Copy any new PNGs from docs/watch-images/ into dashboard/images/
+          if [ -d docs/watch-images ]; then
+            cp -u docs/watch-images/*.png dashboard/images/ 2>/dev/null || true
+          fi
+
+      - name: Commit and push if changed
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add docs/watch-images dashboard/images
+          if git diff --cached --quiet; then
+            echo "No new photos to commit."
+          else
+            git commit -m "Auto-fetch watch photos via shoot-watches workflow"
+            git push
+          fi

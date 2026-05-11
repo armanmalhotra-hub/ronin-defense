@@ -1,0 +1,89 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 1000" width="800" height="1000">
+  <title>Kurono Grand Urushi Aoyama Brown Cinnamon — urushi lacquer dial (rendering)</title>
+  <defs>
+    <radialGradient id="urushi-dial" cx="50%" cy="50%" r="55%">
+      <stop offset="0%" stop-color="#7a3a18"/>
+      <stop offset="50%" stop-color="#5a2a10"/>
+      <stop offset="100%" stop-color="#3a1a08"/>
+    </radialGradient>
+    <linearGradient id="urushi-case" x1="0" x2="0" y1="0" y2="1">
+      <stop offset="0%" stop-color="#f4f6f8"/>
+      <stop offset="50%" stop-color="#bdc1c8"/>
+      <stop offset="100%" stop-color="#838992"/>
+    </linearGradient>
+    <linearGradient id="urushi-strap" x1="0" x2="0" y1="0" y2="1">
+      <stop offset="0%" stop-color="#46291a"/>
+      <stop offset="100%" stop-color="#22120a"/>
+    </linearGradient>
+    <radialGradient id="urushi-flash" cx="40%" cy="35%" r="50%">
+      <stop offset="0%" stop-color="#c66422" stop-opacity="0.55"/>
+      <stop offset="60%" stop-color="#7a3a18" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+
+  <rect width="800" height="1000" fill="#f4f1ec"/>
+
+  <!-- straps -->
+  <path d="M310 60 L490 60 L500 320 L300 320 Z" fill="url(#urushi-strap)"/>
+  <path d="M325 80 L475 80" stroke="#7a4a30" stroke-width="1.2" stroke-dasharray="5 5" fill="none"/>
+  <path d="M325 300 L475 300" stroke="#7a4a30" stroke-width="1.2" stroke-dasharray="5 5" fill="none"/>
+  <path d="M300 680 L500 680 L490 940 L310 940 Z" fill="url(#urushi-strap)"/>
+  <path d="M325 700 L475 700" stroke="#7a4a30" stroke-width="1.2" stroke-dasharray="5 5" fill="none"/>
+  <path d="M325 920 L475 920" stroke="#7a4a30" stroke-width="1.2" stroke-dasharray="5 5" fill="none"/>
+
+  <!-- crown -->
+  <rect x="660" y="485" width="22" height="30" fill="url(#urushi-case)" stroke="#5a5e64" stroke-width="1"/>
+
+  <!-- case -->
+  <circle cx="400" cy="500" r="280" fill="url(#urushi-case)" stroke="#3a3d42" stroke-width="2"/>
+  <circle cx="400" cy="500" r="255" fill="#cfd2d8"/>
+  <circle cx="400" cy="500" r="240" fill="#1f2125"/>
+
+  <!-- urushi lacquer dial -->
+  <circle cx="400" cy="500" r="232" fill="url(#urushi-dial)"/>
+  <!-- chameleonic flash -->
+  <circle cx="400" cy="500" r="232" fill="url(#urushi-flash)"/>
+  <!-- subtle pattern under lacquer (faint diagonal lines) -->
+  <g stroke="#48200d" stroke-width="0.4" opacity="0.6">
+    <g transform="translate(400 500)">
+      <line x1="-200" y1="-100" x2="200" y2="100"/>
+      <line x1="-200" y1="-50" x2="200" y2="150"/>
+      <line x1="-200" y1="0" x2="200" y2="200"/>
+      <line x1="-200" y1="50" x2="200" y2="250"/>
+      <line x1="-200" y1="-150" x2="200" y2="50"/>
+      <line x1="-200" y1="-200" x2="200" y2="0"/>
+      <line x1="-200" y1="-250" x2="200" y2="-50"/>
+    </g>
+  </g>
+
+  <!-- discreet Kurono wordmark near 12 -->
+  <text x="400" y="335" font-family="Georgia, serif" font-size="11" text-anchor="middle" fill="#d9b896" letter-spacing="2">KURONO</text>
+
+  <!-- minimal hour batons (12 at top only thin marker) -->
+  <g fill="#e7d3b8">
+    <rect x="398" y="285" width="4" height="14"/>
+    <rect x="599" y="498" width="14" height="4"/>
+    <rect x="398" y="701" width="4" height="14"/>
+    <rect x="187" y="498" width="14" height="4"/>
+    <circle cx="497" cy="318" r="2"/>
+    <circle cx="567" cy="388" r="2"/>
+    <circle cx="567" cy="612" r="2"/>
+    <circle cx="497" cy="682" r="2"/>
+    <circle cx="303" cy="682" r="2"/>
+    <circle cx="233" cy="612" r="2"/>
+    <circle cx="233" cy="388" r="2"/>
+    <circle cx="303" cy="318" r="2"/>
+  </g>
+
+  <!-- hands -->
+  <line x1="400" y1="500" x2="400" y2="320" stroke="#e7d3b8" stroke-width="5" stroke-linecap="round"/>
+  <line x1="400" y1="500" x2="490" y2="570" stroke="#e7d3b8" stroke-width="6" stroke-linecap="round"/>
+  <line x1="400" y1="500" x2="340" y2="450" stroke="#e7d3b8" stroke-width="1.2"/>
+  <circle cx="400" cy="500" r="6" fill="#e7d3b8"/>
+
+  <!-- caption -->
+  <g font-family="-apple-system, Helvetica, Arial, sans-serif" fill="#1a1c1f">
+    <text x="400" y="985" font-size="16" text-anchor="middle" font-weight="600">Kurono Grand Urushi Aoyama — Brown Cinnamon</text>
+    <text x="400" y="80" font-size="11" text-anchor="middle" fill="#888" font-style="italic">illustration · 37mm · urushi lacquer · 188 pieces · salon-only Tokyo</text>
+  </g>
+</svg>

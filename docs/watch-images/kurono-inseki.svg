@@ -1,0 +1,87 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 1000" width="800" height="1000">
+  <title>Kurono 37mm Inseki — meteorite dial (rendering)</title>
+  <defs>
+    <radialGradient id="inseki-meteor" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#9aa0a6"/>
+      <stop offset="100%" stop-color="#5b6068"/>
+    </radialGradient>
+    <linearGradient id="inseki-case" x1="0" x2="0" y1="0" y2="1">
+      <stop offset="0%" stop-color="#e6e8ec"/>
+      <stop offset="50%" stop-color="#aab0b8"/>
+      <stop offset="100%" stop-color="#7a8088"/>
+    </linearGradient>
+    <linearGradient id="inseki-strap" x1="0" x2="0" y1="0" y2="1">
+      <stop offset="0%" stop-color="#3a2a1c"/>
+      <stop offset="100%" stop-color="#1c130a"/>
+    </linearGradient>
+    <pattern id="widmanstatten" patternUnits="userSpaceOnUse" width="40" height="40" patternTransform="rotate(20)">
+      <rect width="40" height="40" fill="url(#inseki-meteor)"/>
+      <path d="M0 10 L40 30 M0 30 L40 10 M10 0 L30 40 M30 0 L10 40" stroke="#3e4248" stroke-width="0.6" opacity="0.7"/>
+      <path d="M0 0 L40 40 M40 0 L0 40" stroke="#2a2d31" stroke-width="0.4" opacity="0.5"/>
+    </pattern>
+  </defs>
+
+  <!-- background -->
+  <rect width="800" height="1000" fill="#f4f1ec"/>
+
+  <!-- top strap -->
+  <path d="M310 60 L490 60 L500 320 L300 320 Z" fill="url(#inseki-strap)"/>
+  <path d="M325 80 L475 80" stroke="#523a26" stroke-width="1.5" stroke-dasharray="6 6" fill="none"/>
+  <path d="M325 300 L475 300" stroke="#523a26" stroke-width="1.5" stroke-dasharray="6 6" fill="none"/>
+
+  <!-- bottom strap -->
+  <path d="M300 680 L500 680 L490 940 L310 940 Z" fill="url(#inseki-strap)"/>
+  <path d="M325 700 L475 700" stroke="#523a26" stroke-width="1.5" stroke-dasharray="6 6" fill="none"/>
+  <path d="M325 920 L475 920" stroke="#523a26" stroke-width="1.5" stroke-dasharray="6 6" fill="none"/>
+
+  <!-- crown -->
+  <rect x="660" y="485" width="22" height="30" fill="url(#inseki-case)" stroke="#5a5e64" stroke-width="1"/>
+
+  <!-- case outer -->
+  <circle cx="400" cy="500" r="280" fill="url(#inseki-case)" stroke="#3a3d42" stroke-width="2"/>
+  <!-- bezel -->
+  <circle cx="400" cy="500" r="255" fill="#c9ccd2" stroke="#5a5e64" stroke-width="1"/>
+  <circle cx="400" cy="500" r="240" fill="#1f2125"/>
+
+  <!-- white lacquer outer ring -->
+  <circle cx="400" cy="500" r="235" fill="#f7f4ee"/>
+  <circle cx="400" cy="500" r="180" fill="none" stroke="#dcd6c8" stroke-width="2"/>
+
+  <!-- meteorite disc -->
+  <circle cx="400" cy="500" r="178" fill="url(#widmanstatten)"/>
+
+  <!-- hour numerals on white ring (Calligra-style) -->
+  <g font-family="Georgia, 'Times New Roman', serif" font-size="22" fill="#1a1c1f" text-anchor="middle" font-weight="500">
+    <text x="400" y="282">12</text>
+    <text x="595" y="510">3</text>
+    <text x="400" y="735">6</text>
+    <text x="208" y="510">9</text>
+  </g>
+
+  <!-- minute markers -->
+  <g stroke="#1a1c1f" stroke-width="2">
+    <line x1="400" y1="265" x2="400" y2="275"/>
+    <line x1="400" y1="725" x2="400" y2="735"/>
+    <line x1="165" y1="500" x2="175" y2="500"/>
+    <line x1="625" y1="500" x2="635" y2="500"/>
+  </g>
+
+  <!-- hands -->
+  <g stroke="#e6e8ec" stroke-width="5" stroke-linecap="round">
+    <line x1="400" y1="500" x2="400" y2="370"/> <!-- minute -->
+  </g>
+  <g stroke="#e6e8ec" stroke-width="6" stroke-linecap="round">
+    <line x1="400" y1="500" x2="475" y2="565"/> <!-- hour -->
+  </g>
+  <line x1="400" y1="500" x2="320" y2="425" stroke="#e6e8ec" stroke-width="1.5"/> <!-- seconds -->
+  <circle cx="400" cy="500" r="6" fill="#e6e8ec"/>
+
+  <!-- Hajime seal (small red square) -->
+  <rect x="392" y="610" width="16" height="16" fill="#a32a2a"/>
+
+  <!-- caption -->
+  <g font-family="-apple-system, Helvetica, Arial, sans-serif" fill="#1a1c1f">
+    <text x="400" y="985" font-size="16" text-anchor="middle" font-weight="600">Kurono Special Projects 37mm "Inseki" 隕石</text>
+    <text x="400" y="80" font-size="11" text-anchor="middle" fill="#888" font-style="italic">illustration · 37mm · meteorite + white lacquer · leather · time-only</text>
+  </g>
+</svg>

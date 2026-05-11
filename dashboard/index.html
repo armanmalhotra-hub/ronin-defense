@@ -1,0 +1,85 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>Watch Watch</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="./vendor/leaflet.css"/>
+  <script src="./vendor/leaflet.js" defer></script>
+  <link rel="stylesheet" href="./style.css"/>
+</head>
+<body>
+  <header>
+    <div>
+      <h1>Watch Watch</h1>
+      <p class="sub">Japanese independents · curated for friends</p>
+    </div>
+    <div class="who" id="who">
+      <input id="nick-input" placeholder="your name" maxlength="24"/>
+      <button id="nick-save" title="Save nickname">→</button>
+      <button id="lock-toggle" class="lock hidden" title="Unlock" aria-label="Unlock">🔒</button>
+      <span class="sync-status" id="sync-status">local</span>
+    </div>
+  </header>
+
+  <nav class="tabs" role="tablist">
+    <button class="tab active" data-tab="play">Offhand</button>
+    <button class="tab" data-tab="markets">Markets</button>
+    <button class="tab" data-tab="favorites">Catalog</button>
+    <button class="tab" data-tab="brands">Brands</button>
+    <button class="tab" data-tab="survey">Survey</button>
+    <button class="tab" data-tab="friends">Friends</button>
+    <input id="search" type="search" placeholder="search…"/>
+  </nav>
+
+  <section class="panel" id="panel-play">
+    <div class="play-stage" id="play-stage"></div>
+    <h3 class="play-title">Offhand leaderboard</h3>
+    <div class="grid" id="grid-leaderboard"></div>
+  </section>
+
+  <section class="panel hidden" id="panel-markets">
+    <div class="markets-intro">
+      <h2>Auction Markets</h2>
+      <p class="sub">Predict the hammer price on top auction lots. No real money — leaderboard reputation only. Submit your guess before the lot closes; settle when the result drops.</p>
+    </div>
+    <div class="market-list" id="grid-markets"></div>
+  </section>
+
+  <section class="panel hidden" id="panel-favorites">
+    <div class="grid" id="grid-favorites"></div>
+  </section>
+
+  <section class="panel hidden" id="panel-brands">
+    <div class="grid" id="grid-brands"></div>
+  </section>
+
+  <section class="panel hidden" id="panel-survey">
+    <div class="grid" id="grid-surveys"></div>
+  </section>
+
+  <section class="panel hidden" id="panel-friends">
+    <div class="grid" id="grid-friends"></div>
+  </section>
+
+  <!-- Hidden panels — kept for owner reference, no nav links -->
+  <section class="panel hidden" id="panel-drops"><div class="grid" id="grid-drops"></div></section>
+  <section class="panel hidden" id="panel-stores"><div class="chip-row" id="store-cities"></div><div class="grid" id="grid-stores"></div></section>
+  <section class="panel hidden" id="panel-cities"><div class="grid" id="grid-cities"></div></section>
+  <section class="panel hidden" id="panel-sellers"><div class="grid" id="grid-sellers"></div></section>
+
+  <footer>
+    <a href="https://github.com/armanmalhotra-hub/ronin-defense">repo</a>
+    <span>·</span>
+    <a href="https://github.com/armanmalhotra-hub/ronin-defense/blob/main/dashboard/README.md">readme</a>
+    <span>·</span>
+    <span id="updated"></span>
+  </footer>
+
+  <script src="./config.js" defer></script>
+  <script src="./app.js" defer></script>
+</body>
+</html>
