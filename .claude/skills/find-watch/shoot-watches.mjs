@@ -45,12 +45,16 @@ if (filterId) {
   }
 }
 
-const env = {
-  ...process.env,
-  NODE_PATH: process.env.NODE_PATH || "/opt/node22/lib/node_modules",
-  PLAYWRIGHT_BROWSERS_PATH:
-    process.env.PLAYWRIGHT_BROWSERS_PATH || "/opt/pw-browsers",
-};
+const env = { ...process.env };
+// In the local sandbox these paths exist; on GitHub Actions / a laptop
+// we let Node and Playwright use their defaults (node_modules ancestor
+// resolution + ~/.cache/ms-playwright).
+if (existsSync("/opt/node22/lib/node_modules") && !env.NODE_PATH) {
+  env.NODE_PATH = "/opt/node22/lib/node_modules";
+}
+if (existsSync("/opt/pw-browsers") && !env.PLAYWRIGHT_BROWSERS_PATH) {
+  env.PLAYWRIGHT_BROWSERS_PATH = "/opt/pw-browsers";
+}
 
 await fs.mkdir(OUT_DIR, { recursive: true });
 
