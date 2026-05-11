@@ -1,6 +1,13 @@
 name: Fetch watch photos
 
 on:
+  push:
+    branches: [main]
+    paths:
+      - "dashboard/data.json"
+      - ".github/workflows/fetch-photos.yml"
+      - ".claude/skills/find-watch/shoot-watches.mjs"
+      - ".claude/skills/find-watch/screenshot.mjs"
   workflow_dispatch:
     inputs:
       target:
