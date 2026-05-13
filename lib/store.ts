@@ -1,6 +1,6 @@
 import { randomBytes } from "crypto";
 import type { Game, Player, RoundAnswer, Phase, LatLng } from "./types";
-import { PHIL_PLACES } from "./places";
+import { PHIL_ROUNDS } from "./rounds";
 import { scoreAnswer } from "./scoring";
 
 const ALPHA = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
@@ -37,8 +37,8 @@ export function createGame(durationSeconds = 45): Game {
     createdAt: Date.now(),
     phase: "lobby",
     players: {},
-    places: [...PHIL_PLACES],
-    placeIndex: 0,
+    rounds: [...PHIL_ROUNDS],
+    roundIndex: 0,
     answers: {},
     roundDurationMs: durationSeconds * 1000,
   };
@@ -73,17 +73,23 @@ export function startGame(code: string, hostToken: string): Game | null {
   if (game.hostToken !== hostToken) return null;
   if (Object.keys(game.players).length === 0) return null;
   game.phase = "round";
-  game.placeIndex = 0;
+  game.roundIndex = 0;
   game.answers = {};
   game.roundStartedAt = Date.now();
   return game;
 }
 
+export interface AnswerPayload {
+  guess?: LatLng | null;
+  number?: number | null;
+  choiceIndex?: number | null;
+  binaryValue?: string | null;
+}
+
 export function submitAnswer(
   code: string,
   playerId: string,
-  guess: LatLng | null,
-  number: number | null,
+  payload: AnswerPayload,
 ): boolean {
   const game = getGame(code);
   if (!game) return false;
@@ -92,8 +98,10 @@ export function submitAnswer(
   if (game.answers[playerId]) return false;
   const answer: RoundAnswer = {
     playerId,
-    guess,
-    number,
+    guess: payload.guess ?? null,
+    number: payload.number ?? null,
+    choiceIndex: payload.choiceIndex ?? null,
+    binaryValue: payload.binaryValue ?? null,
     submittedAt: Date.now(),
   };
   game.answers[playerId] = answer;
@@ -104,19 +112,17 @@ export function reveal(code: string, hostToken: string): Game | null {
   const game = getGame(code);
   if (!game || game.hostToken !== hostToken) return null;
   if (game.phase !== "round") return null;
-  const place = game.places[game.placeIndex];
-  if (!place) return null;
+  const round = game.rounds[game.roundIndex];
+  if (!round) return null;
   for (const playerId of Object.keys(game.players)) {
     const ans = game.answers[playerId];
-    if (!ans) {
-      game.players[playerId].lastRoundPoints = 0;
-      continue;
+    const scored = scoreAnswer(round, ans);
+    if (ans) {
+      ans.locationPoints = scored.locationPoints;
+      ans.numberPoints = scored.numberPoints;
+      ans.totalPoints = scored.totalPoints;
+      ans.distanceKm = scored.distanceKm;
     }
-    const scored = scoreAnswer(place, ans.guess, ans.number);
-    ans.locationPoints = scored.locationPoints;
-    ans.numberPoints = scored.numberPoints;
-    ans.totalPoints = scored.totalPoints;
-    ans.distanceKm = scored.distanceKm;
     game.players[playerId].score += scored.totalPoints;
     game.players[playerId].lastRoundPoints = scored.totalPoints;
   }
@@ -127,13 +133,13 @@ export function reveal(code: string, hostToken: string): Game | null {
 export function advance(code: string, hostToken: string): Game | null {
   const game = getGame(code);
   if (!game || game.hostToken !== hostToken) return null;
-  const lastIndex = game.places.length - 1;
+  const lastIndex = game.rounds.length - 1;
   if (game.phase === "reveal") {
-    if (game.placeIndex >= lastIndex) {
+    if (game.roundIndex >= lastIndex) {
       game.phase = "finished";
       return game;
     }
-    game.placeIndex += 1;
+    game.roundIndex += 1;
     game.answers = {};
     game.phase = "round";
     game.roundStartedAt = Date.now();
