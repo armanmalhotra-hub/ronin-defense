@@ -11,7 +11,7 @@ export function Leaderboard({
 }) {
   if (players.length === 0) {
     return (
-      <p className="text-center text-white/50 py-6">
+      <p className="text-center text-black/40 py-6">
         Waiting for players to join…
       </p>
     );
@@ -26,28 +26,28 @@ export function Leaderboard({
             key={p.id}
             className={`flex items-center justify-between rounded-2xl px-4 py-3 border ${
               isMe
-                ? "bg-sunset/20 border-sunset"
-                : "bg-white/5 border-white/10"
+                ? "bg-forest/10 border-forest/40"
+                : "bg-black/[0.03] border-black/5"
             }`}
           >
-            <div className="flex items-center gap-3">
-              <span className="text-white/40 w-6 tabular-nums">{i + 1}</span>
-              <span className="font-semibold">
+            <div className="flex items-center gap-3 min-w-0">
+              <span className="text-black/40 w-6 tabular-nums">{i + 1}</span>
+              <span className="font-semibold truncate">
                 {medal} {p.name}
-                {isMe && <span className="text-sunset"> (you)</span>}
+                {isMe && <span className="text-forest"> (you)</span>}
               </span>
             </div>
             <div className="text-right">
-              <div className="font-display text-2xl text-sand tabular-nums">
+              <div className="font-display text-xl tabular-nums">
                 {p.score.toLocaleString()}
               </div>
-              {showBonus && typeof p.lastBonus === "number" && (
+              {showBonus && typeof p.lastRoundPoints === "number" && (
                 <div
                   className={`text-xs tabular-nums ${
-                    p.lastBonus > 0 ? "text-green-300" : "text-white/40"
+                    p.lastRoundPoints > 0 ? "text-forest" : "text-black/40"
                   }`}
                 >
-                  {p.lastBonus > 0 ? `+${p.lastBonus}` : "—"}
+                  {p.lastRoundPoints > 0 ? `+${p.lastRoundPoints}` : "—"}
                 </div>
               )}
             </div>

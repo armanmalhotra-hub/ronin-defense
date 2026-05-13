@@ -5,8 +5,12 @@ import { useParams } from "next/navigation";
 import { usePoll } from "@/lib/usePoll";
 import { Leaderboard } from "@/components/Leaderboard";
 import { RoundDots } from "@/components/RoundDots";
+import { PhotoCard } from "@/components/PhotoCard";
+import { PinMap, ResultMap } from "@/components/MapWrapper";
+import { NumberSlider } from "@/components/Slider";
 import { roast } from "@/lib/roast";
-import type { PublicGameView, PublicQuestion } from "@/lib/types";
+import type { LatLng, PublicGameView } from "@/lib/types";
+import { MAX_LOCATION_POINTS, MAX_NUMBER_POINTS, MAX_ROUND_POINTS } from "@/lib/types";
 
 export default function PlayPage() {
   const params = useParams<{ code: string }>();
@@ -48,8 +52,8 @@ export default function PlayPage() {
       <main className="min-h-[100dvh] p-6 flex flex-col items-center justify-center">
         <div className="max-w-md w-full card space-y-5">
           <div className="text-center">
-            <p className="label">Joining game</p>
-            <p className="font-display text-5xl text-sunset tracking-widest">
+            <p className="label">Joining</p>
+            <p className="font-display text-5xl text-forest tracking-widest">
               {code}
             </p>
           </div>
@@ -64,13 +68,10 @@ export default function PlayPage() {
               placeholder="e.g. Aron"
               required
             />
-            <button
-              className="btn-primary w-full"
-              disabled={joining || !name.trim()}
-            >
+            <button className="btn-primary w-full" disabled={joining || !name.trim()}>
               {joining ? "Joining…" : "Join the game"}
             </button>
-            {error && <p className="text-red-300 text-sm">{error}</p>}
+            {error && <p className="text-red-600 text-sm">{error}</p>}
           </form>
         </div>
       </main>
@@ -98,10 +99,8 @@ function PlayerInGame({ code, playerId }: { code: string; playerId: string }) {
       <main className="min-h-[100dvh] p-6 flex flex-col items-center">
         <div className="max-w-md w-full card text-center space-y-5">
           <p className="label">In the lobby</p>
-          <h1 className="text-3xl font-display text-sand">
-            Hey {me?.name ?? "—"} 👋
-          </h1>
-          <p className="text-white/60">
+          <h1 className="text-3xl font-display">Hey {me?.name ?? "—"} 👋</h1>
+          <p className="text-black/60">
             Waiting for the host to start. {data.players.length} players in.
           </p>
           <Leaderboard players={data.players} highlightId={playerId} />
@@ -115,7 +114,7 @@ function PlayerInGame({ code, playerId }: { code: string; playerId: string }) {
       <main className="min-h-[100dvh] p-6 flex flex-col items-center">
         <div className="max-w-md w-full card text-center space-y-5">
           <p className="label">Game over</p>
-          <h1 className="text-3xl font-display text-sand">
+          <h1 className="text-3xl font-display">
             🏆 {data.players[0]?.name} wins!
           </h1>
           <Leaderboard players={data.players} highlightId={playerId} />
@@ -125,11 +124,15 @@ function PlayerInGame({ code, playerId }: { code: string; playerId: string }) {
   }
 
   return (
-    <main className="min-h-[100dvh] p-4 flex flex-col items-center">
+    <main className="min-h-[100dvh] p-4 flex flex-col items-center safe-bottom">
       <div className="max-w-md w-full space-y-4">
-        <div className="card space-y-4">
-          <PlayerQuestion data={data} playerId={playerId} code={code} />
-        </div>
+        <Header data={data} />
+        {data.phase === "round" && (
+          <RoundBody data={data} playerId={playerId} code={code} />
+        )}
+        {data.phase === "reveal" && data.reveal && (
+          <RevealBody data={data} playerId={playerId} />
+        )}
         <div className="card">
           <p className="label mb-3">Standings</p>
           <Leaderboard
@@ -143,7 +146,21 @@ function PlayerInGame({ code, playerId }: { code: string; playerId: string }) {
   );
 }
 
-function PlayerQuestion({
+function Header({ data }: { data: PublicGameView }) {
+  return (
+    <div className="card">
+      <div className="flex items-center justify-between mb-3">
+        <p className="font-display text-xl tracking-widest">PHIL-GUESSR</p>
+        <p className="text-xs text-black/50 tabular-nums">
+          Round {data.placeIndex + 1} of {data.totalPlaces}
+        </p>
+      </div>
+      <RoundDots current={data.placeIndex} total={data.totalPlaces} />
+    </div>
+  );
+}
+
+function RoundBody({
   data,
   playerId,
   code,
@@ -152,86 +169,49 @@ function PlayerQuestion({
   playerId: string;
   code: string;
 }) {
-  const q = data.question;
+  const place = data.place!;
   const submitted = data.answeredPlayerIds.includes(playerId);
+  const [guess, setGuess] = useState<LatLng | null>(null);
+  const [number, setNumber] = useState<number>(
+    Math.round(
+      (place.numericQuestion.min + place.numericQuestion.max) / 2,
+    ),
+  );
+  const [locationSubmitted, setLocationSubmitted] = useState(false);
+  const [busy, setBusy] = useState(false);
+  const [err, setErr] = useState<string | null>(null);
+
+  // Reset when round changes
+  useEffect(() => {
+    setGuess(null);
+    setNumber(
+      Math.round(
+        (place.numericQuestion.min + place.numericQuestion.max) / 2,
+      ),
+    );
+    setLocationSubmitted(false);
+    setErr(null);
+  }, [place.id]);
+
   const [now, setNow] = useState(Date.now());
   useEffect(() => {
     const t = setInterval(() => setNow(Date.now()), 500);
     return () => clearInterval(t);
   }, []);
   const remaining = useMemo(() => {
-    if (data.phase !== "question" || !data.questionStartedAt) return null;
-    const ms = data.questionStartedAt + data.questionDurationMs - now;
+    if (!data.roundStartedAt) return null;
+    const ms = data.roundStartedAt + data.roundDurationMs - now;
     return Math.max(0, Math.ceil(ms / 1000));
   }, [data, now]);
 
-  if (!q) return null;
-
-  return (
-    <div className="space-y-5">
-      <div className="space-y-2">
-        <div className="flex items-baseline justify-between">
-          <p className="label">
-            Round {data.questionIndex + 1} of {data.totalQuestions}
-          </p>
-          {remaining !== null && (
-            <p className="font-display text-2xl text-sunset tabular-nums">
-              {remaining}s
-            </p>
-          )}
-        </div>
-        <RoundDots current={data.questionIndex} total={data.totalQuestions} />
-      </div>
-
-      <h2 className="text-2xl font-display text-sand leading-tight">
-        {q.prompt}
-      </h2>
-      {q.image && (
-        <img
-          src={q.image}
-          alt=""
-          className="rounded-2xl max-h-64 object-cover w-full"
-        />
-      )}
-
-      {data.phase === "question" && !submitted && (
-        <AnswerInput question={q} code={code} playerId={playerId} />
-      )}
-
-      {data.phase === "question" && submitted && (
-        <p className="text-center text-green-300 py-4">
-          Locked in. Waiting for everyone else…
-        </p>
-      )}
-
-      {data.phase === "reveal" && data.reveal && (
-        <RevealPanel data={data} playerId={playerId} />
-      )}
-    </div>
-  );
-}
-
-function AnswerInput({
-  question,
-  code,
-  playerId,
-}: {
-  question: PublicQuestion;
-  code: string;
-  playerId: string;
-}) {
-  const [busy, setBusy] = useState(false);
-  const [text, setText] = useState("");
-  const [err, setErr] = useState<string | null>(null);
-
-  async function submit(value: string | number) {
+  async function submit() {
     setBusy(true);
     setErr(null);
     try {
       const res = await fetch(`/api/game/${code}/answer`, {
         method: "POST",
         headers: { "content-type": "application/json" },
-        body: JSON.stringify({ playerId, value }),
+        body: JSON.stringify({ playerId, guess, number }),
       });
       const json = await res.json();
       if (!res.ok) throw new Error(json.error || "Failed");
@@ -241,113 +221,105 @@ function AnswerInput({
     }
   }
 
-  if (question.kind === "yes_no") {
+  if (submitted) {
     return (
-      <div className="grid grid-cols-2 gap-3">
-        <button
-          className="btn-primary py-5 text-xl"
-          disabled={busy}
-          onClick={() => submit("yes")}
-        >
-          Yes
-        </button>
-        <button
-          className="btn-secondary py-5 text-xl"
-          disabled={busy}
-          onClick={() => submit("no")}
-        >
-          No
-        </button>
-        {err && <p className="col-span-2 text-red-300 text-sm">{err}</p>}
+      <div className="card text-center space-y-2">
+        <p className="text-2xl">✅</p>
+        <p className="font-semibold">Locked in.</p>
+        <p className="text-black/60 text-sm">Waiting for everyone else…</p>
       </div>
     );
   }
 
-  if (question.kind === "higher_lower") {
-    return (
-      <div className="space-y-3">
-        <p className="text-white/70">{question.statement}</p>
-        <div className="grid grid-cols-2 gap-3">
-          <button
-            className="btn-primary py-5 text-xl"
-            disabled={busy}
-            onClick={() => submit("higher")}
-          >
-            ↑ Higher
-          </button>
-          <button
-            className="btn-secondary py-5 text-xl"
-            disabled={busy}
-            onClick={() => submit("lower")}
-          >
-            ↓ Lower
-          </button>
-        </div>
-        {err && <p className="text-red-300 text-sm">{err}</p>}
-      </div>
-    );
-  }
-
-  if (question.kind === "multiple_choice" && question.choices) {
-    return (
-      <div className="grid gap-3">
-        {question.choices.map((c, i) => (
-          <button
-            key={i}
-            className="btn-secondary justify-start text-left py-4"
-            disabled={busy}
-            onClick={() => submit(i)}
-          >
-            <span className="text-sunset mr-3 font-display text-xl">
-              {String.fromCharCode(65 + i)}
-            </span>
-            {c}
-          </button>
-        ))}
-        {err && <p className="text-red-300 text-sm">{err}</p>}
-      </div>
-    );
-  }
-
-  // closest
   return (
-    <form
-      onSubmit={(e) => {
-        e.preventDefault();
-        const n = Number(text);
-        if (!Number.isFinite(n)) {
-          setErr("Enter a number");
-          return;
-        }
-        submit(n);
-      }}
-      className="space-y-3"
-    >
-      {question.hint && <p className="text-white/50 text-sm">{question.hint}</p>}
-      <div className="flex gap-2">
-        <input
-          className="input text-center text-2xl"
-          type="number"
-          inputMode="decimal"
-          step="any"
-          autoFocus
-          value={text}
-          onChange={(e) => setText(e.target.value)}
-          placeholder="Your guess"
-        />
-        {question.unit && (
-          <div className="self-center text-white/60">{question.unit}</div>
+    <>
+      <div className="card space-y-4">
+        <div>
+          <p className="label">Place</p>
+          <h2 className="text-2xl font-display leading-tight">{place.title}</h2>
+        </div>
+        <PhotoCard place={place} />
+        {remaining !== null && (
+          <p className="text-center font-display text-2xl text-forest tabular-nums">
+            {remaining}s
+          </p>
         )}
       </div>
-      <button className="btn-primary w-full text-lg" disabled={busy}>
-        Lock it in
-      </button>
-      {err && <p className="text-red-300 text-sm">{err}</p>}
-    </form>
+
+      <div className="card space-y-3">
+        <div className="flex items-center gap-2">
+          <Step n={1} done={!!guess} active={!guess} />
+          <p className="label">Guess the location — drop a pin</p>
+        </div>
+        <PinMap value={guess} onChange={setGuess} disabled={locationSubmitted} />
+        <p className="text-xs text-black/50">
+          {guess
+            ? `Pin placed at ${guess.lat.toFixed(2)}, ${guess.lng.toFixed(2)}`
+            : "Pin not placed yet"}
+        </p>
+        {!locationSubmitted && (
+          <button
+            className="btn-primary w-full"
+            disabled={!guess}
+            onClick={() => setLocationSubmitted(true)}
+          >
+            Lock location →
+          </button>
+        )}
+      </div>
+
+      <div className={`card space-y-3 ${!locationSubmitted ? "opacity-60" : ""}`}>
+        <div className="flex items-center gap-2">
+          <Step n={2} done={false} active={locationSubmitted} />
+          <p className="label">{place.numericQuestion.label}</p>
+        </div>
+        <p className="text-base font-medium leading-snug">
+          {place.numericQuestion.prompt}
+        </p>
+        {locationSubmitted ? (
+          <NumberSlider
+            min={place.numericQuestion.min}
+            max={place.numericQuestion.max}
+            step={place.numericQuestion.step}
+            unitPrefix={place.numericQuestion.unitPrefix}
+            unitSuffix={place.numericQuestion.unitSuffix}
+            value={number}
+            onChange={setNumber}
+          />
+        ) : (
+          <p className="text-center text-black/40 py-6 text-sm">
+            Lock the location first to unlock the slider.
+          </p>
+        )}
+        <button
+          className="btn-primary w-full"
+          disabled={!locationSubmitted || busy}
+          onClick={submit}
+        >
+          {busy ? "Submitting…" : "Submit answer →"}
+        </button>
+        {err && <p className="text-red-600 text-sm">{err}</p>}
+      </div>
+    </>
   );
 }
 
-function RevealPanel({
+function Step({
+  n,
+  done,
+  active,
+}: {
+  n: number;
+  done: boolean;
+  active: boolean;
+}) {
+  const base = "h-6 w-6 rounded-full flex items-center justify-center text-xs font-bold";
+  if (done) return <div className={`${base} bg-forest text-white`}>✓</div>;
+  if (active) return <div className={`${base} bg-leaf text-white`}>{n}</div>;
+  return <div className={`${base} bg-black/10 text-black/40`}>{n}</div>;
+}
+
+function RevealBody({
   data,
   playerId,
 }: {
@@ -355,63 +327,85 @@ function RevealPanel({
   playerId: string;
 }) {
   const reveal = data.reveal!;
-  const mine = reveal.perPlayer.find((x) => x.playerId === playerId);
-  const pts = mine?.pointsEarned ?? 0;
-  const pct = Math.round((pts / 1000) * 100);
-  const roastLine = roast(pts, `${reveal.questionId}:${playerId}`);
+  const place = data.place!;
+  const mine = reveal.perPlayer.find((p) => p.playerId === playerId);
+  const totalPts = mine?.totalPoints ?? 0;
+  const locPct = (mine?.locationPoints ?? 0) / MAX_LOCATION_POINTS;
+  const numPct = (mine?.numberPoints ?? 0) / MAX_NUMBER_POINTS;
+  const overallPct = Math.round((totalPts / MAX_ROUND_POINTS) * 100);
+  const roastLine = roast(locPct, numPct, `${reveal.placeId}:${playerId}`);
 
   return (
-    <div className="space-y-4">
-      <div className="rounded-3xl bg-white/5 border border-white/10 p-6 text-center">
-        <p className="label mb-2">Round result</p>
+    <>
+      <div className="card text-center space-y-2">
+        <p className="label">Round {data.placeIndex + 1} Result</p>
         <p
           className={`font-display tracking-tight text-7xl ${
-            pct >= 70
-              ? "text-green-300"
-              : pct >= 40
-              ? "text-sand"
-              : "text-white/70"
+            overallPct >= 70
+              ? "text-forest"
+              : overallPct >= 40
+              ? "text-ink"
+              : "text-black/60"
           }`}
         >
-          {pct}%
+          {overallPct}%
         </p>
-        <p className="text-white/60 tabular-nums">
-          {pts.toLocaleString()} / 1,000 pts
+        <p className="text-black/60 tabular-nums">
+          {totalPts.toLocaleString()} / {MAX_ROUND_POINTS.toLocaleString()} pts
         </p>
-      </div>
-
-      <div className="grid grid-cols-2 gap-3">
-        <div className="rounded-2xl bg-white/5 border border-white/10 p-3">
-          <p className="label text-[10px]">You said</p>
-          <p className="font-semibold text-base mt-1">
-            {mine?.value !== null && mine?.value !== undefined
-              ? String(mine.value)
-              : "—"}
-          </p>
-        </div>
-        <div className="rounded-2xl bg-sunset/15 border border-sunset/40 p-3">
-          <p className="label text-[10px] text-sunset/80">Truth</p>
-          <p className="font-semibold text-base mt-1 text-sunset">
-            {String(reveal.answer)}
-            {reveal.unit ? ` ${reveal.unit}` : ""}
-          </p>
+        <div className="grid grid-cols-2 gap-3 pt-3 border-t border-black/5">
+          <div>
+            <p className="label">Location</p>
+            <p className="font-display text-3xl">{Math.round(locPct * 100)}%</p>
+          </div>
+          <div>
+            <p className="label">{place.numericQuestion.label}</p>
+            <p className="font-display text-3xl">{Math.round(numPct * 100)}%</p>
+          </div>
         </div>
       </div>
 
-      {reveal.funFact && (
-        <p className="text-center text-white/60 italic text-sm">
-          {reveal.funFact}
-        </p>
-      )}
-
-      <p className="text-center text-white/80 italic">{roastLine}</p>
-    </div>
+      <div className="card space-y-3">
+        <ResultMap guess={mine?.guess ?? null} answer={reveal.location} />
+        <div className="grid grid-cols-2 gap-3">
+          <div className="rounded-2xl bg-black/[0.03] p-3">
+            <p className="label">Location</p>
+            <p className="font-semibold text-forest">{reveal.location.label}</p>
+            <p className="text-xs text-black/60">
+              {mine?.guess
+                ? `${Math.round((mine?.distanceKm ?? 0) * 0.621)} mi off`
+                : "no guess"}
+            </p>
+          </div>
+          <div className="rounded-2xl bg-black/[0.03] p-3">
+            <p className="label">{place.numericQuestion.label}</p>
+            <p className="font-semibold text-forest">
+              {place.numericQuestion.unitPrefix}
+              {reveal.numberAnswer.toLocaleString()}
+              {place.numericQuestion.unitSuffix ? ` ${place.numericQuestion.unitSuffix}` : ""}
+            </p>
+            <p className="text-xs text-black/60">
+              You said{" "}
+              {mine?.number !== null && mine?.number !== undefined
+                ? `${place.numericQuestion.unitPrefix ?? ""}${mine.number.toLocaleString()}${place.numericQuestion.unitSuffix ? " " + place.numericQuestion.unitSuffix : ""}`
+                : "—"}
+            </p>
+          </div>
+        </div>
+        {reveal.funFact && (
+          <p className="text-center text-black/60 italic text-sm pt-1">
+            {reveal.funFact}
+          </p>
+        )}
+        <p className="text-center italic">{roastLine}</p>
+      </div>
+    </>
   );
 }
 
 function Centered({ children }: { children: React.ReactNode }) {
   return (
-    <main className="min-h-[100dvh] flex items-center justify-center p-6 text-white/70">
+    <main className="min-h-[100dvh] flex items-center justify-center p-6 text-black/60">
       {children}
     </main>
   );

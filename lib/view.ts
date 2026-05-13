@@ -1,34 +1,27 @@
 import type {
   Game,
+  Place,
   PublicGameView,
-  PublicQuestion,
+  PublicPlace,
   RevealView,
-  Question,
 } from "./types";
 
-export function toPublicQuestion(q: Question): PublicQuestion {
-  const base = {
-    id: q.id,
-    kind: q.kind,
-    prompt: q.prompt,
-    image: q.image,
-    caption: q.caption,
+export function toPublicPlace(p: Place): PublicPlace {
+  return {
+    id: p.id,
+    title: p.title,
+    image: p.image,
+    pills: p.pills,
+    numericQuestion: {
+      label: p.numericQuestion.label,
+      prompt: p.numericQuestion.prompt,
+      unitPrefix: p.numericQuestion.unitPrefix,
+      unitSuffix: p.numericQuestion.unitSuffix,
+      min: p.numericQuestion.min,
+      max: p.numericQuestion.max,
+      step: p.numericQuestion.step,
+    },
   };
-  if (q.kind === "closest") {
-    return { ...base, unit: q.unit, hint: q.hint };
-  }
-  if (q.kind === "higher_lower") {
-    return {
-      ...base,
-      reference: q.reference,
-      unit: q.unit,
-      statement: q.statement,
-    };
-  }
-  if (q.kind === "multiple_choice") {
-    return { ...base, choices: q.choices };
-  }
-  return base;
 }
 
 export function toPublicView(game: Game): PublicGameView {
@@ -37,47 +30,39 @@ export function toPublicView(game: Game): PublicGameView {
     code: game.code,
     phase: game.phase,
     players,
-    questionIndex: game.questionIndex,
-    totalQuestions: game.questions.length,
-    questionStartedAt: game.questionStartedAt,
-    questionDurationMs: game.questionDurationMs,
+    placeIndex: game.placeIndex,
+    totalPlaces: game.places.length,
+    roundStartedAt: game.roundStartedAt,
+    roundDurationMs: game.roundDurationMs,
     answeredPlayerIds: Object.keys(game.answers),
   };
-  if (game.phase === "question" || game.phase === "reveal") {
-    const q = game.questions[game.questionIndex];
-    if (q) view.question = toPublicQuestion(q);
+  if (game.phase === "round" || game.phase === "reveal") {
+    const p = game.places[game.placeIndex];
+    if (p) view.place = toPublicPlace(p);
   }
   if (game.phase === "reveal") {
-    const q = game.questions[game.questionIndex];
-    if (q) view.reveal = buildReveal(game, q);
+    const p = game.places[game.placeIndex];
+    if (p) view.reveal = buildReveal(game, p);
   }
   return view;
 }
 
-function buildReveal(game: Game, q: Question): RevealView {
-  let answer: string | number;
-  let unit: string | undefined;
-  if (q.kind === "closest") {
-    answer = q.answer;
-    unit = q.unit;
-  } else if (q.kind === "higher_lower") {
-    answer = q.answer;
-  } else if (q.kind === "yes_no") {
-    answer = q.answer;
-  } else {
-    answer = q.choices[q.answerIndex];
-  }
+function buildReveal(game: Game, p: Place): RevealView {
   return {
-    questionId: q.id,
-    answer,
-    unit,
-    funFact: q.funFact,
-    perPlayer: Object.values(game.players).map((p) => {
-      const ans = game.answers[p.id];
+    placeId: p.id,
+    location: p.location,
+    numberAnswer: p.numericQuestion.answer,
+    funFact: p.funFact,
+    perPlayer: Object.values(game.players).map((player) => {
+      const ans = game.answers[player.id];
       return {
-        playerId: p.id,
-        value: ans ? ans.value : null,
-        pointsEarned: ans?.pointsEarned ?? 0,
+        playerId: player.id,
+        guess: ans?.guess ?? null,
+        number: ans?.number ?? null,
+        locationPoints: ans?.locationPoints ?? 0,
+        numberPoints: ans?.numberPoints ?? 0,
+        totalPoints: ans?.totalPoints ?? 0,
+        distanceKm: ans?.distanceKm ?? 0,
       };
     }),
   };

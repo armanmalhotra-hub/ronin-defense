@@ -1,18 +1,21 @@
-# How Well Do You Know Phil?
+# PHIL-GUESSR
 
-A live-multiplayer guessing game for Phil's bachelor party in Joshua Tree.
-Inspired by [HomeGuessr](https://homeguessr.com/) — but instead of houses,
-you're guessing stuff about the groom.
+A HomeGuessr-style live-multiplayer game for Phil's bachelor party in Joshua Tree.
+Instead of guessing where random US houses are, you guess where the places
+from Phil's life are — and one number about each.
 
-- **Host** opens the game on a TV/laptop and gets a QR code + 4-letter game code.
+- **Host** opens the game on a TV/laptop → gets a QR code + 4-letter game code.
 - **Up to 20 guests** scan the QR on their phones, type their name, and join.
-- Each round is a question about Phil with one of four answer types:
-  - **Closest wins** (numeric guess, partial credit by closeness)
-  - **Higher / lower** (vs. a stated reference number)
-  - **Yes / no** (betting)
-  - **Multiple choice** (pick A/B/C/D, photos optional)
-- After each round the host reveals the answer, points get awarded, and the
-  live leaderboard updates on every screen.
+- Each round shows a **place** from Phil's life (childhood home, NYU dorm,
+  proposal spot, Diana in Melbourne, Joshua Tree itself, etc.) with a photo
+  and metadata pills.
+- Players do two things per round:
+  1. **Drop a pin** on a world map for the location (up to 2,500 pts based on
+     distance from truth)
+  2. **Slide** to guess a number — rent, age, year, miles, whatever the round
+     asks (up to 2,500 pts based on closeness)
+- Combined out of 5,000 pts per round. Result screen shows a giant %, the
+  truth on a map next to your guess, and a tier-based roast.
 
 ## Run locally
 
@@ -22,80 +25,55 @@ npm run dev
 # open http://localhost:3000
 ```
 
-Open the host view in one tab, then open `http://localhost:3000/play/<CODE>` in
-several other tabs (or on your phone over LAN) to simulate guests.
+Open the host view in one tab, then visit `http://localhost:3000/play/<CODE>`
+in another tab or your phone over LAN.
 
-## Customize the questions
+## Customize the places
 
-All 15 starter questions live in `lib/questions.ts`. Most of the answers are
-placeholders — **edit them before the party** so the scoring is correct.
+All 8 starter places live in `lib/places.ts`. Most answers are placeholders —
+**edit them before the party** so scoring is correct. For each place, set:
 
-Each question can include an optional `image` field. Drop photos in
-`public/photos/` and reference them like `/photos/baby-phil.jpg`.
+- `title` — display name ("Phil's childhood home")
+- `pills` — small overlay tags on the photo (["San Diego, CA", "1996 – 2014"])
+- `location` — `{ lat, lng, label }` — the truth
+- `numericQuestion` — the slider question with `min`, `max`, `answer`, `unitPrefix` / `unitSuffix`
+- `funFact` — shown on reveal
+- `image` (optional) — path like `/photos/childhood-home.jpg`
 
-Question types and the fields each one needs:
-
-```ts
-{ kind: "closest", prompt, answer: 42, unit?: "miles", hint? }
-{ kind: "higher_lower", prompt, statement, reference: 3500, unit?, answer: "higher" | "lower" }
-{ kind: "yes_no", prompt, answer: "yes" | "no" }
-{ kind: "multiple_choice", prompt, choices: [...], answerIndex: 0 }
-```
-
-Optional on any question: `image`, `caption`, `funFact` (shown on reveal).
+Drop photos in `public/photos/` and reference them with `image:`.
 
 ## Deploy to Vercel
 
-1. Push this repo to GitHub.
-2. Go to [vercel.com/new](https://vercel.com/new), import the repo, accept the
-   defaults. No environment variables needed.
-3. Share the resulting URL (e.g. `phils-party.vercel.app`) with the host
-   device on the day.
+1. Push this branch to GitHub.
+2. Connect / import the repo at [vercel.com/new](https://vercel.com/new).
+3. Accept defaults. No env vars needed. Map tiles use OpenStreetMap (free).
 
-### Important caveat: in-memory state
+### Caveat: in-memory state
 
-Game state lives in memory on the server. On Vercel that means **all 20 guests
-must hit the same serverless instance** for the duration of the party. With
-free-tier traffic levels this almost always works, because the function stays
-warm on a single instance. If you see weird "missing player" errors, that's the
-signal that Vercel cold-started a new instance — the fix is to upgrade `lib/store.ts`
-to use [Vercel KV](https://vercel.com/docs/storage/vercel-kv) or Upstash Redis.
-Easy swap if you need it.
+Game state is stored in memory on the server. With a single warm Vercel
+function instance, all 20 guests share state fine for an evening. If you
+see "missing player" errors under load, swap `lib/store.ts` to Vercel KV
+(Redis) — easy follow-up.
 
 ## Joshua Tree day-of checklist
 
-- **Bring a hotspot.** The desert WiFi situation is unreliable. Tether the host
-  laptop and the guests' phones to one strong cell signal.
-- **Test on the actual hardware** the day before. Open the host page on the
-  TV/projector you'll use, scan the QR with two phones, and play a few rounds.
-- **Have a backup plan.** If networking dies entirely, pre-print the questions
-  on paper and run it pub-quiz style.
-- **Pre-load images.** If you add photos in `public/photos/`, make sure they're
-  reasonably small (~300 KB each) so they load fast on cell.
-
-## How a round works
-
-1. Host clicks **Start the game**.
-2. Question appears on the host screen and on every player's phone.
-3. Players tap their answer / type a number and lock it in. The host screen
-   shows `X of Y answered` so you know when to move on.
-4. Host clicks **Reveal answer** — the answer appears on every screen with the
-   fun fact, and points are added to the leaderboard.
-5. Host clicks **Next question**. Repeat for 15 rounds.
-6. After the last reveal, host clicks **Show final results** for the champion
-   screen.
+- Bring a hotspot. Desert WiFi is unreliable.
+- Test on the actual TV/projector the day before.
+- Pre-warm the Vercel function: open the host page 30 seconds before guests start joining.
+- If you add photos, keep each under ~300 KB.
 
 ## Scoring
 
-- Yes/no, higher/lower, multiple choice: **1000 points** for a correct answer,
-  0 otherwise.
-- Closest wins: scaled from 0 to 1000 based on relative error vs. the truth.
-  A guess within 0.1% gets the full 1000; anything off by 100% or more gets 0.
+- **Location**: 2,500 × exp(-distance_km / 2000). Within ~25 km feels like a
+  bullseye, ~500 km still rewarding, antipodes get zero.
+- **Number**: smooth curve from 2,500 pts (exact) to 0 pts (≥ 60% of the
+  slider range off).
 
 ## Tech
 
 - Next.js 14 (App Router) + TypeScript + Tailwind
-- React client polls `/api/game/[code]/state` every ~1.5 s
+- Leaflet + OpenStreetMap tiles for maps (no API key)
+- React clients poll `/api/game/[code]/state` every 1.5 s
 - In-memory game store (singleton via `globalThis`)
 - `qrcode` for the join QR
-- No external services required
+- No external services / env vars required

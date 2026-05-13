@@ -10,14 +10,14 @@ export function QrCode({ value, size = 240 }: { value: string; size?: number }) 
     QRCode.toDataURL(value, {
       width: size,
       margin: 1,
-      color: { dark: "#0b132b", light: "#e9d8a6" },
+      color: { dark: "#0a0a0a", light: "#ffffff" },
     }).then(setSrc);
   }, [value, size]);
 
   if (!src) {
     return (
       <div
-        className="bg-sand/20 rounded-2xl animate-pulse"
+        className="bg-black/5 rounded-2xl animate-pulse"
         style={{ width: size, height: size }}
       />
     );

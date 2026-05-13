@@ -6,7 +6,10 @@ import { usePoll } from "@/lib/usePoll";
 import { QrCode } from "@/components/QrCode";
 import { Leaderboard } from "@/components/Leaderboard";
 import { RoundDots } from "@/components/RoundDots";
+import { PhotoCard } from "@/components/PhotoCard";
+import { ResultMap } from "@/components/MapWrapper";
 import type { PublicGameView } from "@/lib/types";
+import { MAX_ROUND_POINTS } from "@/lib/types";
 
 export default function HostPage() {
   const params = useParams<{ code: string }>();
@@ -46,24 +49,23 @@ export default function HostPage() {
   if (error && !data) {
     return <Centered>Couldn't reach the server. {error}</Centered>;
   }
-  if (!data) {
-    return <Centered>Loading lobby…</Centered>;
-  }
+  if (!data) return <Centered>Loading lobby…</Centered>;
 
   if (data.phase === "lobby") {
     return (
       <main className="min-h-[100dvh] p-6 sm:p-10 flex flex-col items-center">
         <div className="max-w-5xl w-full grid sm:grid-cols-2 gap-8">
           <div className="card flex flex-col items-center text-center gap-4">
+            <p className="font-display text-2xl tracking-widest">PHIL-GUESSR</p>
             <p className="label">Scan to join</p>
             {joinUrl && <QrCode value={joinUrl} size={260} />}
             <div>
-              <p className="text-white/60 text-sm">Or visit</p>
-              <p className="font-mono text-sand">{joinUrl}</p>
+              <p className="text-black/60 text-sm">Or visit</p>
+              <p className="font-mono text-forest text-sm break-all">{joinUrl}</p>
             </div>
             <div className="mt-4">
               <p className="label">Game code</p>
-              <p className="font-display text-7xl tracking-widest text-sunset">
+              <p className="font-display text-7xl tracking-widest text-forest">
                 {code}
               </p>
             </div>
@@ -71,10 +73,8 @@ export default function HostPage() {
 
           <div className="card flex flex-col gap-4">
             <div className="flex items-baseline justify-between">
-              <h2 className="text-2xl font-display text-sand">Players</h2>
-              <span className="text-white/50">
-                {data.players.length} joined
-              </span>
+              <h2 className="text-2xl font-display">Players</h2>
+              <span className="text-black/50">{data.players.length} joined</span>
             </div>
             <div className="flex-1 overflow-auto">
               <Leaderboard players={data.players} />
@@ -87,9 +87,8 @@ export default function HostPage() {
               Start the game →
             </button>
             {!hostToken && (
-              <p className="text-xs text-red-300">
-                Host token missing. You may have refreshed the host tab. Create
-                a new game from the homepage.
+              <p className="text-xs text-red-600">
+                Host token missing. Create a new game from the homepage.
               </p>
             )}
           </div>
@@ -104,11 +103,9 @@ export default function HostPage() {
       <main className="min-h-[100dvh] p-6 sm:p-10 flex flex-col items-center">
         <div className="max-w-3xl w-full card text-center space-y-6">
           <p className="label">Final standings</p>
-          <h1 className="text-5xl font-display text-sand">🏆 Champion 🏆</h1>
-          <p className="text-3xl text-sunset font-display">
-            {winner?.name ?? "—"}
-          </p>
-          <p className="text-white/60">
+          <h1 className="text-5xl font-display">🏆 Champion 🏆</h1>
+          <p className="text-3xl text-forest font-display">{winner?.name ?? "—"}</p>
+          <p className="text-black/60">
             with {winner?.score.toLocaleString() ?? 0} points
           </p>
           <Leaderboard players={data.players} />
@@ -117,122 +114,113 @@ export default function HostPage() {
     );
   }
 
-  // question or reveal
   return (
     <main className="min-h-[100dvh] p-6 sm:p-10 grid lg:grid-cols-3 gap-6">
-      <div className="lg:col-span-2 card flex flex-col gap-6">
-        <HostQuestionPanel data={data} />
+      <div className="lg:col-span-2 card flex flex-col gap-5">
+        <HostMain data={data} />
       </div>
       <div className="card flex flex-col gap-4">
         <div className="flex items-baseline justify-between">
-          <h2 className="text-xl font-display text-sand">Leaderboard</h2>
-          <span className="text-white/50 text-sm">
-            Round {data.questionIndex + 1} / {data.totalQuestions}
+          <h2 className="text-xl font-display">Standings</h2>
+          <span className="text-black/50 text-sm">
+            Round {data.placeIndex + 1} / {data.totalPlaces}
           </span>
         </div>
         <div className="flex-1 overflow-auto">
-          <Leaderboard players={data.players} showBonus={data.phase === "reveal"} />
+          <Leaderboard
+            players={data.players}
+            showBonus={data.phase === "reveal"}
+          />
         </div>
-        <button
-          className="btn-primary text-lg"
-          onClick={advance}
-          disabled={!hostToken}
-        >
-          {data.phase === "question"
+        <button className="btn-primary text-lg" onClick={advance} disabled={!hostToken}>
+          {data.phase === "round"
             ? "Reveal answer →"
-            : data.questionIndex + 1 >= data.totalQuestions
+            : data.placeIndex + 1 >= data.totalPlaces
             ? "Show final results →"
-            : "Next question →"}
+            : "Next place →"}
         </button>
       </div>
     </main>
   );
 }
 
-function HostQuestionPanel({ data }: { data: PublicGameView }) {
+function HostMain({ data }: { data: PublicGameView }) {
   const [now, setNow] = useState(Date.now());
   useEffect(() => {
     const t = setInterval(() => setNow(Date.now()), 250);
     return () => clearInterval(t);
   }, []);
   const remaining = useMemo(() => {
-    if (data.phase !== "question" || !data.questionStartedAt) return null;
-    const ms = data.questionStartedAt + data.questionDurationMs - now;
+    if (data.phase !== "round" || !data.roundStartedAt) return null;
+    const ms = data.roundStartedAt + data.roundDurationMs - now;
     return Math.max(0, Math.ceil(ms / 1000));
   }, [data, now]);
 
-  const q = data.question;
+  const place = data.place;
   const reveal = data.reveal;
-  if (!q) return null;
+  if (!place) return null;
   const answeredCount = data.answeredPlayerIds.length;
   const totalPlayers = data.players.length;
 
   return (
-    <div className="flex flex-col gap-6 h-full">
-      <div className="space-y-3">
-        <div className="flex items-baseline justify-between">
-          <p className="label">
-            Question {data.questionIndex + 1} of {data.totalQuestions}
-          </p>
-          {remaining !== null && (
-            <p className="font-display text-3xl text-sunset tabular-nums">
-              {remaining}s
-            </p>
-          )}
-        </div>
-        <RoundDots current={data.questionIndex} total={data.totalQuestions} />
+    <div className="flex flex-col gap-5 h-full">
+      <div className="flex items-center justify-between">
+        <p className="font-display text-2xl tracking-widest">PHIL-GUESSR</p>
+        {remaining !== null && (
+          <p className="font-display text-3xl text-forest tabular-nums">{remaining}s</p>
+        )}
       </div>
-
-      <h2 className="text-3xl sm:text-4xl font-display text-sand leading-tight">
-        {q.prompt}
-      </h2>
-
-      {q.image && (
-        <img
-          src={q.image}
-          alt=""
-          className="rounded-2xl max-h-96 object-cover"
-        />
-      )}
-
-      {q.kind === "higher_lower" && (
-        <p className="text-2xl text-white/80">{q.statement}</p>
-      )}
-
-      {q.kind === "multiple_choice" && q.choices && (
-        <ul className="grid sm:grid-cols-2 gap-3">
-          {q.choices.map((c, i) => (
-            <li
-              key={i}
-              className="rounded-xl bg-white/5 border border-white/10 px-4 py-3"
-            >
-              <span className="text-white/40 mr-2">
-                {String.fromCharCode(65 + i)}.
-              </span>
-              {c}
-            </li>
-          ))}
-        </ul>
-      )}
-
-      <div className="mt-auto flex items-center justify-between text-white/60">
-        <p>
-          Answered:{" "}
-          <span className="text-sand font-semibold">
-            {answeredCount} / {totalPlayers}
-          </span>
+      <div className="space-y-2">
+        <p className="label">
+          Round {data.placeIndex + 1} of {data.totalPlaces}
         </p>
+        <RoundDots current={data.placeIndex} total={data.totalPlaces} />
       </div>
+
+      <h2 className="text-4xl font-display leading-tight">{place.title}</h2>
+      <PhotoCard place={place} />
+
+      <div className="grid sm:grid-cols-2 gap-3">
+        <div className="rounded-2xl bg-black/[0.03] p-4">
+          <p className="label">Step 1</p>
+          <p className="font-semibold">Drop a pin on the map</p>
+        </div>
+        <div className="rounded-2xl bg-black/[0.03] p-4">
+          <p className="label">Step 2 — {place.numericQuestion.label}</p>
+          <p className="font-semibold">{place.numericQuestion.prompt}</p>
+        </div>
+      </div>
+
+      <p className="text-black/60">
+        Answered:{" "}
+        <span className="font-semibold text-ink">
+          {answeredCount} / {totalPlayers}
+        </span>
+      </p>
 
       {data.phase === "reveal" && reveal && (
-        <div className="rounded-2xl bg-sunset/15 border border-sunset/40 p-5 space-y-2">
-          <p className="label">Answer</p>
-          <p className="text-3xl font-display text-sunset">
-            {String(reveal.answer)}
-            {reveal.unit ? ` ${reveal.unit}` : ""}
-          </p>
+        <div className="space-y-3">
+          <div className="grid sm:grid-cols-2 gap-3">
+            <div className="rounded-2xl bg-forest/10 border border-forest/30 p-4">
+              <p className="label">Location answer</p>
+              <p className="text-2xl font-display text-forest">
+                {reveal.location.label}
+              </p>
+            </div>
+            <div className="rounded-2xl bg-forest/10 border border-forest/30 p-4">
+              <p className="label">{place.numericQuestion.label}</p>
+              <p className="text-2xl font-display text-forest">
+                {place.numericQuestion.unitPrefix}
+                {reveal.numberAnswer.toLocaleString()}
+                {place.numericQuestion.unitSuffix
+                  ? ` ${place.numericQuestion.unitSuffix}`
+                  : ""}
+              </p>
+            </div>
+          </div>
+          <ResultMap guess={null} answer={reveal.location} />
           {reveal.funFact && (
-            <p className="text-white/70 italic">{reveal.funFact}</p>
+            <p className="text-center text-black/60 italic">{reveal.funFact}</p>
           )}
         </div>
       )}
@@ -242,7 +230,7 @@ function HostQuestionPanel({ data }: { data: PublicGameView }) {
 
 function Centered({ children }: { children: React.ReactNode }) {
   return (
-    <main className="min-h-[100dvh] flex items-center justify-center p-6 text-white/70">
+    <main className="min-h-[100dvh] flex items-center justify-center p-6 text-black/60">
       {children}
     </main>
   );

@@ -1,69 +1,46 @@
-export type QuestionKind =
-  | "closest"
-  | "higher_lower"
-  | "yes_no"
-  | "multiple_choice";
+export interface LatLng {
+  lat: number;
+  lng: number;
+}
 
-interface BaseQuestion {
+export interface Place {
   id: string;
-  prompt: string;
+  title: string;
   image?: string;
-  caption?: string;
+  pills?: string[];
+  location: LatLng & { label: string };
+  numericQuestion: {
+    label: string;
+    prompt: string;
+    answer: number;
+    unitPrefix?: string;
+    unitSuffix?: string;
+    min: number;
+    max: number;
+    step?: number;
+  };
   funFact?: string;
 }
-
-export interface ClosestQuestion extends BaseQuestion {
-  kind: "closest";
-  answer: number;
-  unit?: string;
-  hint?: string;
-}
-
-export interface HigherLowerQuestion extends BaseQuestion {
-  kind: "higher_lower";
-  reference: number;
-  answer: "higher" | "lower";
-  unit?: string;
-  statement: string;
-}
-
-export interface YesNoQuestion extends BaseQuestion {
-  kind: "yes_no";
-  answer: "yes" | "no";
-}
-
-export interface MultipleChoiceQuestion extends BaseQuestion {
-  kind: "multiple_choice";
-  choices: string[];
-  answerIndex: number;
-}
-
-export type Question =
-  | ClosestQuestion
-  | HigherLowerQuestion
-  | YesNoQuestion
-  | MultipleChoiceQuestion;
 
 export interface Player {
   id: string;
   name: string;
   joinedAt: number;
   score: number;
-  lastBonus?: number;
+  lastRoundPoints?: number;
 }
 
-export type Phase =
-  | "lobby"
-  | "question"
-  | "reveal"
-  | "leaderboard"
-  | "finished";
+export type Phase = "lobby" | "round" | "reveal" | "finished";
 
 export interface RoundAnswer {
   playerId: string;
-  value: string | number;
+  guess: LatLng | null;
+  number: number | null;
   submittedAt: number;
-  pointsEarned?: number;
+  locationPoints?: number;
+  numberPoints?: number;
+  totalPoints?: number;
+  distanceKm?: number;
 }
 
 export interface Game {
@@ -72,47 +49,60 @@ export interface Game {
   createdAt: number;
   phase: Phase;
   players: Record<string, Player>;
-  questions: Question[];
-  questionIndex: number;
+  places: Place[];
+  placeIndex: number;
   answers: Record<string, RoundAnswer>;
-  questionStartedAt?: number;
-  questionDurationMs: number;
+  roundStartedAt?: number;
+  roundDurationMs: number;
+}
+
+export interface PublicPlace {
+  id: string;
+  title: string;
+  image?: string;
+  pills?: string[];
+  numericQuestion: {
+    label: string;
+    prompt: string;
+    unitPrefix?: string;
+    unitSuffix?: string;
+    min: number;
+    max: number;
+    step?: number;
+  };
+}
+
+export interface PublicAnswerSummary {
+  playerId: string;
+  guess: LatLng | null;
+  number: number | null;
+  locationPoints: number;
+  numberPoints: number;
+  totalPoints: number;
+  distanceKm: number;
+}
+
+export interface RevealView {
+  placeId: string;
+  location: LatLng & { label: string };
+  numberAnswer: number;
+  funFact?: string;
+  perPlayer: PublicAnswerSummary[];
 }
 
 export interface PublicGameView {
   code: string;
   phase: Phase;
   players: Player[];
-  questionIndex: number;
-  totalQuestions: number;
-  question?: PublicQuestion;
+  placeIndex: number;
+  totalPlaces: number;
+  place?: PublicPlace;
   reveal?: RevealView;
-  questionStartedAt?: number;
-  questionDurationMs: number;
+  roundStartedAt?: number;
+  roundDurationMs: number;
   answeredPlayerIds: string[];
 }
 
-export interface PublicQuestion {
-  id: string;
-  kind: QuestionKind;
-  prompt: string;
-  image?: string;
-  caption?: string;
-  unit?: string;
-  hint?: string;
-  reference?: number;
-  statement?: string;
-  choices?: string[];
-}
-
-export interface RevealView {
-  questionId: string;
-  answer: string | number;
-  unit?: string;
-  funFact?: string;
-  perPlayer: Array<{
-    playerId: string;
-    value: string | number | null;
-    pointsEarned: number;
-  }>;
-}
+export const MAX_LOCATION_POINTS = 2500;
+export const MAX_NUMBER_POINTS = 2500;
+export const MAX_ROUND_POINTS = MAX_LOCATION_POINTS + MAX_NUMBER_POINTS;

@@ -12,10 +12,10 @@ export function RoundDots({
           key={i}
           className={`h-1.5 rounded-full transition-all ${
             i < current
-              ? "w-6 bg-cactus"
+              ? "w-6 bg-forest"
               : i === current
-              ? "w-8 bg-sunset"
-              : "w-4 bg-white/15"
+              ? "w-8 bg-leaf"
+              : "w-4 bg-black/10"
           }`}
         />
       ))}

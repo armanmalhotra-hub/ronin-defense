@@ -1,6 +1,5 @@
 "use client";
 
-import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 
@@ -29,13 +28,13 @@ export default function Landing() {
     <main className="min-h-[100dvh] flex flex-col items-center justify-center px-6 py-12">
       <div className="max-w-2xl w-full text-center space-y-10">
         <div>
-          <p className="label mb-3">Bachelor Party · Joshua Tree</p>
-          <h1 className="text-5xl sm:text-7xl font-display tracking-tight text-sand">
-            How Well Do You Know <span className="text-sunset">Phil</span>?
+          <p className="label mb-3">Bachelor party · Joshua Tree</p>
+          <h1 className="text-6xl sm:text-8xl font-display tracking-tight">
+            <span className="text-forest">PHIL</span>
+            <span className="text-ink">-GUESSR</span>
           </h1>
-          <p className="mt-4 text-white/70 text-lg">
-            Higher or lower. Yes or no. Closest wins. One bachelor, twenty
-            opinions, one champion.
+          <p className="mt-4 text-black/60 text-lg max-w-md mx-auto">
+            Drop a pin. Guess a number. Find out how badly you actually know Phil.
           </p>
         </div>
 
@@ -48,16 +47,16 @@ export default function Landing() {
             {creating ? "Creating lobby…" : "Host the game"}
           </button>
 
-          <div className="flex items-center gap-3 text-white/40">
-            <div className="flex-1 h-px bg-white/15" />
+          <div className="flex items-center gap-3 text-black/40">
+            <div className="flex-1 h-px bg-black/15" />
             <span className="text-xs uppercase tracking-widest">or</span>
-            <div className="flex-1 h-px bg-white/15" />
+            <div className="flex-1 h-px bg-black/15" />
           </div>
 
           <form onSubmit={join} className="space-y-3">
             <label className="label block text-left">Game code</label>
             <input
-              className="input text-center tracking-[0.5em] uppercase"
+              className="input text-center tracking-[0.5em] uppercase font-display text-2xl"
               placeholder="ABCD"
               maxLength={4}
               value={code}
@@ -69,7 +68,7 @@ export default function Landing() {
           </form>
         </div>
 
-        <p className="text-xs text-white/40">
+        <p className="text-xs text-black/40">
           Built with Claude Code · for Phil &amp; Michelle
         </p>
       </div>

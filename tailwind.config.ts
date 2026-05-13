@@ -5,13 +5,17 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
-        sand: "#e9d8a6",
-        dusk: "#0b132b",
-        sunset: "#ee6c4d",
-        cactus: "#3a5a40",
+        ink: "#0a0a0a",
+        paper: "#f3f4f6",
+        forest: "#15803d",
+        leaf: "#22c55e",
+        moss: "#86efac",
       },
       fontFamily: {
         display: ['"Bebas Neue"', "system-ui", "sans-serif"],
+      },
+      boxShadow: {
+        soft: "0 2px 12px rgba(0,0,0,0.06)",
       },
     },
   },
