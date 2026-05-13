@@ -48,9 +48,14 @@ jobs:
       - name: Move photos into dashboard
         run: |
           mkdir -p dashboard/images
-          # Copy any new PNGs from docs/watch-images/ into dashboard/images/
+          # Copy ALL image extensions from docs/watch-images/ into dashboard/images/
           if [ -d docs/watch-images ]; then
-            cp -u docs/watch-images/*.png dashboard/images/ 2>/dev/null || true
+            shopt -s nullglob
+            for ext in jpg jpeg webp png avif; do
+              for f in docs/watch-images/*.$ext; do
+                [ -f "$f" ] && cp -u "$f" dashboard/images/
+              done
+            done
           fi
 
       - name: Commit and push if changed
