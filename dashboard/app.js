@@ -335,8 +335,10 @@ function renderFavorites() {
   });
   for (const w of list) {
     if (!matchesSearch(w.brand, w.model, (w.tags || []).join(" "), w.dial)) continue;
-    const imgSrc = w.image || `./images/${w.id}.png`;
-    const img = `<a class="img" href="${w.url}" target="_blank" rel="noopener"><img loading="lazy" alt="${w.brand} ${w.model}" src="${imgSrc}" onerror="this.parentElement.style.display='none'; this.parentElement.parentElement.classList.remove('with-image')"/></a>`;
+    const imgSrc = w.image || `./images/${w.id}.jpg`;
+    // Try .jpg → fall back to .webp → .png → .avif before giving up
+    const fallback = `onerror="(function(i){const ext=i.src.match(/\\.([a-z]+)$/i)?.[1]||'';const chain={jpg:'webp',webp:'png',png:'avif'};const next=chain[ext];if(next){i.src=i.src.replace(/\\.[a-z]+$/i,'.'+next);}else{i.parentElement.style.display='none';i.parentElement.parentElement.classList.remove('with-image');}})(this)"`;
+    const img = `<a class="img" href="${w.url}" target="_blank" rel="noopener"><img loading="lazy" alt="${w.brand} ${w.model}" src="${imgSrc}" ${fallback}/></a>`;
     const statusClass = w.status === "own-target" || w.status === "lottery" ? "accent"
       : w.status === "available" ? "good"
       : w.status === "salon-only" ? "accent" : "dim";
@@ -997,7 +999,7 @@ function renderPlay() {
   const watchId = playState.watches[playState.idx];
   const w = data.favorites.find(x => x.id === watchId);
   const brands = [...new Set(data.favorites.map(x => x.brand))].sort();
-  const imgSrc = w.image || `./images/${w.id}.png`;
+  const imgSrc = w.image || `./images/${w.id}.jpg`;
   const hasImg = true; // try always; hidden via onerror if missing
 
   // PROGRESS BAR
@@ -1020,7 +1022,7 @@ function renderPlay() {
     const pctClass = pct >= 80 ? "high" : "";
     stage.className = "play-stage is-reveal" + (hasImg ? " with-image" : "");
     stage.innerHTML = `
-      <img class="silhouette" src="${imgSrc}" alt="${w.brand} ${w.model}" onerror="this.style.display='none'"/>
+      <img class="silhouette" src="${imgSrc}" alt="${w.brand} ${w.model}" onerror="(function(i){const ext=i.src.match(/\\.([a-z]+)$/i)?.[1]||'';const chain={jpg:'webp',webp:'png',png:'avif'};const next=chain[ext];if(next){i.src=i.src.replace(/\\.[a-z]+$/i,'.'+next);}else{i.style.display='none';}})(this)"/>
       <div class="clue">
         <p class="day-label">Round ${playState.idx + 1} of ${playState.watches.length}</p>
         <div class="progress">${segs}</div>
@@ -1059,7 +1061,7 @@ function renderPlay() {
   stage.className = "play-stage" + (hasImg ? " with-image" : "");
   const stageBody = playState.stage === "map" ? renderStageMap(w) : renderStagePrice(w);
   stage.innerHTML = `
-    <img class="silhouette hidden-img" src="${imgSrc}" alt="mystery watch" onerror="this.style.display='none'"/>
+    <img class="silhouette hidden-img" src="${imgSrc}" alt="mystery watch" onerror="(function(i){const ext=i.src.match(/\\.([a-z]+)$/i)?.[1]||'';const chain={jpg:'webp',webp:'png',png:'avif'};const next=chain[ext];if(next){i.src=i.src.replace(/\\.[a-z]+$/i,'.'+next);}else{i.style.display='none';}})(this)"/>
     <div class="clue">
       <p class="day-label">Round ${playState.idx + 1} of ${playState.watches.length}</p>
       <div class="progress">${segs}</div>
@@ -1356,7 +1358,7 @@ function renderMarkets() {
 
     grid.insertAdjacentHTML("beforeend", `
       <article class="market-card ${isSettled ? 'settled' : ''}" data-id="market:${m.id}">
-        ${imgSrc ? `<a class="market-img" href="${m.house_url}" target="_blank" rel="noopener"><img loading="lazy" alt="${m.title}" src="${imgSrc}" onerror="this.style.display='none'"/></a>` : ""}
+        ${imgSrc ? `<a class="market-img" href="${m.house_url}" target="_blank" rel="noopener"><img loading="lazy" alt="${m.title}" src="${imgSrc}" onerror="(function(i){const ext=i.src.match(/\\.([a-z]+)$/i)?.[1]||'';const chain={jpg:'webp',webp:'png',png:'avif'};const next=chain[ext];if(next){i.src=i.src.replace(/\\.[a-z]+$/i,'.'+next);}else{i.style.display='none';}})(this)"/></a>` : ""}
         <div class="market-body">
           <div class="market-head">
             <div>
